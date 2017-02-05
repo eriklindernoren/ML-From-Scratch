@@ -7,21 +7,19 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 
 
-
 iris = load_iris()
 
 X = iris.data
 y = iris.target
-
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=42)
 
 k = 5
 classes = np.unique(y_train)
 
-def euclidean_distance(instance1, instance2):
+def euclidean_distance(x1, x2):
 	distance = 0
-	for x in range(len(instance1)):
-		distance += pow((instance1[x] - instance2[x]), 2)
+	for x in range(len(x1)):
+		distance += pow((x1[x] - x2[x]), 2)
 	return math.sqrt(distance)
 
 def get_vote(neighbors):
