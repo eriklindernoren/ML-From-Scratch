@@ -1,6 +1,5 @@
 from sklearn import datasets
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import MultiLabelBinarizer
 from sklearn.metrics import accuracy_score
 import matplotlib.pyplot as plt
 import numpy as np
@@ -19,17 +18,17 @@ def categorical_to_binary(x):
 		binarized[i, x[i]] = 1
 	return binarized	
 
-iris = datasets.load_digits()
-X = iris.data
-y = iris.target
+data = datasets.load_iris()
+X = data.data
+y = data.target
 x_train, x_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=42)
 
 y_train = categorical_to_binary(y_train)
 y_test = categorical_to_binary(y_test)
 
 # Configuration
-n_hidden = 60
-n_iterations = 12000
+n_hidden = 20
+n_iterations = 60000
 n_samples = len(x_train)
 learning_rate = 0.001
 
@@ -44,18 +43,18 @@ for i in range(n_iterations):
 	hidden_output = sigmoid(hidden_input)
 	# Calculate outputs
 	output_layer_input = np.dot(hidden_output, v)
-	output = sigmoid(output_layer_input)
+	output_layer_pred = sigmoid(output_layer_input)
 	
-	error = (y_train - output)
+	error = (y_train - output_layer_pred)
 	errors.append(math.fabs(error.mean()))
 	
 	# Calculate the loss gradient
-	l2_delta = -(y_train - output)*sigmoid_gradient(output_layer_input)
-	l1_delta = l2_delta.dot(v.T)*sigmoid_gradient(hidden_input)
+	v_gradient = -(y_train - output_layer_pred)*sigmoid_gradient(output_layer_input)
+	w_gradient = v_gradient.dot(v.T)*sigmoid_gradient(hidden_input)
 
 	# Update weights
-	v -= learning_rate*hidden_output.T.dot(l2_delta)
-	w -= learning_rate*x_train.T.dot(l1_delta)
+	v -= learning_rate*hidden_output.T.dot(v_gradient)
+	w -= learning_rate*x_train.T.dot(w_gradient)
 
 
 # Plot the training error
