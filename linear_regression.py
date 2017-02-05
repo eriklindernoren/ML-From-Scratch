@@ -35,6 +35,4 @@ plt.scatter(x_test[:,1], y_test,  color='black')
 plt.plot(x_test[:,1], y_pred, color='blue', linewidth=3)
 plt.show()
 
-print w
-
 
