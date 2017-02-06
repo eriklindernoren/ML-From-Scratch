@@ -46,8 +46,8 @@ def predict(X):
 			label = y_train[j]
 			neighbors.append([distance, label])
 		neighbors = np.array(neighbors)
-		k_closest_neighbors = neighbors[neighbors[:,0].argsort()][:k]
-		label = get_vote(k_closest_neighbors)
+		k_nearest_neighbors = neighbors[neighbors[:,0].argsort()][:k]
+		label = get_vote(k_nearest_neighbors)
 		y_pred.append(label)
 	return np.array(y_pred)
 

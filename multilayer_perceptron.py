@@ -1,6 +1,7 @@
 from sklearn import datasets
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
+from sklearn.preprocessing import normalize
 import matplotlib.pyplot as plt
 import numpy as np
 import math
@@ -26,15 +27,21 @@ x_train, x_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random
 y_train = categorical_to_binary(y_train)
 y_test = categorical_to_binary(y_test)
 
+x_train = normalize(x_train)
+x_test = normalize(x_test)
+
 # Configuration
 n_hidden = 20
-n_iterations = 60000
+n_iterations = 80000
 n_samples = len(x_train)
+n_features = len(x_train[0])
 learning_rate = 0.001
 
-# Initial weights (w - hidden, v - output)
-w = 2*np.random.random((len(x_train[0]), n_hidden)) - 1
-v = 2*np.random.random((n_hidden, len(y_train[0,:]))) - 1
+# Initial weights between [-1/sqrt(N), 1/sqrt(N)] (w - hidden, v - output)
+a = -1/math.sqrt(n_features)
+b = -a
+w = (b-a)*np.random.random((len(x_train[0]), n_hidden)) + a
+v = (b-a)*np.random.random((n_hidden, len(y_train[0,:]))) + a
 
 errors = []
 for i in range(n_iterations):
@@ -45,11 +52,11 @@ for i in range(n_iterations):
 	output_layer_input = np.dot(hidden_output, v)
 	output_layer_pred = sigmoid(output_layer_input)
 	
-	error = (y_train - output_layer_pred)
-	errors.append(math.fabs(error.mean()))
+	mean_squared_error = np.mean(np.power(y_train - output_layer_pred, 2))
+	errors.append(mean_squared_error)
 	
 	# Calculate the loss gradient
-	v_gradient = -(y_train - output_layer_pred)*sigmoid_gradient(output_layer_input)
+	v_gradient = -2*(y_train - output_layer_pred)*sigmoid_gradient(output_layer_input)
 	w_gradient = v_gradient.dot(v.T)*sigmoid_gradient(hidden_input)
 
 	# Update weights
