@@ -1,6 +1,7 @@
 from __future__ import division
 import numpy as np
 from sklearn.datasets import make_gaussian_quantiles
+import matplotlib.pyplot as plt
 import math, sys
 
 # Construct dataset
@@ -20,7 +21,7 @@ n_features = len(x_train[0])
 # Initialize weights to 1/N
 w = np.ones(n_samples)*(1/n_features)
 
-# Set number of weak trees
+# Set number of weak classifiers
 n_clf = 6
 
 # clf = [threshold, polarity, feature_index, alpha]
@@ -67,7 +68,7 @@ for c in range(n_clf):
     # Save the classifier configuration
     clfs[:4,c] = [threshold, polarity, feature_index, alpha]
     # Iterate through samples and update weights 
-    # Larg weight => hard sample to classify
+    # Large weight => hard sample to classify
     for m in range(n_samples):
         h = 1.0
         x = x_train[m, feature_index]
@@ -80,4 +81,33 @@ for c in range(n_clf):
 
 print clfs
 
-# TEST MODEL
+# Test data
+x_test = np.array([[0.3, 0.98],[3.4, 1.74]])
+y_test = np.array([-1, 1])
+
+correct = 0
+# Iterate through each test sample and classify by commitee
+for i in range(len(y_test)):
+    s = 0
+    for c in range(n_clf):
+        # Get classifier parameters
+        clf = clfs[:, c]
+        threshold = clf[0]
+        polarity = clf[1]
+        feature_index = int(clf[2])
+        alpha = clf[3]
+        x = x_test[i, feature_index]
+        h = 1
+        if polarity*x < polarity*threshold:
+            h = -1
+        # Weight prediction by classifiers proficiency
+        s += alpha*h
+    y = y_test[i]
+    # if s < 0 => pred = -1, else pred = 1
+    correct += (np.sign(s) == y)
+
+accuracy = correct / len(y_test)
+print "Accuracy:", accuracy
+
+plt.scatter(x_train[:,0], x_train[:,1])
+plt.show()
