@@ -15,17 +15,16 @@ def make_diagonal(x):
 	return m
 
 # Data
-dataset = np.array([[1,2.7810836,2.550537003,		0],
-					[1,1.465489372,2.362125076,		0],
-					[1,3.396561688,4.400293529,		0],
-					[1,1.38807019,1.850220317,		0],
-					[1,3.06407232,3.005305973,		0],
-					[1,7.627531214,2.759262235,		1],
-					[1,5.332441248,2.088626775,		1],
-					[1,6.922596716,1.77106367,		1],
-					[1,8.675418651,-0.242068655,	1],
-					[1,7.673756466,3.508563011,		1]
-					])
+dataset = np.array([[1,2.7810836,2.550537003,0],
+					[1,1.465489372,2.362125076,0],
+					[1,3.396561688,4.400293529,0],
+					[1,1.38807019,1.850220317,0],
+					[1,3.06407232,3.005305973,0],
+					[1,7.627531214,2.759262235,1],
+					[1,5.332441248,2.088626775,1],
+					[1,6.922596716,1.77106367,1],
+					[1,8.675418651,-0.242068655,1],
+					[1,7.673756466,3.508563011,1]])
 
 x_train = dataset[:,0:-1]
 y_train = dataset[:,-1].reshape((len(dataset[:,-1]),1))
@@ -51,7 +50,9 @@ for i in range(n_iterations):
 	# (X^T * diag(sigm*(1 - sigm) * X) * X^T * (diag(sigm*(1 - sigm) * X * param + Y - Y_pred)
 	param = np.linalg.inv(x_train.T.dot(diag_gradient).dot(x_train)).dot(x_train.T).dot(diag_gradient.dot(x_train).dot(param) + y_train - y_pred)
 
-# Print the last prediction
+# Print a final prediction
+dot = x_train.dot(param)
+y_pred = sigmoid(dot)
 print "Y prediction:"
 print y_pred
 print "Y:"
