@@ -12,13 +12,8 @@ df = df.sample(frac=1).reset_index(drop=True)
 df_train = df.iloc[:-100]
 df_test = df.iloc[-100:]
 
-classes = df["species"].unique()
-
-class_map = {
-	0: "setosa",
-	1: "versicolor",
-	2: "virginica"
-}
+# Unique values in last column
+classes = df.ix[:,-1].unique()
 
 # Gaussian probability distribution
 def calculate_probability(mean, var, x):
@@ -27,10 +22,10 @@ def calculate_probability(mean, var, x):
 	return coeff * exponent
 
 mean_var = []
-def determine_mean_and_variance():
+def determine_class_distributions():
 	# Calculate the mean and variance of each feature for each class
 	for i in range(len(classes)):
-		c = class_map[i]
+		c = classes[i]
 		# Only select the rows where the species equals the given class
 		class_df = df_train.loc[df_train['species'] == c].drop("species", axis=1)
 		# Add the mean and variance for each feature
@@ -57,7 +52,7 @@ def classify(sample):
 	results = []
 	# Go through list of classes
 	for i in range(len(classes)):
-		c = class_map[i]
+		c = classes[i]
 		results.append([])
 		# Add the prior as the first probability
 		prior = calculate_prior(c)
@@ -68,7 +63,7 @@ def classify(sample):
 			mean = mean_var[i][j][0]
 			var = mean_var[i][j][1]
 			# Determine probability of sample belonging the class 'c' by the 
-			# sample's distance to the class distribution 
+			# sample's similarity to the class distribution 
 			prob = calculate_probability(mean, var, sample_feature)
 			probs = np.append(probs, prob)
 		probability = np.prod(probs)
@@ -78,15 +73,15 @@ def classify(sample):
 	index_of_max = np.argmax(results)
 	max_value = results[index_of_max]
 
-	return class_map[index_of_max]
+	return classes[index_of_max]
 
-# Determine the mean and variance of the features in the 
-# training set
-determine_mean_and_variance()
+# Determine the mean and the variance of the different
+# class distributions
+determine_class_distributions()
 
 # Test the model
-x_test = df_test.drop("species", axis=1).as_matrix()
-y_test = df_test["species"].as_matrix()
+x_test = df_test.ix[:,:-1].as_matrix()
+y_test = df_test.ix[:,-1].as_matrix()
 
 n_test_samples = len(y_test)
 
