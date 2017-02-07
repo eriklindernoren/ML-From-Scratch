@@ -9,6 +9,12 @@ def sigmoid(x):
 def sigmoid_gradient(x):
 	return sigmoid(x)*(1-sigmoid(x))
 
+def make_diagonal(x):
+	m = np.zeros((len(x), len(x)))
+	for i in range(len(m[0])):
+		m[i,i] = x[i]
+	return m
+
 # test predictions
 dataset = np.array([[1, 2.7810836,2.550537003,0],
 	[1, 1.465489372,2.362125076,0],
@@ -25,7 +31,7 @@ x_train = dataset[:,0:-1]
 y_train = dataset[:,-1].reshape((len(dataset[:,-1]),1))
 
 n_features = len(x_train[0])
-n_iterations = 3000
+n_iterations = 5
 learning_rate = 0.001
 
 # Initial weights between [-1/sqrt(N), 1/sqrt(N)] (w - hidden, v - output)
@@ -34,14 +40,16 @@ b = -a
 parameters = (b-a)*np.random.random((len(x_train[0]), 1)) + a
 
 for i in range(n_iterations):
+	# Make a new prediction
 	dot = x_train.dot(parameters)
 	y_pred = sigmoid(dot)
 
-	# Calculate the loss gradient
-	loss_gradient = -2*(y_train - y_pred)*sigmoid_gradient(dot)
+	# Make a diagonal matrix of the sigmoid gradient column vector
+	diag_gradient = make_diagonal(sigmoid_gradient(dot))
 
-	# Update weights
-	parameters -= learning_rate*x_train.T.dot(loss_gradient)
+	# Batch opt:
+	# (X^T * diag(sigm*(1 - sigm) * X) * X^T * (diag(sigm*(1 - sigm) * X * param + Y - Y_pred)
+	parameters = np.linalg.inv(x_train.T.dot(diag_gradient).dot(x_train)).dot(x_train.T).dot(diag_gradient.dot(x_train).dot(parameters) + y_train - y_pred)
 
 print "Y prediction:"
 print y_pred
