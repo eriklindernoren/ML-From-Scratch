@@ -1,5 +1,10 @@
+from sklearn.preprocessing import normalize
+from sklearn.metrics import accuracy_score
+from sklearn.model_selection import train_test_split
+from sklearn import datasets
 import numpy as np
-import math
+import pandas as pd
+import math, sys
 
 # The sigmoid function
 def sigmoid(x):
@@ -14,28 +19,24 @@ def make_diagonal(x):
 		m[i,i] = x[i]
 	return m
 
-# Data
-dataset = np.array([[1,2.7810836,2.550537003,0],
-					[1,1.465489372,2.362125076,0],
-					[1,3.396561688,4.400293529,0],
-					[1,1.38807019,1.850220317,0],
-					[1,3.06407232,3.005305973,0],
-					[1,7.627531214,2.759262235,1],
-					[1,5.332441248,2.088626775,1],
-					[1,6.922596716,1.77106367,1],
-					[1,8.675418651,-0.242068655,1],
-					[1,7.673756466,3.508563011,1]])
+df = pd.read_csv("./data/diabetes.csv")
 
-x_train = dataset[:,0:-1]
-y_train = dataset[:,-1].reshape((len(dataset[:,-1]),1))
+Y = df["Outcome"]
+y_train = Y[:-300].as_matrix()
+y_test = Y[-300:].as_matrix()
+
+X = df.drop("Outcome", axis=1)
+x_train = np.insert(normalize(X[:-300].as_matrix()),0,1,axis=1)
+x_test = np.insert(normalize(X[-300:].as_matrix()),0,1,axis=1)
 
 n_features = len(x_train[0])
-n_iterations = 5
+n_iterations = 10
 
 # Initial weights between [-1/sqrt(N), 1/sqrt(N)] (w - hidden, v - output)
 a = -1/math.sqrt(n_features)
 b = -a
-param = (b-a)*np.random.random((len(x_train[0]), 1)) + a
+param = (b-a)*np.random.random((len(x_train[0]),)) + a
+
 
 # Tune parameters for n iterations
 for i in range(n_iterations):
@@ -51,12 +52,15 @@ for i in range(n_iterations):
 	param = np.linalg.inv(x_train.T.dot(diag_gradient).dot(x_train)).dot(x_train.T).dot(diag_gradient.dot(x_train).dot(param) + y_train - y_pred)
 
 # Print a final prediction
-dot = x_train.dot(param)
-y_pred = sigmoid(dot)
+dot = x_test.dot(param)
+y_pred = np.round(sigmoid(dot))
 print "Y prediction:"
 print y_pred
 print "Y:"
-print y_train
+print y_test
+
+print "Accuracy:", accuracy_score(y_test, y_pred)
+
 
 
 

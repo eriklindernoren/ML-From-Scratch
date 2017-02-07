@@ -2,6 +2,7 @@ from sklearn import datasets
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 from sklearn.preprocessing import normalize
+import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 import math
@@ -31,11 +32,11 @@ x_train = normalize(x_train)
 x_test = normalize(x_test)
 
 # Configuration
-n_hidden = 20
-n_iterations = 80000
+n_hidden = 50
+n_iterations = 20000
 n_samples = len(x_train)
 n_features = len(x_train[0])
-learning_rate = 0.001
+learning_rate = 0.01
 
 # Initial weights between [-1/sqrt(N), 1/sqrt(N)] (w - hidden, v - output)
 a = -1/math.sqrt(n_features)
