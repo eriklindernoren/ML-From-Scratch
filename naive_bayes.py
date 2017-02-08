@@ -45,18 +45,19 @@ def calculate_prior(c):
 	n_total_instances = df_train.shape[0]
 	return n_class_instances / n_total_instances
 
-# Compare the sample to the gaussian distribution of each class
-# Choose the class that has the highest probability of the sample 
-# being a member of that distribution
+# Classify using Bayes Rule, P(Y|X) = P(X|Y)*P(Y) / P(X)
+# P(X|Y) - Gaussian distribution (given by calculate_probability)
+# P(Y) - Prior
+# P(X) - Scales the value to the range 0 - 1 (ignored)
+# Compares the different values for each class and choose the largest one.
+# Classify the sample as the class that results in the largest P(Y|X)
 def classify(sample):
-	results = []
+	posteriors = []
 	# Go through list of classes
 	for i in range(len(classes)):
 		c = classes[i]
-		results.append([])
-		# Add the prior as the first probability
 		prior = calculate_prior(c)
-		probs = np.array([prior])
+		probability = prior
 		# Add the additional probabilities
 		for j in range(len(mean_var[i])):
 			sample_feature = sample[j]
@@ -65,13 +66,13 @@ def classify(sample):
 			# Determine probability of sample belonging the class 'c' by the 
 			# sample's similarity to the class distribution 
 			prob = calculate_probability(mean, var, sample_feature)
-			probs = np.append(probs, prob)
-		probability = np.prod(probs)
-		results[i] = probability
+			probability *= prob
+		# Total probability = prior * p1 * p2 * ... * pN
+		posteriors.append(probability)
 	# Get the largest probability and return the class corresponding
 	# to that probability
-	index_of_max = np.argmax(results)
-	max_value = results[index_of_max]
+	index_of_max = np.argmax(posteriors)
+	max_value = posteriors[index_of_max]
 
 	return classes[index_of_max]
 
