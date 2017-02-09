@@ -15,12 +15,6 @@ df_test = df.iloc[-100:]
 # Unique values in last column
 classes = df.ix[:,-1].unique()
 
-# Gaussian probability distribution
-def calculate_probability(mean, var, x):
-	coeff = (1.0 / (math.sqrt((2.0*math.pi) * var)))
-	exponent = math.exp(-(math.pow(x-mean,2)/(2*var)))
-	return coeff * exponent
-
 mean_var = []
 def determine_class_distributions():
 	# Calculate the mean and variance of each feature for each class
@@ -37,6 +31,12 @@ def determine_class_distributions():
 	# Return the list
 	return mean_var
 
+# Gaussian probability distribution
+def calculate_probability(mean, var, x):
+	coeff = (1.0 / (math.sqrt((2.0*math.pi) * var)))
+	exponent = math.exp(-(math.pow(x-mean,2)/(2*var)))
+	return coeff * exponent
+
 # Calculate the prior of class c (samples where class == c / total number of samples)
 def calculate_prior(c):
 	# Only select the rows where the species equals the given class
@@ -45,30 +45,31 @@ def calculate_prior(c):
 	n_total_instances = df_train.shape[0]
 	return n_class_instances / n_total_instances
 
-# Classify using Bayes Rule, P(Y|X) = P(X|Y)*P(Y) / P(X)
-# P(X|Y) - Gaussian distribution (given by calculate_probability)
-# P(Y) - Prior
-# P(X) - Scales the value to the range 0 - 1 (ignored)
-# Compares the different values for each class and choose the largest one.
-# Classify the sample as the class that results in the largest P(Y|X)
+# Classify using Bayes Rule, P(Y|X) = P(X|Y)*P(Y)/P(X)
+# P(X|Y) - Probability. Gaussian distribution (given by calculate_probability)
+# P(Y) - Prior (given by calculate_prior)
+# P(X) - Scales the posterior to the range 0 - 1 (ignored)
+# Classify the sample as the class that results in the largest P(Y|X) (posterior)
 def classify(sample):
 	posteriors = []
 	# Go through list of classes
 	for i in range(len(classes)):
 		c = classes[i]
 		prior = calculate_prior(c)
-		probability = prior
-		# Add the additional probabilities
+		posterior = prior
+		# multiply with the additional probabilties
+		# Naive assumption (independence):
+		# P(x1,x2,x3|Y) = P(x1|Y)*P(x2|Y)*P(x3|Y)
 		for j in range(len(mean_var[i])):
 			sample_feature = sample[j]
 			mean = mean_var[i][j][0]
 			var = mean_var[i][j][1]
-			# Determine probability of sample belonging the class 'c' by the 
-			# sample's similarity to the class distribution 
+			# Determine P(x|Y)
 			prob = calculate_probability(mean, var, sample_feature)
-			probability *= prob
-		# Total probability = prior * p1 * p2 * ... * pN
-		posteriors.append(probability)
+			# Multiply with the rest
+			posterior *= prob
+		# Total probability = P(Y)*P(x1|Y)*P(x2|Y)*...*P(xN|Y)
+		posteriors.append(posterior)
 	# Get the largest probability and return the class corresponding
 	# to that probability
 	index_of_max = np.argmax(posteriors)

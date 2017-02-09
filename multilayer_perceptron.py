@@ -1,7 +1,7 @@
 from sklearn import datasets
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score
 from sklearn.preprocessing import normalize
+from helper_functions import train_test_split, accuracy_score
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
@@ -23,7 +23,7 @@ def categorical_to_binary(x):
 data = datasets.load_iris()
 X = data.data
 y = data.target
-x_train, x_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=42)
+x_train, x_test, y_train, y_test = train_test_split(X, y, test_size=0.33)
 
 y_train = categorical_to_binary(y_train)
 y_test = categorical_to_binary(y_test)
@@ -32,8 +32,8 @@ x_train = normalize(x_train)
 x_test = normalize(x_test)
 
 # Configuration
-n_hidden = 50
-n_iterations = 20000
+n_hidden = 10
+n_iterations = 10000
 n_samples = len(x_train)
 n_features = len(x_train[0])
 learning_rate = 0.01
@@ -47,10 +47,10 @@ v = (b-a)*np.random.random((n_hidden, len(y_train[0,:]))) + a
 errors = []
 for i in range(n_iterations):
 	# Calculate outputs of hidden layer
-	hidden_input = np.dot(x_train,w)
+	hidden_input = x_train.dot(w)
 	hidden_output = sigmoid(hidden_input)
 	# Calculate outputs
-	output_layer_input = np.dot(hidden_output, v)
+	output_layer_input = hidden_output.dot(v)
 	output_layer_pred = sigmoid(output_layer_input)
 	
 	mean_squared_error = np.mean(np.power(y_train - output_layer_pred, 2))

@@ -1,7 +1,5 @@
 from sklearn.preprocessing import normalize
-from sklearn.metrics import accuracy_score
-from sklearn.model_selection import train_test_split
-from sklearn import datasets
+from helper_functions import accuracy_score
 import numpy as np
 import pandas as pd
 import math, sys
@@ -53,14 +51,11 @@ for i in range(n_iterations):
 
 # Print a final prediction
 dot = x_test.dot(param)
-y_pred = np.round(sigmoid(dot))
+y_pred = np.round(sigmoid(dot)).astype(int)
 print "Y prediction:"
 print y_pred
 print "Y:"
 print y_test
 
 print "Accuracy:", accuracy_score(y_test, y_pred)
-
-
-
 

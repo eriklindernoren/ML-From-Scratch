@@ -1,7 +1,6 @@
 from sklearn import datasets
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score
 from sklearn.preprocessing import normalize
+from helper_functions import train_test_split, accuracy_score
 import matplotlib.pyplot as plt
 import numpy as np
 import math
@@ -22,7 +21,8 @@ def categorical_to_binary(x):
 data = datasets.load_iris()
 X = data.data
 y = data.target
-x_train, x_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=42)
+
+x_train, x_test, y_train, y_test = train_test_split(X, y, test_size=0.33)
 
 y_train = categorical_to_binary(y_train)
 y_test = categorical_to_binary(y_test)
