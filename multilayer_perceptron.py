@@ -1,7 +1,7 @@
 from sklearn import datasets
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import normalize
-from helper_functions import train_test_split, accuracy_score
+from helper_functions import train_test_split, accuracy_score, categorical_to_binary
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
@@ -12,13 +12,6 @@ def sigmoid(x):
 
 def sigmoid_gradient(x):
 	return sigmoid(x)*(1-sigmoid(x))
-
-def categorical_to_binary(x):
-	n_col = np.amax(x)+1
-	binarized = np.zeros((len(x), n_col))
-	for i in range(len(x)):
-		binarized[i, x[i]] = 1
-	return binarized	
 
 data = datasets.load_iris()
 X = data.data
@@ -63,7 +56,6 @@ for i in range(n_iterations):
 	# Update weights
 	v -= learning_rate*hidden_output.T.dot(v_gradient)
 	w -= learning_rate*x_train.T.dot(w_gradient)
-
 
 # Plot the training error
 plt.plot(range(n_iterations), errors)

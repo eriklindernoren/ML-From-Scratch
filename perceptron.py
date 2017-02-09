@@ -1,6 +1,6 @@
 from sklearn import datasets
 from sklearn.preprocessing import normalize
-from helper_functions import train_test_split, accuracy_score
+from helper_functions import train_test_split, accuracy_score, categorical_to_binary
 import matplotlib.pyplot as plt
 import numpy as np
 import math
@@ -10,13 +10,6 @@ def sigmoid(x):
 
 def sigmoid_gradient(x):
 	return sigmoid(x)*(1-sigmoid(x))
-
-def categorical_to_binary(x):
-	n_col = np.amax(x)+1
-	binarized = np.zeros((len(x), n_col))
-	for i in range(len(x)):
-		binarized[i, x[i]] = 1
-	return binarized	
 
 data = datasets.load_iris()
 X = data.data

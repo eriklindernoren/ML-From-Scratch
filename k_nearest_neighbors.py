@@ -1,7 +1,7 @@
 import math
 import numpy as np
 import matplotlib.pyplot as plt
-from helper_functions import train_test_split, accuracy_score
+from helper_functions import train_test_split, accuracy_score, euclidean_distance
 from sklearn.datasets import load_iris
 
 
@@ -13,12 +13,6 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33)
 
 k = 5
 classes = np.unique(y_train)
-
-def euclidean_distance(x1, x2):
-	distance = 0
-	for x in range(len(x1)):
-		distance += pow((x1[x] - x2[x]), 2)
-	return math.sqrt(distance)
 
 def get_vote(neighbors):
 	max_count = 0
@@ -51,7 +45,6 @@ def predict(X):
 
 y_pred = predict(X_test)
 print "Accuracy score:", accuracy_score(y_test, y_pred)
-
 
 h = .02  # step size in the mesh
 # create a mesh to plot in

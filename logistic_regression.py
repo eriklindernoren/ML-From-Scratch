@@ -1,5 +1,5 @@
 from sklearn.preprocessing import normalize
-from helper_functions import accuracy_score
+from helper_functions import accuracy_score, make_diagonal
 import numpy as np
 import pandas as pd
 import math, sys
@@ -10,12 +10,6 @@ def sigmoid(x):
 
 def sigmoid_gradient(x):
 	return sigmoid(x)*(1-sigmoid(x))
-
-def make_diagonal(x):
-	m = np.zeros((len(x), len(x)))
-	for i in range(len(m[0])):
-		m[i,i] = x[i]
-	return m
 
 df = pd.read_csv("./data/diabetes.csv")
 
