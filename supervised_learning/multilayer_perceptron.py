@@ -1,14 +1,13 @@
 from sklearn import datasets
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import normalize
-import sys, os
-dir_path = os.path.dirname(os.path.realpath(__file__))
-sys.path.insert(0, dir_path + "/../")
-from helper_functions import train_test_split, accuracy_score, categorical_to_binary
+import sys, os, math
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
-import math
+
+# Import helper functions
+dir_path = os.path.dirname(os.path.realpath(__file__))
+sys.path.insert(0, dir_path + "/../")
+from helper_functions import train_test_split, accuracy_score, categorical_to_binary, normalize
 
 def sigmoid(x):
 	return 1/(1+np.exp(-x))

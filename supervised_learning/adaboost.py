@@ -1,8 +1,8 @@
 from __future__ import division
+import math, sys
 import numpy as np
 from sklearn.datasets import make_gaussian_quantiles
 import matplotlib.pyplot as plt
-import math, sys
 
 # Construct dataset
 X1, y1 = make_gaussian_quantiles(cov=2.,

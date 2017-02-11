@@ -1,12 +1,12 @@
-import math
+import sys, os, math
 import numpy as np
 import matplotlib.pyplot as plt
-import sys, os
+from sklearn.datasets import load_iris
+
+# Import helper functions
 dir_path = os.path.dirname(os.path.realpath(__file__))
 sys.path.insert(0, dir_path + "/../")
 from helper_functions import train_test_split, accuracy_score, euclidean_distance
-from sklearn.datasets import load_iris
-
 
 iris = load_iris()
 

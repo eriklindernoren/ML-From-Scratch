@@ -1,7 +1,7 @@
 from __future__ import division
+import math, sys, os
 import numpy as np
 import pandas as pd
-import math, sys, os
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
 df = pd.read_csv(dir_path + "/../data/iris.csv")

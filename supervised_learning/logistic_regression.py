@@ -1,11 +1,11 @@
-from sklearn.preprocessing import normalize
-import sys, os
-dir_path = os.path.dirname(os.path.realpath(__file__))
-sys.path.insert(0, dir_path + "/../")
-from helper_functions import accuracy_score, make_diagonal
+import sys, os, math
 import numpy as np
 import pandas as pd
-import math, sys
+
+# Import helper functions
+dir_path = os.path.dirname(os.path.realpath(__file__))
+sys.path.insert(0, dir_path + "/../")
+from helper_functions import accuracy_score, make_diagonal, normalize
 
 # The sigmoid function
 def sigmoid(x):

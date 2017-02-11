@@ -1,12 +1,12 @@
+import sys, os, math
 from sklearn import datasets
-from sklearn.preprocessing import normalize
-import sys, os
-dir_path = os.path.dirname(os.path.realpath(__file__))
-sys.path.insert(0, dir_path + "/../")
-from helper_functions import train_test_split, accuracy_score, categorical_to_binary
 import matplotlib.pyplot as plt
 import numpy as np
-import math
+
+# Import helper functions
+dir_path = os.path.dirname(os.path.realpath(__file__))
+sys.path.insert(0, dir_path + "/../")
+from helper_functions import train_test_split, accuracy_score, categorical_to_binary, normalize
 
 def sigmoid(x):
 	return 1/(1+np.exp(-x))
@@ -52,7 +52,6 @@ for i in range(n_iterations):
 
 	# Update weights
 	w -= learning_rate*x_train.T.dot(w_gradient)
-
 
 # Plot the training error
 plt.plot(range(n_iterations), errors)
