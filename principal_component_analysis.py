@@ -20,7 +20,6 @@ idx = eigenvalues.argsort()[::-1]
 eigenvalues = eigenvalues[idx]
 eigenvectors = eigenvectors[:,idx]
 
-
 # Project data onto the first two principal components
 a = X.dot(eigenvectors[:,0].reshape((len(eigenvectors[0]),1)))
 b = X.dot(eigenvectors[:,1].reshape((len(eigenvectors[1]),1)))
