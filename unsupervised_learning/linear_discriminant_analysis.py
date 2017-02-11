@@ -1,13 +1,13 @@
 from sklearn import datasets
 import matplotlib.pyplot as plt
 import numpy as np
-import sys
-sys.path.insert(0, '../')
-sys.path.insert(0, '.')
+import sys, os
+dir_path = os.path.dirname(os.path.realpath(__file__))
+sys.path.insert(0, dir_path + "/../")
 from helper_functions import calculate_covariance_matrix, calculate_correlation_matrix
 import pandas as pd
 
-df = pd.read_csv("./data/iris.csv")
+df = pd.read_csv(dir_path + "/../data/iris.csv")
 # Change class labels from strings to numbers
 df = df.replace(to_replace="setosa", value="0")
 df = df.replace(to_replace="virginica", value="1")

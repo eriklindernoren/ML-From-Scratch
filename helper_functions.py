@@ -1,5 +1,6 @@
 from __future__ import division
 import numpy as np
+import math
 
 # Split the data into train and test sets
 def train_test_split(X, Y, test_size=0.5, shuffle=True):

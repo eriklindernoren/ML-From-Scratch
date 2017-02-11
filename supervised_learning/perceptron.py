@@ -1,8 +1,8 @@
 from sklearn import datasets
 from sklearn.preprocessing import normalize
-import sys
-sys.path.insert(0, '../')
-sys.path.insert(0, '.')
+import sys, os
+dir_path = os.path.dirname(os.path.realpath(__file__))
+sys.path.insert(0, dir_path + "/../")
 from helper_functions import train_test_split, accuracy_score, categorical_to_binary
 import matplotlib.pyplot as plt
 import numpy as np

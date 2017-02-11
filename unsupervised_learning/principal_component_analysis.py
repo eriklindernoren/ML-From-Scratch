@@ -1,9 +1,9 @@
 from sklearn import datasets
 import matplotlib.pyplot as plt
 import numpy as np
-import sys
-sys.path.insert(0, '../')
-sys.path.insert(0, '.')
+import sys, os
+dir_path = os.path.dirname(os.path.realpath(__file__))
+sys.path.insert(0, dir_path + "/../")
 from helper_functions import calculate_covariance_matrix, calculate_correlation_matrix
 
 # Dataset

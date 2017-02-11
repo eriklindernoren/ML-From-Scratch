@@ -1,9 +1,10 @@
 from __future__ import division
 import numpy as np
 import pandas as pd
-import math, sys
+import math, sys, os
+dir_path = os.path.dirname(os.path.realpath(__file__))
 
-df = pd.read_csv("./data/iris.csv")
+df = pd.read_csv(dir_path + "/../data/iris.csv")
 
 # Shuffle the samples
 df = df.sample(frac=1).reset_index(drop=True)

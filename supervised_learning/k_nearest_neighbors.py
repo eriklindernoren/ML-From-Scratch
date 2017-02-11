@@ -1,9 +1,9 @@
 import math
 import numpy as np
 import matplotlib.pyplot as plt
-import sys
-sys.path.insert(0, '../')
-sys.path.insert(0, '.')
+import sys, os
+dir_path = os.path.dirname(os.path.realpath(__file__))
+sys.path.insert(0, dir_path + "/../")
 from helper_functions import train_test_split, accuracy_score, euclidean_distance
 from sklearn.datasets import load_iris
 

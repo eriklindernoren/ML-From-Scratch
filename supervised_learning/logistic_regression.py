@@ -1,7 +1,7 @@
 from sklearn.preprocessing import normalize
-import sys
-sys.path.insert(0, '../')
-sys.path.insert(0, '.')
+import sys, os
+dir_path = os.path.dirname(os.path.realpath(__file__))
+sys.path.insert(0, dir_path + "/../")
 from helper_functions import accuracy_score, make_diagonal
 import numpy as np
 import pandas as pd
@@ -14,7 +14,7 @@ def sigmoid(x):
 def sigmoid_gradient(x):
 	return sigmoid(x)*(1-sigmoid(x))
 
-df = pd.read_csv("./data/diabetes.csv")
+df = pd.read_csv(dir_path + "/../data/diabetes.csv")
 
 Y = df["Outcome"]
 y_train = Y[:-300].as_matrix()
