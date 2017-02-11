@@ -55,10 +55,9 @@ def accuracy_score(y_true, y_pred):
 
 # Calculate the covariance matrix for the dataset X
 def calculate_covariance_matrix(X):
-	mean_vector = X.mean(0)
-	mean_matrix = np.ones(np.shape(X))*mean_vector
-	N = len(X[0])
-	covariance_matrix = (1/N) * (X - mean_matrix).T.dot(X - mean_matrix)
+	mean_matrix = np.ones(np.shape(X))*X.mean(0)
+	n_features = len(X[0])
+	covariance_matrix = (1/n_features) * (X - mean_matrix).T.dot(X - mean_matrix)
 	return covariance_matrix
 
 # Calculate the correlation of the dataset X

@@ -8,6 +8,8 @@ data = datasets.load_iris()
 X = data.data
 y = data.target
 
+n_features = len(X[0])
+
 # Calculate the covariance matrix for the data
 covariance = calculate_covariance_matrix(X)
 
@@ -20,9 +22,13 @@ idx = eigenvalues.argsort()[::-1]
 eigenvalues = eigenvalues[idx]
 eigenvectors = eigenvectors[:,idx]
 
+# Get two first principal components
+evect1 = eigenvectors[:,0].reshape((n_features,1))
+evect2 = eigenvectors[:,1].reshape((n_features,1))
+
 # Project data onto the first two principal components
-a = X.dot(eigenvectors[:,0].reshape((len(eigenvectors[0]),1)))
-b = X.dot(eigenvectors[:,1].reshape((len(eigenvectors[1]),1)))
+a = X.dot(evect1)
+b = X.dot(evect2)
 
 # Plot the data
 plt.scatter(a,b,c=y)
