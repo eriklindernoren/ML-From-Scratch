@@ -28,8 +28,8 @@ def categorical_to_binary(x):
 # Calculate the distance between two vectors
 def euclidean_distance(x1, x2):
 	distance = 0
-	for x in range(len(x1)):
-		distance += pow((x1[x] - x2[x]), 2)
+	for i in range(len(x1)):
+		distance += pow((x1[i] - x2[i]), 2)
 	return math.sqrt(distance)
 
 # Makes a row vector into an diagonal matrix
@@ -60,10 +60,11 @@ def calculate_covariance_matrix(X):
 	covariance_matrix = (1/n_features) * (X - mean_matrix).T.dot(X - mean_matrix)
 	return covariance_matrix
 
-# Calculate the correlation of the dataset X
+# Calculate the correlation matrix for the dataset X
 def calculate_correlation_matrix(X):
 	covariance = calculate_covariance_matrix(X)
-	std_dev = np.sqrt(np.diag(covariance)).reshape((len(covariance[0]), 1))
+	n_features = len(covariance[0])
+	std_dev = np.sqrt(np.diag(covariance)).reshape((n_features, 1))
 	correlation = np.divide(covariance, std_dev.dot(std_dev.T))
 	print correlation
 

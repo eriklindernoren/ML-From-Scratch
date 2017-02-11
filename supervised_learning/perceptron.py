@@ -1,5 +1,8 @@
 from sklearn import datasets
 from sklearn.preprocessing import normalize
+import sys
+sys.path.insert(0, '../')
+sys.path.insert(0, '.')
 from helper_functions import train_test_split, accuracy_score, categorical_to_binary
 import matplotlib.pyplot as plt
 import numpy as np

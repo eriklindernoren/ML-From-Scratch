@@ -1,4 +1,7 @@
 from sklearn.preprocessing import normalize
+import sys
+sys.path.insert(0, '../')
+sys.path.insert(0, '.')
 from helper_functions import accuracy_score, make_diagonal
 import numpy as np
 import pandas as pd

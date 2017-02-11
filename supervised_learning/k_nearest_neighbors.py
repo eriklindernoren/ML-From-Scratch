@@ -1,6 +1,9 @@
 import math
 import numpy as np
 import matplotlib.pyplot as plt
+import sys
+sys.path.insert(0, '../')
+sys.path.insert(0, '.')
 from helper_functions import train_test_split, accuracy_score, euclidean_distance
 from sklearn.datasets import load_iris
 
