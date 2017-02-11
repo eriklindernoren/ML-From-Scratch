@@ -52,3 +52,21 @@ def accuracy_score(y_true, y_pred):
 		correct += 1
 
 	return correct / len(y_true)
+
+# Calculate the covariance matrix for the dataset X
+def calculate_covariance_matrix(X):
+	mean_vector = X.mean(0)
+	mean_matrix = np.ones(np.shape(X))*mean_vector
+	N = len(X[0])
+	covariance_matrix = (1/N) * (X - mean_matrix).T.dot(X - mean_matrix)
+	return covariance_matrix
+
+# Calculate the correlation of the dataset X
+def calculate_correlation_matrix(X):
+	covariance = calculate_covariance_matrix(X)
+	std_dev = np.sqrt(np.diag(covariance)).reshape((len(covariance[0]), 1))
+	correlation = np.divide(covariance, std_dev.dot(std_dev.T))
+	print correlation
+
+
+
