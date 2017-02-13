@@ -1,36 +1,54 @@
 import matplotlib.pyplot as plt
 import numpy as np
 from sklearn import datasets
+import sys, os
+# Import helper functions
+dir_path = os.path.dirname(os.path.realpath(__file__))
+sys.path.insert(0, dir_path + "/../")
+from helper_functions import mean_squared_error
 
-# Load the diabetes dataset
-diabetes = datasets.load_diabetes()
+class LinearRegression():
+	def __init__(self):
+		self.w = None
 
-# Use only one feature
-X = diabetes.data[:, np.newaxis, 2]
+	def fit(self, X, y):
+		# Insert constant ones for bias weights
+		X = np.insert(X, 0, 1, axis=1)	
+		# Get weights by least squares
+		self.w = np.linalg.inv(X.T.dot(X)).dot(X.T).dot(y)
 
-# Split the data into training/testing sets
-x_train = X[:-20]
-x_test = X[-20:]
+	def predict(self, X):
+		# Insert constant ones for bias weights
+		X = np.insert(X, 0, 1, axis=1)
+		y_pred = X.dot(self.w)
+		return y_pred
 
-# Split the targets into training/testing sets
-y_train = diabetes.target[:-20]
-y_test = diabetes.target[-20:]
 
-# Insert constant 1:s for bias weight
-x_train = np.insert(x_train, 0, 1, axis=1)
-x_test = np.insert(x_test, 0, 1, axis=1)
+def main():
+	# Load the diabetes dataset
+	diabetes = datasets.load_diabetes()
 
-# Get weights by least squares
-w = np.linalg.inv(x_train.T.dot(x_train)).dot(x_train.T).dot(y_train)
+	# Use only one feature
+	X = diabetes.data[:, np.newaxis, 2]
 
-# Make prediction
-y_pred = x_test.dot(w)
+	# Split the data into training/testing sets
+	x_train, x_test = X[:-20], X[-20:]
 
-# Print the mean squared error
-mean_squared_error = np.mean(np.power(y_test - y_pred, 2))
-print "Mean Squared Error:", mean_squared_error
+	# Split the targets into training/testing sets
+	y_train, y_test = diabetes.target[:-20], diabetes.target[-20:]
 
-# Plot the results
-plt.scatter(x_test[:,1], y_test,  color='black')
-plt.plot(x_test[:,1], y_pred, color='blue', linewidth=3)
-plt.show()
+	clf = LinearRegression()
+	clf.fit(x_train, y_train)
+	y_pred = clf.predict(x_test)
+
+	# Print the mean squared error
+	print "Mean Squared Error:", mean_squared_error(y_test, y_pred)
+
+	# Plot the results
+	plt.scatter(x_test[:,0], y_test,  color='black')
+	plt.plot(x_test[:,0], y_pred, color='blue', linewidth=3)
+	plt.show()
+
+if __name__ == "__main__": main()
+
+

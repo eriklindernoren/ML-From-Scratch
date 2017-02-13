@@ -22,6 +22,10 @@ def normalize(X, axis=-1, order=2):
 	l2[l2==0] = 1
 	return X / np.expand_dims(l2, axis)
 
+def mean_squared_error(y_true, y_pred):
+	mse = np.mean(np.power(y_true - y_pred, 2))
+	return mse
+
 # Return the variance of the features in dataset X
 def calculate_variance(X):
 	mean_matrix = np.ones(np.shape(X))*X.mean(0)
