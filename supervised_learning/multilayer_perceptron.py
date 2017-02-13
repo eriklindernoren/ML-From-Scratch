@@ -28,7 +28,7 @@ class MultilayerPerceptron():
         self.v = None
 
     def fit(self, X, y, n_iterations=3000, learning_rate=0.01, plot_errors=False):
-        x_train = np.array(X, dtype=float)
+        x_train = normalize(np.array(X, dtype=float))
         # Convert the nominal y values to binary
         y_train = categorical_to_binary(y)
 
@@ -70,7 +70,7 @@ class MultilayerPerceptron():
 
     # Use the trained model to predict labels of X
     def predict(self, X):
-        x_test = np.array(X, dtype=float)
+        x_test = normalize(np.array(X, dtype=float))
         hidden_output = sigmoid(np.dot(x_test,self.w))
         y_pred = np.round(sigmoid(np.dot(hidden_output, self.v)))
         y_pred = binary_to_categorical(y_pred)
@@ -82,10 +82,6 @@ def main():
     X = data.data
     y = data.target
     x_train, x_test, y_train, y_test = train_test_split(X, y, test_size=0.33)
-
-    # Normalize the data
-    x_train = normalize(x_train)
-    x_test = normalize(x_test)
 
     # MLP
     clf = MultilayerPerceptron(n_hidden=10)
