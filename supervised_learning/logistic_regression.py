@@ -21,9 +21,10 @@ class LogisticRegression():
     def __init__(self):
         self.param = None
 
-    def fit(self, X, y, n_iterations=10):
-        x_train = X
-        y_train = y
+    def fit(self, X, y, n_iterations=4):
+        x_train = np.array(X, dtype=float)
+        y_train = np.atleast_1d(y)
+
         n_features = len(x_train[0])
 
         # Initial weights between [-1/sqrt(N), 1/sqrt(N)] (w - hidden, v - output)
@@ -45,8 +46,9 @@ class LogisticRegression():
             self.param = np.linalg.inv(x_train.T.dot(diag_gradient).dot(x_train)).dot(x_train.T).dot(diag_gradient.dot(x_train).dot(self.param) + y_train - y_pred)
 
     def predict(self, X):
+        x_test = np.array(X, dtype=float)
         # Print a final prediction
-        dot = X.dot(self.param)
+        dot = x_test.dot(self.param)
         y_pred = np.round(sigmoid(dot)).astype(int)
         return y_pred
 

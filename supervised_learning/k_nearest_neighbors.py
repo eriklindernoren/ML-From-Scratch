@@ -11,7 +11,7 @@ sys.path.insert(0, dir_path + "/../unsupervised_learning/")
 from principal_component_analysis import PCA
 
 class KNN():
-	def __init__(self, k=2):
+	def __init__(self, k=5):
 		self.k = k
 
 	def _get_vote(self, neighbors, classes):

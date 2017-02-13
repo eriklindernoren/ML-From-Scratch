@@ -49,6 +49,18 @@ def categorical_to_binary(x):
 
 	return binarized
 
+# Converting from binary vectors to nominal values
+def binary_to_categorical(x):
+	categorical = []
+	for i in range(len(x)):
+		if not 1 in x[i]:
+			categorical.append(0)
+		else:
+			i_where_one = np.where(x[i] == 1)[0][0]
+			categorical.append(i_where_one)
+
+	return categorical
+
 # Calculate the distance between two vectors
 def euclidean_distance(x1, x2):
 	distance = 0

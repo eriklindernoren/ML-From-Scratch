@@ -7,7 +7,7 @@ import numpy as np
 # Import helper functions
 dir_path = os.path.dirname(os.path.realpath(__file__))
 sys.path.insert(0, dir_path + "/../")
-from helper_functions import train_test_split, accuracy_score, categorical_to_binary, normalize
+from helper_functions import train_test_split, accuracy_score, categorical_to_binary, normalize, binary_to_categorical
 sys.path.insert(0, dir_path + "/../unsupervised_learning/")
 from principal_component_analysis import PCA
 
@@ -28,7 +28,7 @@ class MultilayerPerceptron():
         self.v = None
 
     def fit(self, X, y, n_iterations=3000, learning_rate=0.01, plot_errors=False):
-        x_train = X
+        x_train = np.array(X, dtype=float)
         # Convert the nominal y values to binary
         y_train = categorical_to_binary(y)
 
@@ -70,9 +70,10 @@ class MultilayerPerceptron():
 
     # Use the trained model to predict labels of X
     def predict(self, X):
-        hidden_output = sigmoid(np.dot(X,self.w))
+        x_test = np.array(X, dtype=float)
+        hidden_output = sigmoid(np.dot(x_test,self.w))
         y_pred = np.round(sigmoid(np.dot(hidden_output, self.v)))
-
+        y_pred = binary_to_categorical(y_pred)
         return y_pred
 
 # Demo of the MLP module
@@ -81,9 +82,6 @@ def main():
     X = data.data
     y = data.target
     x_train, x_test, y_train, y_test = train_test_split(X, y, test_size=0.33)
-
-    # Convert Y labels to binary
-    y_test = categorical_to_binary(y_test)
 
     # Normalize the data
     x_train = normalize(x_train)
