@@ -7,7 +7,7 @@ import pandas as pd
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 sys.path.insert(0, dir_path + "/../")
-from helper_functions import train_test_split, accuracy_score
+from helper_functions import train_test_split, accuracy_score, normalize
 sys.path.insert(0, dir_path + "/../unsupervised_learning/")
 from principal_component_analysis import PCA
 
@@ -20,7 +20,7 @@ class NaiveBayes():
 		self.mean_var = []
 
 	def fit(self, X, y):
-		self.X = X
+		self.X = normalize(X)
 		self.y = y
 		self.classes = np.unique(y)
 		# Calculate the mean and variance of each feature for each class

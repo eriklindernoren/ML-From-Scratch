@@ -19,17 +19,32 @@ from perceptron import Perceptron
 sys.path.insert(0, dir_path + "/unsupervised_learning")
 from principal_component_analysis import PCA
 
-# ......
-#  DATA
-# ......
-df = pd.read_csv(dir_path + "/data/iris.csv")
-df = df.replace(to_replace="virginica", value="0")
-df = df.replace(to_replace="versicolor", value="1")
-# Only select data for two classes
-X = df.loc[df['species'] != "setosa"].drop("species", axis=1).as_matrix()
-y = df.loc[df['species'] != "setosa"]["species"].as_matrix()
+# ...........
+#  LOAD DATA
+# ...........
+# Load the handwritten digits dataset
+data = datasets.load_digits()
+# Select two digits
+digit1 = 0
+digit2 = 8
+idx = np.append(np.where(data.target == digit1)[0], np.where(data.target == digit2)[0])
+y = data.target[idx]
+# Change labels to {0, 1}
+y[y == digit1] = 0
+y[y == digit2] = 1
+X = data.data[idx]
+
+# ..........................
+#  DIMENSIONALITY REDUCTION
+# ..........................
+pca = PCA(n_components=5)
+X = pca.transform(X)
+
+# ..........................
+#  TRAIN / TEST SPLIT
+# ..........................
 x_train, x_test, y_train, y_test = train_test_split(X, y, test_size=0.5)
-# Rescale class labels for Adaboost to {-1, 1}
+# Rescale label for Adaboost to {-1, 1}
 ada_y_train = 2*y_train - np.ones(np.shape(y_train))
 ada_y_test = 2*y_test - np.ones(np.shape(y_test))
 
@@ -43,9 +58,9 @@ logistic_regression = LogisticRegression()
 mlp = MultilayerPerceptron(n_hidden=5)
 perceptron = Perceptron()
 
-# .......
+# ........
 #  TRAIN
-# .......
+# ........
 adaboost.fit(x_train, ada_y_train)
 naive_bayes.fit(x_train, y_train)
 logistic_regression.fit(x_train, y_train)
