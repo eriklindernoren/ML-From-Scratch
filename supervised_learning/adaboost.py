@@ -14,7 +14,7 @@ from principal_component_analysis import PCA
 
 
 class Adaboost():
-    def __init__(self, n_clf=4):
+    def __init__(self, n_clf=5):
         self.n_clf = n_clf
         # clf = [threshold, polarity, feature_index, alpha]
         self.clfs = np.ones((4,self.n_clf))

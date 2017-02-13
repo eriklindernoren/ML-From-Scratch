@@ -17,11 +17,13 @@ def train_test_split(X, Y, test_size=0.5, shuffle=True):
 
 	return x_train, x_test, y_train, y_test
 
+# Normalize the dataset X
 def normalize(X, axis=-1, order=2):
 	l2 = np.atleast_1d(np.linalg.norm(X, order, axis))
 	l2[l2==0] = 1
 	return X / np.expand_dims(l2, axis)
 
+# Returns the mean squared error between y_true and y_pred
 def mean_squared_error(y_true, y_pred):
 	mse = np.mean(np.power(y_true - y_pred, 2))
 	return mse
@@ -69,7 +71,7 @@ def euclidean_distance(x1, x2):
 
 	return math.sqrt(distance)
 
-# Makes a row vector into an diagonal matrix
+# Converts a vector into an diagonal matrix
 def make_diagonal(x):
 	m = np.zeros((len(x), len(x)))
 	for i in range(len(m[0])):
@@ -81,14 +83,9 @@ def make_diagonal(x):
 def accuracy_score(y_true, y_pred):
 	correct = 0
 	for i in range(len(y_true)):
-		eq = np.equal(y_true[i], y_pred[i])
-		if isinstance(eq, np.bool_):
-			if eq == False:
-				continue
-		elif False in eq:
-			continue
-		correct += 1
-
+		diff = y_true[i] - y_pred[i]
+		if diff == np.zeros(np.shape(diff)):
+			correct += 1
 	return correct / len(y_true)
 
 # Calculate the covariance matrix for the dataset X
@@ -105,9 +102,9 @@ def calculate_correlation_matrix(X):
 	covariance = calculate_covariance_matrix(X, X)
 	n_features = len(covariance[0])
 	std_dev = np.expand_dims(calculate_std_dev(X), 1)
-	correlation = np.divide(covariance, std_dev.dot(std_dev.T))
+	correlation_matrix = np.divide(covariance, std_dev.dot(std_dev.T))
 
-	return correlation
+	return correlation_matrix
 
 
 

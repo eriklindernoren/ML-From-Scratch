@@ -81,9 +81,6 @@ def main():
     clf.fit(x_train, y_train)
     y_pred = clf.predict(x_test)
 
-    # Print prediction and true output
-    print y_pred
-    print y_test
     print "Accuracy:", accuracy_score(y_test, y_pred)
 
     # Reduce dimension to two using PCA and plot the results

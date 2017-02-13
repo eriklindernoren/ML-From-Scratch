@@ -27,14 +27,14 @@ class KNN():
 				label = c
 		return label
 
-	def predict(self, X_test, X_train, y_train):
+	def predict(self, x_test, x_train, y_train):
 		classes = np.unique(y_train)
 		y_pred = []
-		for i in range(len(X_test)):
-			test_sample = X_test[i]
+		for i in range(len(x_test)):
+			test_sample = x_test[i]
 			neighbors = []
-			for j in range(len(X_train)):
-				observed_sample = X_train[j]
+			for j in range(len(x_train)):
+				observed_sample = x_train[j]
 				distance = euclidean_distance(test_sample, observed_sample)
 				label = y_train[j]
 				neighbors.append([distance, label])
@@ -47,18 +47,17 @@ class KNN():
 # Demo of the knn classifier
 def main():
 	iris = load_iris()
-
 	X = iris.data
 	y = iris.target
-	X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33)
+	x_train, x_test, y_train, y_test = train_test_split(X, y, test_size=0.33)
 
 	clf = KNN(k=3)
-	y_pred = clf.predict(X_test, X_train, y_train)
+	y_pred = clf.predict(x_test, x_train, y_train)
 	print "Accuracy score:", accuracy_score(y_test, y_pred)
 
 	# Reduce dimensions to 2d using pca and plot the results
 	pca = PCA(n_components=2)
-	X_transformed = pca.transform(X_test)
+	X_transformed = pca.transform(x_test)
 	x1 = X_transformed[:,0]
 	x2 = X_transformed[:,1]
 

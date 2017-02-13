@@ -22,16 +22,12 @@ from principal_component_analysis import PCA
 #  DATA
 # ......
 df = pd.read_csv(dir_path + "/data/iris.csv")
-# Change class labels from strings to numbers
-df = df.replace(to_replace="setosa", value="2")
 df = df.replace(to_replace="virginica", value="0")
 df = df.replace(to_replace="versicolor", value="1")
-
 # Only select data for two classes
-X = df.loc[df['species'] != "2"].drop("species", axis=1).as_matrix()
-y = df.loc[df['species'] != "2"]["species"].as_matrix()
+X = df.loc[df['species'] != "setosa"].drop("species", axis=1).as_matrix()
+y = df.loc[df['species'] != "setosa"]["species"].as_matrix()
 x_train, x_test, y_train, y_test = train_test_split(X, y, test_size=0.5)
-
 # Rescale class labels for Adaboost to {-1, 1}
 ada_y_train = 2*y_train - np.ones(np.shape(y_train))
 ada_y_test = 2*y_test - np.ones(np.shape(y_test))
@@ -42,7 +38,7 @@ ada_y_test = 2*y_test - np.ones(np.shape(y_test))
 adaboost = Adaboost(n_clf = 8)
 knn = KNN(k=4)
 logistic_regression = LogisticRegression()
-mlp = MultilayerPerceptron(n_hidden=4)
+mlp = MultilayerPerceptron(n_hidden=5)
 perceptron = Perceptron()
 
 # .......
@@ -66,7 +62,6 @@ y_pred["Perceptron"] = perceptron.predict(x_test)
 # ..........
 #  ACCURACY
 # ..........
-acc = {}
 print "Accuracy:"
 for clf in y_pred:
 	if clf == "Adaboost":
