@@ -10,6 +10,7 @@ from helper_functions import train_test_split, accuracy_score
 # Import ML models
 sys.path.insert(0, dir_path + "/supervised_learning")
 from adaboost import Adaboost
+from naive_bayes import NaiveBayes
 from k_nearest_neighbors import KNN
 from multilayer_perceptron import MultilayerPerceptron
 from logistic_regression import LogisticRegression
@@ -36,6 +37,7 @@ ada_y_test = 2*y_test - np.ones(np.shape(y_test))
 #  SETUP
 # .......
 adaboost = Adaboost(n_clf = 8)
+naive_bayes = NaiveBayes()
 knn = KNN(k=4)
 logistic_regression = LogisticRegression()
 mlp = MultilayerPerceptron(n_hidden=5)
@@ -45,6 +47,7 @@ perceptron = Perceptron()
 #  TRAIN
 # .......
 adaboost.fit(x_train, ada_y_train)
+naive_bayes.fit(x_train, y_train)
 logistic_regression.fit(x_train, y_train)
 mlp.fit(x_train, y_train, n_iterations=4000, learning_rate=0.01)
 perceptron.fit(x_train, y_train)
@@ -54,6 +57,7 @@ perceptron.fit(x_train, y_train)
 # .........
 y_pred = {}
 y_pred["Adaboost"] = adaboost.predict(x_test)
+y_pred["Naive Bayes"] = naive_bayes.predict(x_test)
 y_pred["K Nearest Neighbors"] = knn.predict(x_test, x_train, y_train)
 y_pred["Logistic Regression"] = logistic_regression.predict(x_test)
 y_pred["Multilayer Perceptron"] = mlp.predict(x_test)
