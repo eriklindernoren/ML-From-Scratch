@@ -22,11 +22,9 @@ from principal_component_analysis import PCA
 # ...........
 #  LOAD DATA
 # ...........
-# Load the handwritten digits dataset
 data = datasets.load_digits()
-# Select two digits
-digit1 = 0
-digit2 = 8
+digit1 = 1
+digit2 = 9
 idx = np.append(np.where(data.target == digit1)[0], np.where(data.target == digit2)[0])
 y = data.target[idx]
 # Change labels to {0, 1}
@@ -37,7 +35,7 @@ X = data.data[idx]
 # ..........................
 #  DIMENSIONALITY REDUCTION
 # ..........................
-pca = PCA(n_components=5)
+pca = PCA(n_components=3)
 X = pca.transform(X)
 
 # ..........................
