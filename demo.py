@@ -7,12 +7,14 @@ import pandas as pd
 # Import helper functions
 dir_path = os.path.dirname(os.path.realpath(__file__))
 from helper_functions import train_test_split, accuracy_score
+# Import ML models
 sys.path.insert(0, dir_path + "/supervised_learning")
 from adaboost import Adaboost
 from k_nearest_neighbors import KNN
 from multilayer_perceptron import MultilayerPerceptron
 from logistic_regression import LogisticRegression
 from perceptron import Perceptron
+# Import PCA
 sys.path.insert(0, dir_path + "/unsupervised_learning")
 from principal_component_analysis import PCA
 
@@ -21,14 +23,14 @@ from principal_component_analysis import PCA
 # ......
 df = pd.read_csv(dir_path + "/data/iris.csv")
 # Change class labels from strings to numbers
-df = df.replace(to_replace="setosa", value="0")
-df = df.replace(to_replace="virginica", value="1")
-df = df.replace(to_replace="versicolor", value="2")
+df = df.replace(to_replace="setosa", value="2")
+df = df.replace(to_replace="virginica", value="0")
+df = df.replace(to_replace="versicolor", value="1")
 
 # Only select data for two classes
 X = df.loc[df['species'] != "2"].drop("species", axis=1).as_matrix()
 y = df.loc[df['species'] != "2"]["species"].as_matrix()
-x_train, x_test, y_train, y_test = train_test_split(X, y, test_size=0.33)
+x_train, x_test, y_train, y_test = train_test_split(X, y, test_size=0.5)
 
 # Rescale class labels for Adaboost to {-1, 1}
 ada_y_train = 2*y_train - np.ones(np.shape(y_train))
@@ -46,7 +48,6 @@ perceptron = Perceptron()
 # .......
 #  TRAIN
 # .......
-
 adaboost.fit(x_train, ada_y_train)
 logistic_regression.fit(x_train, y_train)
 mlp.fit(x_train, y_train, n_iterations=4000, learning_rate=0.01)
@@ -66,7 +67,7 @@ y_pred["Perceptron"] = perceptron.predict(x_test)
 #  ACCURACY
 # ..........
 acc = {}
-print "Accuracies:"
+print "Accuracy:"
 for clf in y_pred:
 	if clf == "Adaboost":
 		print "\t%s: %s" %(clf, accuracy_score(ada_y_test, y_pred[clf]))
@@ -82,10 +83,5 @@ x1 = X_transformed[:,0]
 x2 = X_transformed[:,1]
 plt.scatter(x1,x2,c=y_test)
 plt.show()
-
-
-
-
-
 
 

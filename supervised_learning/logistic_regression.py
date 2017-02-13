@@ -22,7 +22,8 @@ class LogisticRegression():
         self.param = None
 
     def fit(self, X, y, n_iterations=4):
-        x_train = np.array(X, dtype=float)
+        x_train = normalize(np.array(X, dtype=float))
+        x_train = np.insert(x_train, 0, 1, axis=1)
         y_train = np.atleast_1d(y)
 
         n_features = len(x_train[0])
@@ -46,7 +47,8 @@ class LogisticRegression():
             self.param = np.linalg.inv(x_train.T.dot(diag_gradient).dot(x_train)).dot(x_train.T).dot(diag_gradient.dot(x_train).dot(self.param) + y_train - y_pred)
 
     def predict(self, X):
-        x_test = np.array(X, dtype=float)
+        x_test = normalize(np.array(X, dtype=float))
+        x_test = np.insert(x_test, 0, 1, axis=1)
         # Print a final prediction
         dot = x_test.dot(self.param)
         y_pred = np.round(sigmoid(dot)).astype(int)
