@@ -20,7 +20,7 @@ class NaiveBayes():
 		self.mean_var = []
 
 	def fit(self, X, y):
-		self.X = normalize(X)
+		self.X = X
 		self.y = y
 		self.classes = np.unique(y)
 		# Calculate the mean and variance of each feature for each class
@@ -93,9 +93,10 @@ class NaiveBayes():
 			y_pred.append(y)
 		return y_pred
 
+# Demo
 def main():
 	iris = datasets.load_iris()
-	X = iris.data
+	X = normalize(iris.data)
 	y = iris.target
 	x_train, x_test, y_train, y_test = train_test_split(X, y, test_size=0.5)
 

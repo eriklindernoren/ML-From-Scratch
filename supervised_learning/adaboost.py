@@ -103,6 +103,7 @@ class Adaboost():
             y_pred.append(y)
         return y_pred
 
+# Demo
 def main():
     df = pd.read_csv(dir_path + "/../data/iris.csv")
     # Change class labels from strings to numbers

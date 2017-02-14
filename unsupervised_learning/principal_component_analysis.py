@@ -13,10 +13,10 @@ class PCA():
     def __init__(self, n_components):
         self.n_components = n_components
 
-    # Get the covariance of the dataset X
+    # Get the covariance of X
     def get_covariance(self, X):
         # Calculate the covariance matrix for the data
-        covariance = calculate_covariance_matrix(X,X)
+        covariance = calculate_covariance_matrix(X)
         return np.array(covariance, dtype=float)
 
     # Fit the dataset to the number of principal components specified in the constructor
@@ -30,11 +30,13 @@ class PCA():
         # Sort the eigenvalues and corresponding eigenvectors from largest
         # to smallest eigenvalue. 
         idx = eigenvalues.argsort()[::-1]
-        eigenvalues = eigenvalues[idx]
-        eigenvectors = eigenvectors[:,idx]
+        eigenvalues = eigenvalues[idx][:self.n_components]
+        eigenvectors = np.atleast_1d(eigenvectors[:,idx])[:,:self.n_components]
 
         # Get two first principal components
-        evects = np.atleast_1d(eigenvectors[:,0:self.n_components])
+        evects = eigenvectors
+        # eval_matrix = np.ones(np.shape(eigenvectors))*eigenvalues
+        # evects = eval_matrix*eigenvectors
 
         # Project the data onto principal components
         X_transformed = X.dot(evects)
@@ -49,11 +51,10 @@ class PCA():
         plt.scatter(x1,x2,c=y)
         plt.show()
 
-
-# Demo of the pca module
+# Demo
 def main():
     # Load the dataset
-    data = datasets.load_iris()
+    data = datasets.load_digits()
     X = data.data
     y = data.target
 

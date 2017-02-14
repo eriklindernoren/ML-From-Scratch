@@ -23,7 +23,7 @@ class LogisticRegression():
 
     def fit(self, X, y, n_iterations=4):
         # Normalize the training data
-        x_train = normalize(np.array(X, dtype=float))
+        x_train = np.array(X, dtype=float)
         # Add one to take bias weights into consideration
         x_train = np.insert(x_train, 0, 1, axis=1)
         y_train = np.atleast_1d(y)
@@ -50,7 +50,7 @@ class LogisticRegression():
 
     def predict(self, X):
         # Normalize test data
-        x_test = normalize(np.array(X, dtype=float))
+        x_test = np.array(X, dtype=float)
         # Add ones to take bias weights into consideration
         x_test = np.insert(x_test, 0, 1, axis=1)
         # Print a final prediction
@@ -58,7 +58,7 @@ class LogisticRegression():
         y_pred = np.round(sigmoid(dot)).astype(int)
         return y_pred
 
-# Demo of Logistic Regression
+# Demo
 def main():
     df = pd.read_csv(dir_path + "/../data/diabetes.csv")
 

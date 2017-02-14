@@ -23,7 +23,7 @@ class LinearRegression():
 		y_pred = X.dot(self.w)
 		return y_pred
 
-
+# Demo
 def main():
 	# Load the diabetes dataset
 	diabetes = datasets.load_diabetes()

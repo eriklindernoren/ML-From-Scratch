@@ -44,10 +44,10 @@ class KNN():
 			y_pred.append(label)
 		return np.array(y_pred)
 
-# Demo of the knn classifier
+# Demo
 def main():
 	iris = load_iris()
-	X = iris.data
+	X = normalize(iris.data)
 	y = iris.target
 	x_train, x_test, y_train, y_test = train_test_split(X, y, test_size=0.33)
 
