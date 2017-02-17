@@ -12,7 +12,7 @@ from principal_component_analysis import PCA
 
 
 class GaussianMixtureModel():
-	def __init__(self, k=2, max_iterations=500, tolerance=1e-3):
+	def __init__(self, k=2, max_iterations=200, tolerance=1e-3):
 		self.k = k
 		self.parameters = []
 		self.max_iterations = max_iterations
@@ -24,7 +24,7 @@ class GaussianMixtureModel():
 	# Initialize gaussian randomly
 	def _init_random_gaussians(self, X):
 		n_samples = np.shape(X)[0]
-		self.mixing_probs = (1/self.k) * np.ones(self.k)
+		self.priors = (1/self.k) * np.ones(self.k)
 		for i in range(self.k):
 			params = {}
 			params["mean"] = X[np.random.choice(range(n_samples))]
@@ -56,29 +56,31 @@ class GaussianMixtureModel():
 
 	# Calculate the responsibility
 	def _expectation(self, X):
-		weighted_likelihoods = self.mixing_probs * self._get_likelihoods(X)
-		self.likelihoods.append(weighted_likelihoods.sum()) # Save value for convergence check
-		weighted_likelihoods /= weighted_likelihoods.sum(axis=1)[:, np.newaxis] # Normalize
-		self.sample_assignments = weighted_likelihoods.argmax(axis=1) # Assign samples to cluster that maximizes likelihood
-		self.responsibility = weighted_likelihoods
+		weighted_likelihoods = self.priors * self._get_likelihoods(X)
+		self.responsibility = weighted_likelihoods / weighted_likelihoods.sum(axis=1)[:, np.newaxis]
+		self.sample_assignments = self.responsibility.argmax(axis=1) # Assign samples to cluster that maximizes likelihood
+		# print self.responsibility
+		self.likelihoods.append(np.max(self.responsibility, axis=1)) # Save value for convergence check
 
-	# Update the parameters and mixing_probs
+	# Update the parameters and priors
 	def _maximization(self, X):
 		for i in range(self.k):
 			resp = self.responsibility[:, i][:, np.newaxis]
 			mean = (resp * X).sum(axis=0) / resp.sum()
-			covariance = (X - mean).T.dot((X - mean)*resp) / resp.sum()
+			mean_matrix = np.ones(np.shape(X)) * mean
+			covariance = np.power((X - mean_matrix), 2) * resp / resp.sum()
 			self.parameters[i]["mean"], self.parameters[i]["cov"] = mean, covariance
 
 		# Update weights
-		mixing_probs = self.responsibility.sum(axis=0)
-		self.mixing_probs = np.mean(mixing_probs)
+		n_samples = np.shape(X)[0]
+		priors = self.responsibility.sum(axis=0)
+		self.priors = priors / n_samples
 
 	# Covergence if likehood - last_likelihood < tolerance
 	def _converged(self, X):
 		if len(self.likelihoods) < 2:
 			return False
-		diff = math.fabs((self.likelihoods[-1] - self.likelihoods[-2]).sum())
+		diff = math.fabs(np.absolute(self.likelihoods[-1] - self.likelihoods[-2]).sum())
 		print "Likelihood update: %s (%s)" %  (diff, self.tolerance)
 		return (len(self.likelihoods) >= 2) and (diff <= self.tolerance)
 
