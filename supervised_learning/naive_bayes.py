@@ -98,21 +98,16 @@ def main():
 	iris = datasets.load_iris()
 	X = normalize(iris.data)
 	y = iris.target
-	x_train, x_test, y_train, y_test = train_test_split(X, y, test_size=0.5)
+	X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5)
 
 	clf = NaiveBayes()
-	clf.fit(x_train, y_train)
-	y_pred = clf.predict(x_test)
+	clf.fit(X_train, y_train)
+	y_pred = clf.predict(X_test)
 
 	print "Accuracy score:", accuracy_score(y_test, y_pred)
 
 	# Reduce dimension to two using PCA and plot the results
 	pca = PCA()
-	X_transformed = pca.transform(x_test, n_components=2)
-	x1 = X_transformed[:,0]
-	x2 = X_transformed[:,1]
-
-	plt.scatter(x1,x2,c=y_pred)
-	plt.show()
+	pca.plot_in_2d(X_test, y_pred)
     
 if __name__ == "__main__": main()

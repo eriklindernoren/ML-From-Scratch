@@ -47,7 +47,7 @@ class KMeans():
 
 	# Calculate new centroids as the means of the samples
 	# in each cluster
-	def _get_centroids(self, clusters, X):
+	def _calculate_centroids(self, clusters, X):
 		n_features = np.shape(X)[1]
 		centroids = np.zeros((self.k, n_features))
 		for i, cluster in enumerate(clusters):
@@ -56,7 +56,8 @@ class KMeans():
 		return centroids
 
 	# Classify samples as the index of their clusters
-	def _classify(self, clusters, X):
+	def _get_cluster_labels(self, clusters, X):
+		# One prediction for each sample
 		y_pred = np.zeros(np.shape(X)[0])
 		for cluster_i in range(len(clusters)):
 			cluster = clusters[cluster_i]
@@ -64,6 +65,7 @@ class KMeans():
 				y_pred[sample_i] = cluster_i
 		return y_pred
 
+	# Do K-Means clustering and return cluster indices
 	def predict(self, X):
 		# Initialize centroids
 		centroids = self._init_random_centroids(X)
@@ -74,25 +76,25 @@ class KMeans():
 			clusters = self._create_clusters(centroids, X)
 			prev_centroids = centroids
 			# Calculate new centroids from the clusters
-			centroids = self._get_centroids(clusters, X)
+			centroids = self._calculate_centroids(clusters, X)
 
+			# If no centroids have changed => convergence
 			diff = centroids - prev_centroids
-			# If not any centroid have changed => convergence
 			if not diff.any():
 				break
 
-		return self._classify(clusters, X)
-
+		return self._get_cluster_labels(clusters, X)
 
 
 # Demo
 def main():
     # Load the dataset
-    data = datasets.load_digits()
+    data = datasets.load_iris()
     X = normalize(data.data)
     y = data.target
 
-    clf = KMeans(k=10)
+    # Cluster the data using K-Means
+    clf = KMeans(k=3)
     y_pred = clf.predict(X)
 
     # Project the data onto the 2 primary principal components

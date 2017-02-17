@@ -27,14 +27,14 @@ class KNN():
 				label = c
 		return label
 
-	def predict(self, x_test, x_train, y_train):
+	def predict(self, X_test, X_train, y_train):
 		classes = np.unique(y_train)
 		y_pred = []
-		for i in range(len(x_test)):
-			test_sample = x_test[i]
+		for i in range(len(X_test)):
+			test_sample = X_test[i]
 			neighbors = []
-			for j in range(len(x_train)):
-				observed_sample = x_train[j]
+			for j in range(len(X_train)):
+				observed_sample = X_train[j]
 				distance = euclidean_distance(test_sample, observed_sample)
 				label = y_train[j]
 				neighbors.append([distance, label])
@@ -49,20 +49,15 @@ def main():
 	iris = load_iris()
 	X = normalize(iris.data)
 	y = iris.target
-	x_train, x_test, y_train, y_test = train_test_split(X, y, test_size=0.33)
+	X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33)
 
 	clf = KNN(k=3)
-	y_pred = clf.predict(x_test, x_train, y_train)
+	y_pred = clf.predict(X_test, X_train, y_train)
 	print "Accuracy score:", accuracy_score(y_test, y_pred)
 
 	# Reduce dimensions to 2d using pca and plot the results
 	pca = PCA()
-	X_transformed = pca.transform(x_test, n_components=2)
-	x1 = X_transformed[:,0]
-	x2 = X_transformed[:,1]
-
-	plt.scatter(x1,x2,c=y_pred)
-	plt.show()
+	pca.plot_in_2d(X_test, y_pred)
 
 
 if __name__ == "__main__": main()

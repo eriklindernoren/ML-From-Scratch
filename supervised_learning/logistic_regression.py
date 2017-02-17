@@ -23,22 +23,22 @@ class LogisticRegression():
 
     def fit(self, X, y, n_iterations=4):
         # Normalize the training data
-        x_train = np.array(X, dtype=float)
+        X_train = np.array(X, dtype=float)
         # Add one to take bias weights into consideration
-        x_train = np.insert(x_train, 0, 1, axis=1)
+        X_train = np.insert(X_train, 0, 1, axis=1)
         y_train = np.atleast_1d(y)
 
-        n_features = len(x_train[0])
+        n_features = len(X_train[0])
 
         # Initial weights between [-1/sqrt(N), 1/sqrt(N)] (w - hidden, v - output)
         a = -1/math.sqrt(n_features)
         b = -a
-        self.param = (b-a)*np.random.random((len(x_train[0]),)) + a
+        self.param = (b-a)*np.random.random((len(X_train[0]),)) + a
 
         # Tune parameters for n iterations
         for i in range(n_iterations):
             # Make a new prediction
-            dot = x_train.dot(self.param)
+            dot = X_train.dot(self.param)
             y_pred = sigmoid(dot)
 
             # Make a diagonal matrix of the sigmoid gradient column vector
@@ -46,15 +46,15 @@ class LogisticRegression():
 
             # Batch opt:
             # (X^T * diag(sigm*(1 - sigm) * X) * X^T * (diag(sigm*(1 - sigm) * X * param + Y - Y_pred)
-            self.param = np.linalg.inv(x_train.T.dot(diag_gradient).dot(x_train)).dot(x_train.T).dot(diag_gradient.dot(x_train).dot(self.param) + y_train - y_pred)
+            self.param = np.linalg.inv(X_train.T.dot(diag_gradient).dot(X_train)).dot(X_train.T).dot(diag_gradient.dot(X_train).dot(self.param) + y_train - y_pred)
 
     def predict(self, X):
         # Normalize test data
-        x_test = np.array(X, dtype=float)
+        X_test = np.array(X, dtype=float)
         # Add ones to take bias weights into consideration
-        x_test = np.insert(x_test, 0, 1, axis=1)
+        X_test = np.insert(X_test, 0, 1, axis=1)
         # Print a final prediction
-        dot = x_test.dot(self.param)
+        dot = X_test.dot(self.param)
         y_pred = np.round(sigmoid(dot)).astype(int)
         return y_pred
 
@@ -67,23 +67,18 @@ def main():
     y_test = Y[-300:].as_matrix()
 
     X = df.drop("Outcome", axis=1)
-    x_train = np.insert(normalize(X[:-300].as_matrix()),0,1,axis=1)
-    x_test = np.insert(normalize(X[-300:].as_matrix()),0,1,axis=1)
+    X_train = np.insert(normalize(X[:-300].as_matrix()),0,1,axis=1)
+    X_test = np.insert(normalize(X[-300:].as_matrix()),0,1,axis=1)
 
     clf = LogisticRegression()
-    clf.fit(x_train, y_train)
-    y_pred = clf.predict(x_test)
+    clf.fit(X_train, y_train)
+    y_pred = clf.predict(X_test)
 
     print "Accuracy:", accuracy_score(y_test, y_pred)
 
      # Reduce dimension to two using PCA and plot the results
     pca = PCA()
-    X_transformed = pca.transform(x_test, n_components=2)
-    x1 = X_transformed[:,0]
-    x2 = X_transformed[:,1]
-
-    plt.scatter(x1,x2,c=y_pred)
-    plt.show()
+    pca.plot_in_2d(X_test, y_pred)
 
 if __name__ == "__main__": main()
 

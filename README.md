@@ -12,7 +12,7 @@ The purpose of this project is purely self-educational.
 - Linear Regression
 - Multilayer Perceptron
 - Perceptron
-- K Nearest Neighbor
+- K Nearest Neighbors
 - Adaboost
 - Naive Bayes
 - Logistic Regression
@@ -21,3 +21,4 @@ The purpose of this project is purely self-educational.
 - Principal Component Analysis
 - Linear Discriminant Analysis
 - K-Means
+- Gaussian Mixture Model

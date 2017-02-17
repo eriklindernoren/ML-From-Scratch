@@ -22,27 +22,27 @@ def sigmoid_gradient(x):
 class Perceptron():
     def __init__(self):
         # Weights
-        self.w = None
+        self.W = None
 
     def fit(self, X, y, n_iterations=40000, learning_rate=0.01, plot_errors=False):
         # Normalize the data
-        x_train = np.array(X, dtype=float)
+        X_train = np.array(X, dtype=float)
         # Convert the nominal y values to binary
         y_train = categorical_to_binary(y)
 
         n_neurons = len(y_train[0,:])
-        n_samples = len(x_train)
-        n_features = len(x_train[0])
+        n_samples = len(X_train)
+        n_features = len(X_train[0])
 
         # Initial weights between [-1/sqrt(N), 1/sqrt(N)]
         a = -1/math.sqrt(n_features)
         b = -a
-        self.w = (b-a)*np.random.random((len(x_train[0]), n_neurons)) + a
+        self.W = (b-a)*np.random.random((len(X_train[0]), n_neurons)) + a
 
         errors = []
         for i in range(n_iterations):
             # Calculate outputs
-            neuron_input = np.dot(x_train,self.w)
+            neuron_input = np.dot(X_train,self.W)
             neuron_output = sigmoid(neuron_input)
             
             mean_squared_error = np.mean(np.power(y_train - neuron_output, 2))
@@ -52,7 +52,7 @@ class Perceptron():
             w_gradient = -2*(y_train - neuron_output)*sigmoid_gradient(neuron_input)
 
             # Update weights
-            self.w -= learning_rate*x_train.T.dot(w_gradient)
+            self.W -= learning_rate*X_train.T.dot(w_gradient)
                 
         # Plot the training error
         if plot_errors:
@@ -64,8 +64,8 @@ class Perceptron():
     # Use the trained model to predict labels of X
     def predict(self, X):
         # Normalize the data
-        x_test = np.array(X, dtype=float)
-        y_pred = np.round(sigmoid(np.dot(x_test,self.w)))
+        X_test = np.array(X, dtype=float)
+        y_pred = np.round(sigmoid(np.dot(X_test,self.W)))
         y_pred = binary_to_categorical(y_pred)
         return y_pred
 
@@ -74,23 +74,18 @@ def main():
     data = datasets.load_iris()
     X = normalize(data.data)
     y = data.target
-    x_train, x_test, y_train, y_test = train_test_split(X, y, test_size=0.33)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33)
 
     # Perceptron
     clf = Perceptron()
-    clf.fit(x_train, y_train)
-    y_pred = clf.predict(x_test)
+    clf.fit(X_train, y_train)
+    y_pred = clf.predict(X_test)
 
     print "Accuracy:", accuracy_score(y_test, y_pred)
 
     # Reduce dimension to two using PCA and plot the results
     pca = PCA()
-    X_transformed = pca.transform(x_test, n_components=2)
-    x1 = X_transformed[:,0]
-    x2 = X_transformed[:,1]
-
-    plt.scatter(x1,x2,c=y_pred)
-    plt.show()
+    pca.plot_in_2d(X_test, y_pred)
     
 
 if __name__ == "__main__": main()

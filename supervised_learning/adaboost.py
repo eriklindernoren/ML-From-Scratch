@@ -20,11 +20,11 @@ class Adaboost():
         self.clfs = np.ones((4,self.n_clf))
 
     def fit(self, X, y):
-        x_train = X
+        X_train = X
         y_train = y
 
         n_samples = len(y_train)
-        n_features = len(x_train[0])
+        n_features = len(X_train[0])
 
         # Initialize weights to 1/N
         w = np.ones(n_samples)*(1/n_features)
@@ -40,12 +40,12 @@ class Adaboost():
                 for t in range(n_samples):
                     err = 0
                     # Select feature as threshold
-                    tao = x_train[t, n]
+                    tao = X_train[t, n]
                     # Iterate through all samples and measure the corresponding features
                     # against the selected threshold and see if the threshold can help predict
                     # y
                     for m in range(n_samples):
-                        x = x_train[m, n]
+                        x = X_train[m, n]
                         y = y_train[m]
                         h = 1.0
                         p = 1
@@ -72,7 +72,7 @@ class Adaboost():
             # Large weight => hard sample to classify
             for m in range(n_samples):
                 h = 1.0
-                x = x_train[m, feature_index]
+                x = X_train[m, feature_index]
                 y = y_train[m]
                 if polarity*x < polarity*threshold:
                     h = -1.0
@@ -114,23 +114,18 @@ def main():
     # Only select data for two classes
     X = df.loc[df['species'] != "2"].drop("species", axis=1).as_matrix()
     y = df.loc[df['species'] != "2"]["species"].as_matrix()
-    x_train, x_test, y_train, y_test = train_test_split(X, y, test_size=0.33)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33)
     
     # Adaboost classification
     clf = Adaboost(n_clf = 8)
-    clf.fit(x_train, y_train)
-    y_pred = clf.predict(x_test)
+    clf.fit(X_train, y_train)
+    y_pred = clf.predict(X_test)
 
     print "Accuracy:", accuracy_score(y_test, y_pred)
 
     # Reduce dimensions to 2d using pca and plot the results
     pca = PCA()
-    X_transformed = pca.transform(x_test, n_components=2)
-    x1 = X_transformed[:,0]
-    x2 = X_transformed[:,1]
-
-    plt.scatter(x1,x2,c=y_pred)
-    plt.show()
+    pca.plot_in_2d(X_test, y_pred)
 
 
 if __name__ == "__main__": main()

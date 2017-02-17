@@ -64,10 +64,8 @@ def main():
     X = data.data
     y = data.target
 
-    # Project the data onto the 2 primary principal components
+    # Project the data onto the 2 primary principal components and plot the data
     pca = PCA()
-
-    # Plot the data in 3d
     pca.plot_in_2d(X, y)
 
 if __name__ == "__main__": main()
