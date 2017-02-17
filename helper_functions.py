@@ -30,9 +30,9 @@ def mean_squared_error(y_true, y_pred):
 
 # Return the variance of the features in dataset X
 def calculate_variance(X):
-	mean_matrix = np.ones(np.shape(X))*X.mean(0)
-	n_features = len(X[0])
-	variance = (1/n_features) * np.diag((X - mean_matrix).T.dot(X - mean_matrix))
+	mean = np.ones(np.shape(X))*X.mean(0)
+	n_samples = np.shape(X)[0]
+	variance = (1/n_samples) * np.diag((X - mean).T.dot(X - mean))
 
 	return variance
 
@@ -94,10 +94,10 @@ def calculate_covariance_matrix(X, Y=None):
 		Y = X
 	X_mean = np.ones(np.shape(X))*X.mean(0)
 	Y_mean = np.ones(np.shape(Y))*Y.mean(0)
-	n_features = len(X[0])
-	covariance_matrix = (1/(n_features-1)) * (X - X_mean).T.dot(Y - Y_mean)
+	n_samples = np.shape(X)[0]
+	covariance_matrix = (1/n_samples) * (X - X_mean).T.dot(Y - Y_mean)
 
-	return covariance_matrix
+	return np.array(covariance_matrix, dtype=float)
 
 
 
@@ -106,12 +106,11 @@ def calculate_correlation_matrix(X, Y=None):
 	if not Y:
 		Y = X
 	covariance = calculate_covariance_matrix(X, Y)
-	n_features = len(covariance[0])
 	std_dev_X = np.expand_dims(calculate_std_dev(X), 1)
 	std_dev_Y = np.expand_dims(calculate_std_dev(Y), 1)
 	correlation_matrix = np.divide(covariance, std_dev_X.dot(std_dev_y.T))
 
-	return correlation_matrix
+	return np.array(correlation_matrix, dtype=float)
 
 
 

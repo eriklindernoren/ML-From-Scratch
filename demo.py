@@ -1,6 +1,5 @@
 import sys, os
 from sklearn import datasets
-from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -37,8 +36,8 @@ X = normalize(X)
 # ..........................
 #  DIMENSIONALITY REDUCTION
 # ..........................
-pca = PCA(n_components=5) # Reduce to 5 dimensions
-X = pca.transform(X)
+pca = PCA()
+X = pca.transform(X, n_components=5) # Reduce to 5 dimensions
 X = normalize(X)
 
 # ..........................
@@ -98,8 +97,7 @@ for clf in y_pred:
 # .......
 #  PLOT
 # .......
-pca = PCA(n_components=3)
-X_3d = pca.transform(x_test)
+X_3d = pca.transform(x_test, n_components=3)
 x1 = X_3d[:,0]
 x2 = X_3d[:,1]
 x3 = X_3d[:,2]

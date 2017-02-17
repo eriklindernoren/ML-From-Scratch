@@ -56,8 +56,8 @@ def main():
 	print "Accuracy score:", accuracy_score(y_test, y_pred)
 
 	# Reduce dimensions to 2d using pca and plot the results
-	pca = PCA(n_components=2)
-	X_transformed = pca.transform(x_test)
+	pca = PCA()
+	X_transformed = pca.transform(x_test, n_components=2)
 	x1 = X_transformed[:,0]
 	x2 = X_transformed[:,1]
 

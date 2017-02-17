@@ -1,5 +1,6 @@
 import sys, os
 from sklearn import datasets
+from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -10,45 +11,50 @@ from helper_functions import calculate_covariance_matrix, calculate_correlation_
 
 
 class PCA():
-    def __init__(self, n_components):
-        self.n_components = n_components
+    def __init__(self): pass
 
     # Get the covariance of X
     def get_covariance(self, X):
         # Calculate the covariance matrix for the data
         covariance = calculate_covariance_matrix(X)
-        return np.array(covariance, dtype=float)
+        return covariance
 
     # Fit the dataset to the number of principal components specified in the constructor
     # and return the transform dataset
-    def transform(self, X):
+    def transform(self, X, n_components):
         covariance = self.get_covariance(X)
 
         # Get the eigenvalues and eigenvectors. (eigenvector[:,0] corresponds to eigenvalue[0])
         eigenvalues, eigenvectors = np.linalg.eig(covariance)
 
         # Sort the eigenvalues and corresponding eigenvectors from largest
-        # to smallest eigenvalue. 
+        # to smallest eigenvalue and select the first n_components
         idx = eigenvalues.argsort()[::-1]
-        eigenvalues = eigenvalues[idx][:self.n_components]
-        eigenvectors = np.atleast_1d(eigenvectors[:,idx])[:,:self.n_components]
-
-        # Get two first principal components
-        evects = eigenvectors
-        # eval_matrix = np.ones(np.shape(eigenvectors))*eigenvalues
-        # evects = eval_matrix*eigenvectors
+        eigenvalues = eigenvalues[idx][:n_components]
+        eigenvectors = np.atleast_1d(eigenvectors[:,idx])[:,:n_components]
 
         # Project the data onto principal components
-        X_transformed = X.dot(evects)
+        X_transformed = X.dot(eigenvectors)
 
         return X_transformed
 
     # Plot the dataset X and the corresponding labels y in 2D using PCA.
     def plot_in_2d(self, X, y=None):
-        X_transformed = self.transform(X)
+        X_transformed = self.transform(X, n_components=2)
         x1 = X_transformed[:,0]
         x2 = X_transformed[:,1]
         plt.scatter(x1,x2,c=y)
+        plt.show()
+
+    # Plot the dataset X and the corresponding labels y in 2D using PCA.
+    def plot_in_3d(self, X, y=None):
+        X_transformed = self.transform(X, n_components=3)
+        x1 = X_transformed[:,0]
+        x2 = X_transformed[:,1]
+        x3 = X_transformed[:,2]
+        fig = plt.figure()
+        ax = fig.add_subplot(111, projection='3d')
+        ax.scatter(x1,x2,x3,c=y)
         plt.show()
 
 # Demo
@@ -59,9 +65,9 @@ def main():
     y = data.target
 
     # Project the data onto the 2 primary principal components
-    pca = PCA(n_components=2)
+    pca = PCA()
 
-    # Plot the data in 2d
+    # Plot the data in 3d
     pca.plot_in_2d(X, y)
 
 if __name__ == "__main__": main()
