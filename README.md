@@ -5,6 +5,8 @@ Python implementations of various Machine Learning models and algorithms from sc
 Some matrix and vector operations such as calculations of covariance and correlation matricies are
 implemented by hand even though there are numpy methods that enable these computations. 
 
+The purpose of this repository is purely self-educational.
+
 ##Current implementations:
 ####Supervised Learning:
 - Linear Regression
@@ -18,5 +20,3 @@ implemented by hand even though there are numpy methods that enable these comput
 ####Unsupervised Learning:
 - Principal Component Analysis
 - Linear Discriminant Analysis
-
-The purpose of this repository is purely self-educational.
