@@ -20,3 +20,4 @@ The purpose of this project is purely self-educational.
 ####Unsupervised Learning:
 - Principal Component Analysis
 - Linear Discriminant Analysis
+- K-Means
