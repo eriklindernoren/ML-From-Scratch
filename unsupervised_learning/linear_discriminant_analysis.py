@@ -31,13 +31,13 @@ mean1 = X1.mean(0)
 mean2 = X2.mean(0)
 mean_diff = np.atleast_1d(mean1 - mean2)
 
-# Calculate w as (cov1 + cov2)^(-1) * (x1_mean - x2_mean)
+# Calculate w as  (x1_mean - x2_mean) / (cov1 + cov2)
 w = np.linalg.inv(cov_tot).dot(mean_diff)
 
 # Project X onto w
-a = X.dot(w)
-b = X.dot(w)
+x1 = X.dot(w)
+x2 = X.dot(w)
 
 # Plot the data
-plt.scatter(a,b,c=y)
+plt.scatter(x1,x2,c=y)
 plt.show()

@@ -25,7 +25,6 @@ class Perceptron():
         self.W = None
 
     def fit(self, X, y, n_iterations=40000, learning_rate=0.01, plot_errors=False):
-        # Normalize the data
         X_train = np.array(X, dtype=float)
         # Convert the nominal y values to binary
         y_train = categorical_to_binary(y)
@@ -63,7 +62,6 @@ class Perceptron():
 
     # Use the trained model to predict labels of X
     def predict(self, X):
-        # Normalize the data
         X_test = np.array(X, dtype=float)
         y_pred = np.round(sigmoid(np.dot(X_test,self.W)))
         y_pred = binary_to_categorical(y_pred)

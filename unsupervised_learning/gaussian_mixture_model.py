@@ -28,14 +28,14 @@ class GaussianMixtureModel():
 		for i in range(self.k):
 			params = {}
 			params["mean"] = X[np.random.choice(range(n_samples))]
-			params["covar"] = calculate_covariance_matrix(X)
+			params["cov"] = calculate_covariance_matrix(X)
 			self.parameters.append(params)
 
 	# Likelihood 
 	def multivariate_gaussian(self, X, params):
 		n_features = np.shape(X)[1]
 		mean = params["mean"]
-		covar = params["covar"]
+		covar = params["cov"]
 		determinant = np.linalg.det(covar)
 		likelihoods = np.zeros(np.shape(X)[0])
 		for i, sample in enumerate(X):
@@ -56,35 +56,36 @@ class GaussianMixtureModel():
 
 	# Calculate the responsibility
 	def _expectation(self, X):
-		weighted_likelihoods = self.priors * self._get_likelihoods(X)
-		self.responsibility = weighted_likelihoods / weighted_likelihoods.sum(axis=1)[:, np.newaxis]
-		self.sample_assignments = self.responsibility.argmax(axis=1) # Assign samples to cluster that maximizes likelihood
-		# print self.responsibility
+		# Calculate probabilities of X belonging to the different clusters
+		weighted_likelihoods = self._get_likelihoods(X) * self.priors
+		sum_likelihoods = np.expand_dims(np.sum(weighted_likelihoods, axis=1), axis=1)
+		# Determine responsibility as P(X|y)*P(y)/P(X)
+		self.responsibility = weighted_likelihoods / sum_likelihoods
+		self.sample_assignments = self.responsibility.argmax(axis=1) # Assign samples to cluster that has largest probability
 		self.likelihoods.append(np.max(self.responsibility, axis=1)) # Save value for convergence check
 
 	# Update the parameters and priors
 	def _maximization(self, X):
+		# Iterate through clusters and recalculate mean and covariance
 		for i in range(self.k):
-			resp = self.responsibility[:, i][:, np.newaxis]
+			resp = np.expand_dims(self.responsibility[:, i],axis=1)
 			mean = (resp * X).sum(axis=0) / resp.sum()
-			mean_matrix = np.ones(np.shape(X)) * mean
-			covariance = np.power((X - mean_matrix), 2) * resp / resp.sum()
+			covariance = (X - mean).T.dot((X - mean)*resp) / resp.sum()
 			self.parameters[i]["mean"], self.parameters[i]["cov"] = mean, covariance
 
 		# Update weights
 		n_samples = np.shape(X)[0]
-		priors = self.responsibility.sum(axis=0)
-		self.priors = priors / n_samples
+		self.priors = self.responsibility.sum(axis=0) / n_samples
 
-	# Covergence if likehood - last_likelihood < tolerance
+	# Covergence if || likehood - last_likelihood || < tolerance
 	def _converged(self, X):
 		if len(self.likelihoods) < 2:
 			return False
-		diff = math.fabs(np.absolute(self.likelihoods[-1] - self.likelihoods[-2]).sum())
-		print "Likelihood update: %s (%s)" %  (diff, self.tolerance)
-		return (len(self.likelihoods) >= 2) and (diff <= self.tolerance)
+		diff = np.linalg.norm(self.likelihoods[-1] - self.likelihoods[-2])
+		print "Likelihood update: %s (tol: %s)" %  (diff, self.tolerance)
+		return diff <= self.tolerance
 
-	# Do GMM and return the cluster indices
+	# Run GMM and return the cluster indices
 	def predict(self, X):
 		# Initialize the gaussians randomly
 		self._init_random_gaussians(X)
@@ -102,13 +103,11 @@ class GaussianMixtureModel():
 		self._expectation(X)
 		return self.sample_assignments
 			
-
-
 # Demo
 def main():
     # Load the dataset
     data = datasets.load_digits()
-    X = normalize(data.data)
+    X = data.data
     y = data.target
 
     # Reduce dimensionality

@@ -22,7 +22,6 @@ class LogisticRegression():
         self.param = None
 
     def fit(self, X, y, n_iterations=4):
-        # Normalize the training data
         X_train = np.array(X, dtype=float)
         # Add one to take bias weights into consideration
         X_train = np.insert(X_train, 0, 1, axis=1)
@@ -49,7 +48,6 @@ class LogisticRegression():
             self.param = np.linalg.inv(X_train.T.dot(diag_gradient).dot(X_train)).dot(X_train.T).dot(diag_gradient.dot(X_train).dot(self.param) + y_train - y_pred)
 
     def predict(self, X):
-        # Normalize test data
         X_test = np.array(X, dtype=float)
         # Add ones to take bias weights into consideration
         X_test = np.insert(X_test, 0, 1, axis=1)
