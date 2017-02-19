@@ -17,7 +17,8 @@ class NaiveBayes():
 		self.classes = None
 		self.X = None
 		self.y = None
-		self.mean_var = []
+		# Gaussian prob. distribution parameters
+		self.parameters = []
 
 	def fit(self, X, y):
 		self.X = X
@@ -29,12 +30,13 @@ class NaiveBayes():
 			# Only select the rows where the species equals the given class
 			x_where_c = X[np.where(y == c)]
 			# Add the mean and variance for each feature
-			self.mean_var.append([])
+			self.parameters.append([])
 			for j in range(len(x_where_c[0,:])):
 				col = x_where_c[:,j]
-				mean = col.mean()
-				var = col.var()
-				self.mean_var[i].append([mean, var])
+				parameters = {}
+				parameters["mean"] = col.mean()
+				parameters["var"] = col.var()
+				self.parameters[i].append(parameters)
 
 	# Gaussian probability distribution
 	def _calculate_probability(self, mean, var, x):
@@ -66,10 +68,10 @@ class NaiveBayes():
 			# multiply with the additional probabilties
 			# Naive assumption (independence):
 			# P(x1,x2,x3|Y) = P(x1|Y)*P(x2|Y)*P(x3|Y)
-			for j in range(len(self.mean_var[i])):
+			for j in range(len(self.parameters[i])):
 				sample_feature = sample[j]
-				mean = self.mean_var[i][j][0]
-				var = self.mean_var[i][j][1]
+				mean = self.parameters[i][j]["mean"]
+				var = self.parameters[i][j]["var"]
 				# Determine P(x|Y)
 				prob = self._calculate_probability(mean, var, sample_feature)
 				# Multiply with the rest

@@ -12,12 +12,12 @@ from principal_component_analysis import PCA
 
 
 class GaussianMixtureModel():
-	def __init__(self, k=2, max_iterations=200, tolerance=1e-3):
+	def __init__(self, k=2, max_iterations=200, tolerance=1e-6):
 		self.k = k
 		self.parameters = []
 		self.max_iterations = max_iterations
 		self.tolerance = tolerance
-		self.likelihoods = []
+		self.responsibilities = []
 		self.sample_assignments = None
 		self.responsibility = None
 
@@ -62,7 +62,7 @@ class GaussianMixtureModel():
 		# Determine responsibility as P(X|y)*P(y)/P(X)
 		self.responsibility = weighted_likelihoods / sum_likelihoods
 		self.sample_assignments = self.responsibility.argmax(axis=1) # Assign samples to cluster that has largest probability
-		self.likelihoods.append(np.max(self.responsibility, axis=1)) # Save value for convergence check
+		self.responsibilities.append(np.max(self.responsibility, axis=1)) # Save value for convergence check
 
 	# Update the parameters and priors
 	def _maximization(self, X):
@@ -79,9 +79,9 @@ class GaussianMixtureModel():
 
 	# Covergence if || likehood - last_likelihood || < tolerance
 	def _converged(self, X):
-		if len(self.likelihoods) < 2:
+		if len(self.responsibilities) < 2:
 			return False
-		diff = np.linalg.norm(self.likelihoods[-1] - self.likelihoods[-2])
+		diff = np.linalg.norm(self.responsibilities[-1] - self.responsibilities[-2])
 		print "Likelihood update: %s (tol: %s)" %  (diff, self.tolerance)
 		return diff <= self.tolerance
 

@@ -10,6 +10,7 @@ The purpose of this project is purely self-educational.
 ##Current implementations:
 ####Supervised Learning:
 - Linear Regression
+- Ridge Regression
 - Multilayer Perceptron
 - Perceptron
 - K Nearest Neighbors
