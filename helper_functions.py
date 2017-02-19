@@ -2,23 +2,58 @@ from __future__ import division
 import numpy as np
 import math, sys
 
+def shuffle_data(X, y):
+	# Concatenate x and y and do a random shuffle
+	x_y = np.concatenate((X,y.reshape((1,len(y))).T), axis=1)
+	np.random.shuffle(x_y)
+	X = x_y[:,:-1] # every column except the last
+	y = x_y[:,-1].astype(int) # last column
+
+	return X, y
+
+# Divide dataset based on if sample value on feature index is larger than
+# the given threshold
+def divide_on_feature(X, feature_i, threshold):
+	split_func = None
+	if isinstance(threshold, int) or isinstance(threshold, float):
+		split_func = lambda sample: sample[feature_i] >= threshold
+	else:
+		split_func = lambda sample: sample[feature_i] == threshold
+
+	X_1 = np.array([sample for sample in X if split_func(sample)])
+	X_2 = np.array([sample for sample in X if not split_func(sample)])
+
+	return np.array([X_1, X_2])
+
+
+# Calculate the entropy of label array y
+def calculate_entropy(y):
+	log2=lambda x:math.log(x)/math.log(2)
+	# Get label as last element in dataset
+	unique_labels = np.unique(y)
+	entropy = 0
+	for label in unique_labels:
+		count = len(y[y == label])
+		p = count / len(y)
+		entropy += -p*log2(p)
+	return entropy
+
 # Split the data into train and test sets
-def train_test_split(X, Y, test_size=0.5, shuffle=True):
+def train_test_split(X, y, test_size=0.5, shuffle=True):
 	if shuffle:
-		# Concatenate x and y and do a random shuffle
-		x_y = np.concatenate((X,Y.reshape((1,len(Y))).T), axis=1)
-		np.random.shuffle(x_y)
-		X = x_y[:,:-1] # every column except the last
-		Y = x_y[:,-1].astype(int) # last column
+		X, y = shuffle_data(X, y)
 	# Split the training data from test data in the ratio specified in test_size
-	split_i = len(Y) - int(len(Y)//(1/test_size))
+	split_i = len(y) - int(len(y)//(1/test_size))
 	x_train, x_test = X[:split_i], X[split_i:]
-	y_train, y_test = Y[:split_i], Y[split_i:]
+	y_train, y_test = y[:split_i], y[split_i:]
 
 	return x_train, x_test, y_train, y_test
 
-# Split the data into train and test sets
-def k_fold_cross_validation_sets(X, y, k):
+# Split the data into k sets of training / test data
+def k_fold_cross_validation_sets(X, y, k, shuffle=True):
+	if shuffle:
+		X, y = shuffle_data(X, y)
+
 	n_samples = len(y)
 	left_overs = {}
 	n_left_overs = (n_samples % k)
@@ -122,7 +157,7 @@ def calculate_covariance_matrix(X, Y=None):
 	X_mean = np.ones(np.shape(X))*X.mean(0)
 	Y_mean = np.ones(np.shape(Y))*Y.mean(0)
 	n_samples = np.shape(X)[0]
-	covariance_matrix = (1/n_samples) * (X - X_mean).T.dot(Y - Y_mean)
+	covariance_matrix = (1/(n_samples-1)) * (X - X_mean).T.dot(Y - Y_mean)
 
 	return np.array(covariance_matrix, dtype=float)
 

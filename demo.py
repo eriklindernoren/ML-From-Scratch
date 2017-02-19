@@ -15,6 +15,7 @@ from k_nearest_neighbors import KNN
 from multilayer_perceptron import MultilayerPerceptron
 from logistic_regression import LogisticRegression
 from perceptron import Perceptron
+from decision_tree import DecisionTree
 # Import PCA
 sys.path.insert(0, dir_path + "/unsupervised_learning")
 from principal_component_analysis import PCA
@@ -43,7 +44,7 @@ X = normalize(X)
 # ..........................
 #  TRAIN / TEST SPLIT
 # ..........................
-x_train, x_test, y_train, y_test = train_test_split(X, y, test_size=0.33)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33)
 # Rescale label for Adaboost to {-1, 1}
 ada_y_train = 2*y_train - np.ones(np.shape(y_train))
 ada_y_test = 2*y_test - np.ones(np.shape(y_test))
@@ -57,32 +58,36 @@ knn = KNN(k=4)
 logistic_regression = LogisticRegression()
 mlp = MultilayerPerceptron(n_hidden=20)
 perceptron = Perceptron()
+decision_tree = DecisionTree()
 
 # ........
 #  TRAIN
 # ........
 print "Training:"
 print "\tAdaboost"
-adaboost.fit(x_train, ada_y_train)
+adaboost.fit(X_train, ada_y_train)
 print "\tNaive Bayes"
-naive_bayes.fit(x_train, y_train)
+naive_bayes.fit(X_train, y_train)
 print "\tLogistic Regression"
-logistic_regression.fit(x_train, y_train)
+logistic_regression.fit(X_train, y_train)
 print "\tMultilayer Perceptron"
-mlp.fit(x_train, y_train, n_iterations=20000, learning_rate=0.1)
+mlp.fit(X_train, y_train, n_iterations=20000, learning_rate=0.1)
 print "\tPerceptron"
-perceptron.fit(x_train, y_train)
+perceptron.fit(X_train, y_train)
+print "\tDecision Tree"
+decision_tree.fit(X_train, y_train)
 
 # .........
 #  PREDICT
 # .........
 y_pred = {}
-y_pred["Adaboost"] = adaboost.predict(x_test)
-y_pred["Naive Bayes"] = naive_bayes.predict(x_test)
-y_pred["K Nearest Neighbors"] = knn.predict(x_test, x_train, y_train)
-y_pred["Logistic Regression"] = logistic_regression.predict(x_test)
-y_pred["Multilayer Perceptron"] = mlp.predict(x_test)
-y_pred["Perceptron"] = perceptron.predict(x_test)
+y_pred["Adaboost"] = adaboost.predict(X_test)
+y_pred["Naive Bayes"] = naive_bayes.predict(X_test)
+y_pred["K Nearest Neighbors"] = knn.predict(X_test, X_train, y_train)
+y_pred["Logistic Regression"] = logistic_regression.predict(X_test)
+y_pred["Multilayer Perceptron"] = mlp.predict(X_test)
+y_pred["Perceptron"] = perceptron.predict(X_test)
+y_pred["Decision Tree"] = decision_tree.predict(X_test)
 
 # ..........
 #  ACCURACY
@@ -97,7 +102,7 @@ for clf in y_pred:
 # .......
 #  PLOT
 # .......
-X_3d = pca.transform(x_test, n_components=3)
+X_3d = pca.transform(X_test, n_components=3)
 x1 = X_3d[:,0]
 x2 = X_3d[:,1]
 x3 = X_3d[:,2]

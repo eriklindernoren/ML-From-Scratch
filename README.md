@@ -17,6 +17,7 @@ The purpose of this project is purely self-educational.
 - Adaboost
 - Naive Bayes
 - Logistic Regression
+- Decision Tree
 
 ####Unsupervised Learning:
 - Principal Component Analysis

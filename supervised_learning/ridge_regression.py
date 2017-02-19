@@ -14,9 +14,10 @@ class RidgeRegression():
 
 	def fit(self, X, y):
 		# Insert constant ones for bias weights
-		X = np.insert(X, 0, 1, axis=1)	
-		# Get weights by least squares
-		self.w = np.linalg.inv(X.T.dot(X) + self.delta * np.diag(np.shape(X))).dot(X.T).dot(y)
+		X = np.insert(X, 0, 1, axis=1)
+		n_features = np.shape(X)[1]
+		# Get weights by least squares with regularization 
+		self.w = np.linalg.inv(X.T.dot(X) + self.delta * np.identity(n_features)).dot(X.T).dot(y)
 
 	def predict(self, X):
 		# Insert constant ones for bias weights
@@ -30,7 +31,7 @@ def main():
 	diabetes = datasets.load_diabetes()
 
 	# Use only one feature
-	X = diabetes.data[:, np.newaxis, 2]
+	X = np.expand_dims(diabetes.data[:, 2], 1)
 
 	# Split the data into training/testing sets
 	X_train, X_test = np.array(X[:-20]), np.array(X[-20:])
@@ -42,7 +43,7 @@ def main():
 	lowest_error = float("inf")
 	best_reg_factor = None
 	print "Finding regularization constant using cross validation:"
-	k = 5
+	k = 10
 	for regularization_factor in np.arange(0,0.5,0.0001):
 		cross_validation_sets = k_fold_cross_validation_sets(X_train, y_train, k=k)
 		mse = 0
@@ -57,12 +58,12 @@ def main():
 		# Print the mean squared error
 		print "\tMean Squared Error: %s (regularization: %s)" % (mse, regularization_factor)
 
-		# Save best prediction
+		# Save reg. constant that gave lowest error
 		if mse < lowest_error:
 			best_reg_factor = regularization_factor
 			lowest_error = mse
 
-	# Make final prediction using reg. constant that gave the best csv results
+	# Make final prediction
 	clf = RidgeRegression(delta=best_reg_factor)
 	clf.fit(X_train, y_train)
 	y_pred = clf.predict(X_test)
