@@ -20,9 +20,10 @@ class DecisionNode():
 
 
 class DecisionTree():
-	def __init__(self):
-		# Root node in the tree
-		self.root = None
+	def __init__(self, min_samples_split=2, min_gain=0.01):
+		self.root = None # Root node in dec. tree
+		self.min_samples_split = min_samples_split
+		self.min_gain = min_gain
 
 	def fit(self, X, y):
 		# Build tree
@@ -43,50 +44,54 @@ class DecisionTree():
 		n_features = np.shape(X)[1]
 		n_samples = np.shape(X)[0]
 
-		# Calculate the information gain for each feature
-		for feature_i in range(n_features):
-			# All values of feature_i
-			feature_values = np.expand_dims(X[:, feature_i], axis=1)
-			unique_values = np.unique(feature_values)
+		if n_samples >= self.min_samples_split:
+			# Calculate the information gain for each feature
+			for feature_i in range(n_features):
+				# All values of feature_i
+				feature_values = np.expand_dims(X[:, feature_i], axis=1)
+				unique_values = np.unique(feature_values)
 
-			# Iterate through all unique values of feature column i and
-			# calculate the informaion gain
-			for threshold in unique_values:
-				Xy_1, Xy_2 = divide_on_feature(X_y, feature_i, threshold)
+				# Iterate through all unique values of feature column i and
+				# calculate the informaion gain
+				for threshold in unique_values:
 
-				# If one subset there is no use of calculating the information gain
-				if len(Xy_1) > 0 and len(Xy_2) > 0:
-					# Calculate information gain
-					p = len(Xy_1) / n_samples
-					y1 = Xy_1[:,-1]
-					y2 = Xy_2[:,-1]
-					info_gain = entropy - p * calculate_entropy(y1) - (1 - p) * calculate_entropy(y2)
+					Xy_1, Xy_2 = divide_on_feature(X_y, feature_i, threshold)
+					if np.shape(X_y)[0] != np.shape(Xy_1)[0] + np.shape(Xy_2)[0]:
+						print "Aj"
+						sys.exit(0)
 
-					# If this threshold resulted in a higher information gain than previously
-					# recorded save the threshold value and the feature index
-					if info_gain > highest_info_gain:
-						highest_info_gain = info_gain
-						best_criteria = {"feature_i": feature_i, "threshold": threshold}
-						best_sets = np.array([Xy_1, Xy_2])
+					# If one subset there is no use of calculating the information gain
+					if len(Xy_1) > 0 and len(Xy_2) > 0:
+						# Calculate information gain
+						p = len(Xy_1) / n_samples
+						y1 = Xy_1[:,-1]
+						y2 = Xy_2[:,-1]
+						info_gain = entropy - p * calculate_entropy(y1) - (1 - p) * calculate_entropy(y2)
+
+						# If this threshold resulted in a higher information gain than previously
+						# recorded save the threshold value and the feature index
+						if info_gain > highest_info_gain:
+							highest_info_gain = info_gain
+							best_criteria = {"feature_i": feature_i, "threshold": threshold}
+							best_sets = np.array([Xy_1, Xy_2])
 
 		# If we have any information gain to go by we build the tree deeper
-		if highest_info_gain > 0:
+		if highest_info_gain > self.min_gain:
 			X_1, y_1 = best_sets[0][:, :-1], best_sets[0][:, -1]
 			X_2, y_2 = best_sets[1][:, :-1], best_sets[1][:, -1]
 			true_branch = self._build_tree(X_1, y_1)
 			false_branch = self._build_tree(X_2, y_2)
 			return DecisionNode(feature_i=best_criteria["feature_i"], threshold=best_criteria["threshold"], true_branch=true_branch, false_branch=false_branch)
 		# There's no recorded information gain so we are at a leaf
-		else:
-			most_common = None
-			max_count = 0
-			results = {}
-			for label in np.unique(y):
-				count = len(y[y == label])
-				if count > max_count:
-					most_common = label
-					max_count = count
-			return DecisionNode(label=most_common)
+		most_common = None
+		max_count = 0
+		results = {}
+		for label in np.unique(y):
+			count = len(y[y == label])
+			if count > max_count:
+				most_common = label
+				max_count = count
+		return DecisionNode(label=most_common)
 
 	# Do a recursive search down the tree and label the data sample by the 
 	# value of the leaf that we end up at
@@ -140,7 +145,7 @@ class DecisionTree():
 # Demo of decision tree
 def main():
 
-	data = datasets.load_iris()
+	data = datasets.load_digits()
 	X = data.data
 	y = data.target
 
@@ -148,7 +153,7 @@ def main():
 
 	clf = DecisionTree()
 	clf.fit(X_train, y_train)
-	clf.print_tree()
+	# clf.print_tree()
 	y_pred = clf.predict(X_test)
 
 	print "Accuracy:", accuracy_score(y_test, y_pred)

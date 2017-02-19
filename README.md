@@ -18,6 +18,7 @@ The purpose of this project is purely self-educational.
 - Naive Bayes
 - Logistic Regression
 - Decision Tree
+- Random Forest
 
 ####Unsupervised Learning:
 - Principal Component Analysis

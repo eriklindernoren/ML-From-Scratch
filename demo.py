@@ -16,6 +16,7 @@ from multilayer_perceptron import MultilayerPerceptron
 from logistic_regression import LogisticRegression
 from perceptron import Perceptron
 from decision_tree import DecisionTree
+from random_forest import RandomForest
 # Import PCA
 sys.path.insert(0, dir_path + "/unsupervised_learning")
 from principal_component_analysis import PCA
@@ -44,7 +45,7 @@ X = normalize(X)
 # ..........................
 #  TRAIN / TEST SPLIT
 # ..........................
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5)
 # Rescale label for Adaboost to {-1, 1}
 ada_y_train = 2*y_train - np.ones(np.shape(y_train))
 ada_y_test = 2*y_test - np.ones(np.shape(y_test))
@@ -59,6 +60,7 @@ logistic_regression = LogisticRegression()
 mlp = MultilayerPerceptron(n_hidden=20)
 perceptron = Perceptron()
 decision_tree = DecisionTree()
+random_forest = RandomForest(n_estimators=40)
 
 # ........
 #  TRAIN
@@ -76,6 +78,8 @@ print "\tPerceptron"
 perceptron.fit(X_train, y_train)
 print "\tDecision Tree"
 decision_tree.fit(X_train, y_train)
+print "\tRandom Forest"
+random_forest.fit(X_train, y_train)
 
 # .........
 #  PREDICT
@@ -88,6 +92,7 @@ y_pred["Logistic Regression"] = logistic_regression.predict(X_test)
 y_pred["Multilayer Perceptron"] = mlp.predict(X_test)
 y_pred["Perceptron"] = perceptron.predict(X_test)
 y_pred["Decision Tree"] = decision_tree.predict(X_test)
+y_pred["Random Forest"] = random_forest.predict(X_test)
 
 # ..........
 #  ACCURACY

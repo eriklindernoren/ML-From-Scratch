@@ -4,10 +4,10 @@ import math, sys
 
 def shuffle_data(X, y):
 	# Concatenate x and y and do a random shuffle
-	x_y = np.concatenate((X,y.reshape((1,len(y))).T), axis=1)
-	np.random.shuffle(x_y)
-	X = x_y[:,:-1] # every column except the last
-	y = x_y[:,-1].astype(int) # last column
+	X_y = np.concatenate((X,y.reshape((1,len(y))).T), axis=1)
+	np.random.shuffle(X_y)
+	X = X_y[:,:-1] # every column except the last
+	y = X_y[:,-1].astype(int) # last column
 
 	return X, y
 
@@ -25,11 +25,23 @@ def divide_on_feature(X, feature_i, threshold):
 
 	return np.array([X_1, X_2])
 
+# Return random subsets (with replacements) of the data
+def get_random_subsets(X, y, n_subsets):
+	n_samples = np.shape(X)[0]
+	# Concatenate x and y and do a random shuffle
+	X_y = np.concatenate((X,y.reshape((1,len(y))).T), axis=1)
+	np.random.shuffle(X_y)
+	subsets = []
+	for _ in range(n_subsets):
+		idx = np.random.choice(range(n_samples), size=np.shape(range(n_samples)))
+		X = X_y[idx][:,:-1]
+		y = X_y[idx][:,-1]
+		subsets.append([X,y])
+	return subsets
 
 # Calculate the entropy of label array y
 def calculate_entropy(y):
 	log2=lambda x:math.log(x)/math.log(2)
-	# Get label as last element in dataset
 	unique_labels = np.unique(y)
 	entropy = 0
 	for label in unique_labels:
