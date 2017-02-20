@@ -11,14 +11,13 @@ from principal_component_analysis import PCA
 
 from decision_tree import DecisionTree
 
-from sklearn.ensemble import RandomForestClassifier
-
-
 class RandomForest():
-	def __init__(self, n_estimators=50, max_features=None):
+	def __init__(self, n_estimators=50, max_features=None, debug=False):
 		self.n_estimators = n_estimators	# Number of trees
 		self.max_features = max_features 	# Maxmimum number of features per tree
 		self.feature_indices = []			# The indices of the features used for each tree
+
+		self.debug = debug
 
 		# Initialize decision trees
 		self.trees = []
@@ -32,6 +31,7 @@ class RandomForest():
 		if not self.max_features:
 			self.max_features = int(math.sqrt(n_features))
 
+		if self.debug: print "Training (%s estimators):" % (self.n_estimators)
 		# Choose one random subset of the data for each tree
 		subsets = get_random_subsets(X, y, self.n_estimators)
 		for i in range(self.n_estimators):
@@ -44,7 +44,9 @@ class RandomForest():
 			X_subset = X_subset[:, idx]
 			# Fit the data to the tree
 			self.trees[i].fit(X_subset, y_subset)
-			# print "%s / %s" % (i, self.n_estimators)
+
+			progress = 100 * (i / self.n_estimators)
+			if self.debug: print "Progress: %.2f%%" % progress
 
 	def predict(self, X):
 		y_preds = []
@@ -73,15 +75,15 @@ class RandomForest():
 			y_pred.append(most_common)
 		return y_pred
 
-# Demo of decision tree
+# Demo
 def main():
 	data = datasets.load_digits()
 	X = data.data
 	y = data.target
 
-	X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5)
+	X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4)
 
-	clf = RandomForest(n_estimators=50)
+	clf = RandomForest(n_estimators=80, debug=True)
 	clf.fit(X_train, y_train)
 	y_pred = clf.predict(X_test)
 

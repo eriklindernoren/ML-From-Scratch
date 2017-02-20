@@ -20,7 +20,7 @@ class DecisionNode():
 
 
 class DecisionTree():
-	def __init__(self, min_samples_split=2, min_gain=0.01):
+	def __init__(self, min_samples_split=2, min_gain=1e-7):
 		self.root = None # Root node in dec. tree
 		self.min_samples_split = min_samples_split
 		self.min_gain = min_gain
@@ -149,7 +149,7 @@ def main():
 	X = data.data
 	y = data.target
 
-	X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5)
+	X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4)
 
 	clf = DecisionTree()
 	clf.fit(X_train, y_train)
