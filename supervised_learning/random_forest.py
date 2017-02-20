@@ -4,8 +4,9 @@ from sklearn import datasets
 import sys, os, math
 # Import helper functions
 dir_path = os.path.dirname(os.path.realpath(__file__))
-sys.path.insert(0, dir_path + "/../")
-from helper_functions import calculate_entropy, divide_on_feature, train_test_split, accuracy_score, get_random_subsets, normalize
+sys.path.insert(0, dir_path + "/../utils")
+from data_manipulation import divide_on_feature, train_test_split, get_random_subsets, normalize
+from data_operation import accuracy_score, calculate_entropy
 sys.path.insert(0, dir_path + "/../unsupervised_learning/")
 from principal_component_analysis import PCA
 

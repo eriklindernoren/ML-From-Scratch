@@ -4,8 +4,9 @@ from sklearn import datasets
 import sys, os
 # Import helper functions
 dir_path = os.path.dirname(os.path.realpath(__file__))
-sys.path.insert(0, dir_path + "/../")
-from helper_functions import mean_squared_error, k_fold_cross_validation_sets
+sys.path.insert(0, dir_path + "/../utils")
+from data_manipulation import k_fold_cross_validation_sets
+from data_operation import mean_squared_error
 
 class RidgeRegression():
 	def __init__(self, delta):

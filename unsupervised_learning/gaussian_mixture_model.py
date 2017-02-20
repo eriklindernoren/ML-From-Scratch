@@ -5,8 +5,9 @@ import numpy as np
 
 # Import helper functions
 dir_path = os.path.dirname(os.path.realpath(__file__))
-sys.path.insert(0, dir_path + "/../")
-from helper_functions import euclidean_distance, normalize, calculate_covariance_matrix
+sys.path.insert(0, dir_path + "/../utils")
+from data_manipulation import normalize
+from data_operation import euclidean_distance, calculate_covariance_matrix
 sys.path.insert(0, dir_path + "/../unsupervised_learning/")
 from principal_component_analysis import PCA
 

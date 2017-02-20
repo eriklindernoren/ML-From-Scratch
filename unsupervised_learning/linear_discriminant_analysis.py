@@ -6,8 +6,8 @@ import pandas as pd
 
 # Import helper functions
 dir_path = os.path.dirname(os.path.realpath(__file__))
-sys.path.insert(0, dir_path + "/../")
-from helper_functions import calculate_covariance_matrix, calculate_correlation_matrix
+sys.path.insert(0, dir_path + "/../utils")
+from data_operation import calculate_covariance_matrix, calculate_correlation_matrix
 
 df = pd.read_csv(dir_path + "/../data/iris.csv")
 # Change class labels from strings to numbers
@@ -22,8 +22,8 @@ X1 = df.loc[df['species'] == "0"].drop("species", axis=1).as_matrix()
 X2 = df.loc[df['species'] == "1"].drop("species", axis=1).as_matrix()
 
 # Calculate the covariances of the two class distributions
-cov1 = calculate_covariance_matrix(X1, X1)
-cov2 = calculate_covariance_matrix(X2, X2)
+cov1 = calculate_covariance_matrix(X1)
+cov2 = calculate_covariance_matrix(X2)
 cov_tot = cov1 + cov2
 
 # Get the means of the two class distributions

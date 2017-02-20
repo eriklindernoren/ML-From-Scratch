@@ -6,8 +6,8 @@ import numpy as np
 
 # Import helper functions
 dir_path = os.path.dirname(os.path.realpath(__file__))
-sys.path.insert(0, dir_path + "/../")
-from helper_functions import calculate_covariance_matrix, calculate_correlation_matrix
+sys.path.insert(0, dir_path + "/../utils")
+from data_operation import calculate_covariance_matrix, calculate_correlation_matrix
 
 
 class PCA():
