@@ -24,13 +24,11 @@ class Perceptron():
     def __init__(self):
         # Weights
         self.W = None
+        self.biasW = None
 
     def fit(self, X, y, n_iterations=40000, learning_rate=0.01, plot_errors=False):
         X_train = np.array(X, dtype=float)
         y_train = categorical_to_binary(y)
-
-        # Add dummy values for bias weights W0
-        X_train = np.insert(X_train, 0, 1, axis=1)
 
         n_outputs = np.shape(y_train)[1]
         n_samples = np.shape(X_train)[0]
@@ -39,22 +37,26 @@ class Perceptron():
         # Initial weights between [-1/sqrt(N), 1/sqrt(N)]
         a = -1/math.sqrt(n_features)
         b = -a
-        self.W = (b-a)*np.random.random((n_features, n_outputs)) + a
+        self.W = (b-a)*np.random.random((n_features, n_outputs))+a
+        self.biasW = (b-a)*np.random.random((1, n_outputs))+a
 
         errors = []
         for i in range(n_iterations):
             # Calculate outputs
-            neuron_input = np.dot(X_train,self.W)
+            neuron_input = np.dot(X_train,self.W) + self.biasW
             neuron_output = sigmoid(neuron_input)
             
-            mean_squared_error = np.mean(np.power(y_train - neuron_output, 2))
-            errors.append(mean_squared_error)
+            error = y_train - neuron_output
+            mse = np.mean(np.power(error, 2))
+            errors.append(mse)
             
             # Calculate the loss gradient
             w_gradient = -2*(y_train - neuron_output)*sigmoid_gradient(neuron_input)
+            bias_gradient = w_gradient
 
             # Update weights
             self.W -= learning_rate*X_train.T.dot(w_gradient)
+            self.biasW -= learning_rate*np.ones((1, n_samples)).dot(bias_gradient)
                 
         # Plot the training error
         if plot_errors:
@@ -65,8 +67,8 @@ class Perceptron():
 
     # Use the trained model to predict labels of X
     def predict(self, X):
-        X_test = np.insert(np.array(X, dtype=float), 0, 1, axis=1)
-        y_pred = np.round(sigmoid(np.dot(X_test,self.W)))
+        X_test = np.array(X, dtype=float)
+        y_pred = np.round(sigmoid(np.dot(X_test,self.W) + self.biasW))
         y_pred = binary_to_categorical(y_pred)
         return y_pred
 
