@@ -39,8 +39,6 @@ def get_random_subsets(X, y, n_subsets, replacements=True):
 		subsample_size = n_samples 		# 100% with replacements
 
 	for _ in range(n_subsets):
-
-		# idx = np.random.choice(range(n_samples), size=np.shape(range(n_samples//3)), replace=False)
 		idx = np.random.choice(range(n_samples), size=np.shape(range(subsample_size)), replace=replacements)
 		X = X_y[idx][:,:-1]
 		y = X_y[idx][:,-1]

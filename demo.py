@@ -1,6 +1,5 @@
 import sys, os
 from sklearn import datasets
-import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
@@ -60,7 +59,7 @@ logistic_regression = LogisticRegression()
 mlp = MultilayerPerceptron(n_hidden=20)
 perceptron = Perceptron()
 decision_tree = DecisionTree()
-random_forest = RandomForest(n_estimators=40)
+random_forest = RandomForest(n_estimators=150)
 
 # ........
 #  TRAIN
@@ -107,11 +106,6 @@ for clf in y_pred:
 # .......
 #  PLOT
 # .......
-X_3d = pca.transform(X_test, n_components=3)
-x1 = X_3d[:,0]
-x2 = X_3d[:,1]
-x3 = X_3d[:,2]
-plt.scatter(x1,x2,c=y_test)
-plt.show()
+pca.plot_in_2d(X_test, y_test)
 
 

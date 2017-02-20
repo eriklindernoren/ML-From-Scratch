@@ -23,40 +23,48 @@ def sigmoid_gradient(x):
 
 class MultilayerPerceptron():
     def __init__(self, n_hidden):
-        self.n_hidden = n_hidden
-        # Weights (w - hidden, v - output)
-        self.W = None
-        self.V = None
+        self.n_hidden = n_hidden    # Number of hidden neurons
+        self.W = None               # Hidden layer weights
+        self.V = None               # Output layer weights
 
     def fit(self, X, y, n_iterations=3000, learning_rate=0.01, plot_errors=False):
         X_train = np.array(X, dtype=float)
         # Convert the nominal y values to binary
         y_train = categorical_to_binary(y)
 
-        n_samples = len(X_train)
-        n_features = len(X_train[0])
+        # Insert dummy values for bias weights W0
+        X_train = np.insert(X_train, 0, 1, axis=1)
+
+        n_samples = np.shape(X_train)[0]
+        n_features = np.shape(X_train)[1]
+        n_outputs = np.shape(y_train)[1]
 
         # Initial weights between [-1/sqrt(N), 1/sqrt(N)]
         a = -1/math.sqrt(n_features)
         b = -a
-        self.W = (b-a)*np.random.random((len(X_train[0]), self.n_hidden)) + a
-        self.V = (b-a)*np.random.random((self.n_hidden, len(y_train[0,:]))) + a
+        self.W = (b-a)*np.random.random((n_features, self.n_hidden)) + a
+        self.V = (b-a)*np.random.random((self.n_hidden+1, n_outputs)) + a
 
         errors = []
         for i in range(n_iterations):
-            # Calculate outputs of hidden layer
+            # Calculate hidden layer
             hidden_input = X_train.dot(self.W)
-            hidden_output = sigmoid(hidden_input)
-            # Calculate outputs
+            # Calculate output of hidden neurons and add dummy values for bias weights V0
+            hidden_output = np.insert(sigmoid(hidden_input), 0, 1, axis=1)
+            
+            # Calculate output layer
             output_layer_input = hidden_output.dot(self.V)
             output_layer_pred = sigmoid(output_layer_input)
 
+            # Calculate the error
             mean_squared_error = np.mean(np.power(y_train - output_layer_pred, 2))
             errors.append(mean_squared_error)
 
-            # Calculate the loss gradient
+            # Calculate loss gradients:
+            # Output layer weights V
             v_gradient = -2*(y_train - output_layer_pred)*sigmoid_gradient(output_layer_input)
-            w_gradient = v_gradient.dot(self.V.T)*sigmoid_gradient(hidden_input)
+            # Hidden layer weights W (disregard bias weight of V when determining W)
+            w_gradient = v_gradient.dot(self.V[1:,:].T)*sigmoid_gradient(hidden_input)
 
             # Update weights
             self.V -= learning_rate*hidden_output.T.dot(v_gradient)
@@ -71,8 +79,10 @@ class MultilayerPerceptron():
 
     # Use the trained model to predict labels of X
     def predict(self, X):
-        X_test = np.array(X, dtype=float)
-        hidden_output = sigmoid(np.dot(X_test,self.W))
+        # Insert dummy values for bias weights W0
+        X_test = np.insert(np.array(X, dtype=float), 0, 1, axis=1)
+        # Insert dummy for bias weights V0
+        hidden_output = np.insert(sigmoid(np.dot(X_test,self.W)), 0, 1, axis=1)
         y_pred = np.round(sigmoid(np.dot(hidden_output, self.V)))
         # Convert binary representation of y to nominal labels
         y_pred = binary_to_categorical(y_pred)

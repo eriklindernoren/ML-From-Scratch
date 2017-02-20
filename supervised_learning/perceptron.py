@@ -27,17 +27,19 @@ class Perceptron():
 
     def fit(self, X, y, n_iterations=40000, learning_rate=0.01, plot_errors=False):
         X_train = np.array(X, dtype=float)
-        # Convert the nominal y values to binary
         y_train = categorical_to_binary(y)
 
-        n_neurons = len(y_train[0,:])
-        n_samples = len(X_train)
-        n_features = len(X_train[0])
+        # Add dummy values for bias weights W0
+        X_train = np.insert(X_train, 0, 1, axis=1)
+
+        n_outputs = np.shape(y_train)[1]
+        n_samples = np.shape(X_train)[0]
+        n_features = np.shape(X_train)[1]
 
         # Initial weights between [-1/sqrt(N), 1/sqrt(N)]
         a = -1/math.sqrt(n_features)
         b = -a
-        self.W = (b-a)*np.random.random((len(X_train[0]), n_neurons)) + a
+        self.W = (b-a)*np.random.random((n_features, n_outputs)) + a
 
         errors = []
         for i in range(n_iterations):
@@ -63,7 +65,7 @@ class Perceptron():
 
     # Use the trained model to predict labels of X
     def predict(self, X):
-        X_test = np.array(X, dtype=float)
+        X_test = np.insert(np.array(X, dtype=float), 0, 1, axis=1)
         y_pred = np.round(sigmoid(np.dot(X_test,self.W)))
         y_pred = binary_to_categorical(y_pred)
         return y_pred
