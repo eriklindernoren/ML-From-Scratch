@@ -40,10 +40,10 @@ X = normalize(X)
 # ..........................
 #  DIMENSIONALITY REDUCTION
 # ..........................
-
 pca = PCA()
 X = pca.transform(X, n_components=5) # Reduce to 5 dimensions
 X = normalize(X)
+
 
 # ..........................
 #  TRAIN / TEST SPLIT

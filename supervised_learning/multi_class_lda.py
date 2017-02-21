@@ -39,7 +39,7 @@ class MultiClassLDA():
                 U,S,V = np.linalg.svd((_X - np.mean(_X, axis=0)))
                 S = np.diag(S)
                 # (_X - mean).T.dot(_X - mean) = V.T.dot(S.T).dot(S).dot(V) (By SVD)
-                within_scatter = V.T.dot(S.T).dot(S).dot(V)
+                within_scatter = V.dot(S.T).dot(S).dot(V.T)
             else:
                 within_scatter = (n_samples - 1) * calculate_covariance_matrix(_X)
             SW += within_scatter
@@ -53,7 +53,7 @@ class MultiClassLDA():
             if self.solver == "svd":
                 U,S,V = np.linalg.svd(np.expand_dims(mean_vector - total_mean, axis=1))
                 S = np.diag(S)
-                between_scatter = n_samples * V.T.dot(S.T).dot(S).dot(V)
+                between_scatter = n_samples * V.dot(S.T).dot(S).dot(V.T)
             else:
                 between_scatter = n_samples * (mean_vector - total_mean).dot((mean_vector - total_mean).T)
             SB += between_scatter
@@ -71,7 +71,7 @@ class MultiClassLDA():
         if self.solver == "svd":
             U,S,V = np.linalg.svd(SW)
             S = np.diag(S)
-            SW_inverse = V.T.dot(np.linalg.pinv(S)).dot(U.T)
+            SW_inverse = V.dot(np.linalg.pinv(S)).dot(U.T)
             A = SW_inverse.dot(SB)
         else:
             A = np.linalg.inv(SW).dot(SB)
