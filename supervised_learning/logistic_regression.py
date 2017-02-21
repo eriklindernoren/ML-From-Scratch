@@ -1,4 +1,5 @@
 import sys, os, math
+from sklearn import datasets
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -6,7 +7,7 @@ import matplotlib.pyplot as plt
 # Import helper functions
 dir_path = os.path.dirname(os.path.realpath(__file__))
 sys.path.insert(0, dir_path + "/../utils")
-from data_manipulation import make_diagonal, normalize
+from data_manipulation import make_diagonal, normalize, train_test_split
 from data_operation import accuracy_score
 sys.path.insert(0, dir_path + "/../unsupervised_learning/")
 from principal_component_analysis import PCA
@@ -46,7 +47,7 @@ class LogisticRegression():
 
             # Batch opt:
             # (X^T * diag(sigm*(1 - sigm) * X) * X^T * (diag(sigm*(1 - sigm) * X * param + Y - Y_pred)
-            self.param = np.linalg.inv(X_train.T.dot(diag_gradient).dot(X_train)).dot(X_train.T).dot(diag_gradient.dot(X_train).dot(self.param) + y_train - y_pred)
+            self.param = np.linalg.pinv(X_train.T.dot(diag_gradient).dot(X_train)).dot(X_train.T).dot(diag_gradient.dot(X_train).dot(self.param) + y_train - y_pred)
 
     def predict(self, X):
         X_test = np.array(X, dtype=float)
@@ -59,15 +60,14 @@ class LogisticRegression():
 
 # Demo
 def main():
-    df = pd.read_csv(dir_path + "/../data/diabetes.csv")
 
-    Y = df["Outcome"]
-    y_train = Y[:-300].as_matrix()
-    y_test = Y[-300:].as_matrix()
+    data = datasets.load_iris()
+    X = data.data[data.target != 0]
+    y = data.target[data.target != 0]
+    y[y == 1] = 0
+    y[y == 2] = 1
 
-    X = df.drop("Outcome", axis=1)
-    X_train = np.insert(normalize(X[:-300].as_matrix()),0,1,axis=1)
-    X_test = np.insert(normalize(X[-300:].as_matrix()),0,1,axis=1)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33)
 
     clf = LogisticRegression()
     clf.fit(X_train, y_train)

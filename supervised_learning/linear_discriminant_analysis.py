@@ -28,7 +28,7 @@ mean2 = X2.mean(0)
 mean_diff = np.atleast_1d(mean1 - mean2)
 
 # Calculate w as  (x1_mean - x2_mean) / (cov1 + cov2)
-w = np.linalg.inv(cov_tot).dot(mean_diff)
+w = np.linalg.pinv(cov_tot).dot(mean_diff)
 
 # Project X onto w
 x1 = X.dot(w)
