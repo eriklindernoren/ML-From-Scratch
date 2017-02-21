@@ -51,6 +51,17 @@ def normalize(X, axis=-1, order=2):
 	l2[l2==0] = 1
 	return X / np.expand_dims(l2, axis)
 
+# Standardize the dataset X
+def standardize(X):
+	X_std = X
+	mean = X.mean(axis=0)
+	std = X.std(axis=0)
+	for col in range(np.shape(X)[1]):
+		if std[col]:
+			X_std[:, col] = (X_std[:, col] - mean[col]) / std[col]
+	# X_std = (X - X.mean(axis=0)) / X.std(axis=0)
+	return X_std
+
 # Split the data into train and test sets
 def train_test_split(X, y, test_size=0.5, shuffle=True):
 	if shuffle:

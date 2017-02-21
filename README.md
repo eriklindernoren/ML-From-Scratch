@@ -17,11 +17,12 @@ The purpose of this project is purely self-educational.
 - Adaboost
 - Naive Bayes
 - Logistic Regression
+- Linear Discriminant Analysis
+- Multi-class Linear Discriminant Analysis
 - Decision Tree
 - Random Forest
 
 ####Unsupervised Learning:
 - Principal Component Analysis
-- Linear Discriminant Analysis
 - K-Means
 - Gaussian Mixture Model

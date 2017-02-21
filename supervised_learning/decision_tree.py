@@ -19,15 +19,16 @@ class DecisionNode():
 		self.true_branch = true_branch		# 'Left' subtree
 		self.false_branch = false_branch	# 'Right' subtree
 
-
 class DecisionTree():
-	def __init__(self, min_samples_split=2, min_gain=1e-7):
+	def __init__(self, min_samples_split=2, min_gain=1e-7, max_depth=float("inf")):
 		self.root = None # Root node in dec. tree
 		self.min_samples_split = min_samples_split
 		self.min_gain = min_gain
+		self.max_depth = max_depth
 
 	def fit(self, X, y):
 		# Build tree
+		self.current_depth = 0
 		self.root = self._build_tree(X, y)
 
 	def _build_tree(self, X, y):
@@ -77,11 +78,12 @@ class DecisionTree():
 							best_sets = np.array([Xy_1, Xy_2])
 
 		# If we have any information gain to go by we build the tree deeper
-		if highest_info_gain > self.min_gain:
+		if self.current_depth < self.max_depth and highest_info_gain > self.min_gain:
 			X_1, y_1 = best_sets[0][:, :-1], best_sets[0][:, -1]
 			X_2, y_2 = best_sets[1][:, :-1], best_sets[1][:, -1]
 			true_branch = self._build_tree(X_1, y_1)
 			false_branch = self._build_tree(X_2, y_2)
+			self.current_depth += 1
 			return DecisionNode(feature_i=best_criteria["feature_i"], threshold=best_criteria["threshold"], true_branch=true_branch, false_branch=false_branch)
 		# There's no recorded information gain so we are at a leaf
 		most_common = None

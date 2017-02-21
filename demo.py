@@ -5,9 +5,12 @@ import pandas as pd
 
 # Import helper functions
 dir_path = os.path.dirname(os.path.realpath(__file__))
-from helper_functions import train_test_split, accuracy_score, normalize
+sys.path.insert(0, dir_path + "/utils")
+from data_manipulation import train_test_split, normalize
+from data_operation import accuracy_score
 # Import ML models
 sys.path.insert(0, dir_path + "/supervised_learning")
+from multi_class_lda import MultiClassLDA
 from adaboost import Adaboost
 from naive_bayes import NaiveBayes
 from k_nearest_neighbors import KNN
@@ -37,6 +40,7 @@ X = normalize(X)
 # ..........................
 #  DIMENSIONALITY REDUCTION
 # ..........................
+
 pca = PCA()
 X = pca.transform(X, n_components=5) # Reduce to 5 dimensions
 X = normalize(X)

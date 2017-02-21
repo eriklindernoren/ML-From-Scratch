@@ -8,18 +8,14 @@ import pandas as pd
 dir_path = os.path.dirname(os.path.realpath(__file__))
 sys.path.insert(0, dir_path + "/../utils")
 from data_operation import calculate_covariance_matrix, calculate_correlation_matrix
+from data_manipulation import normalize
 
-df = pd.read_csv(dir_path + "/../data/iris.csv")
-# Change class labels from strings to numbers
-df = df.replace(to_replace="setosa", value="0")
-df = df.replace(to_replace="virginica", value="1")
-df = df.replace(to_replace="versicolor", value="2")
-
-# Only select data for two classes
-X = df.loc[df['species'] != "2"].drop("species", axis=1).as_matrix()
-y = df.loc[df['species'] != "2"]["species"].as_matrix()
-X1 = df.loc[df['species'] == "0"].drop("species", axis=1).as_matrix()
-X2 = df.loc[df['species'] == "1"].drop("species", axis=1).as_matrix()
+# Load dataset and only use the two first classes
+data = datasets.load_iris()
+X = normalize(data.data[data.target < 2])
+y = data.target[data.target < 2]
+X1 = X[y == 0]
+X2 = X[y == 1]
 
 # Calculate the covariances of the two class distributions
 cov1 = calculate_covariance_matrix(X1)

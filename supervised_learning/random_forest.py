@@ -13,17 +13,19 @@ from principal_component_analysis import PCA
 from decision_tree import DecisionTree
 
 class RandomForest():
-	def __init__(self, n_estimators=50, max_features=None, debug=False):
+	def __init__(self, n_estimators=50, max_features=None, min_samples_split=2, min_gain=1e-7, max_depth=float("inf"), debug=False):
 		self.n_estimators = n_estimators	# Number of trees
 		self.max_features = max_features 	# Maxmimum number of features per tree
 		self.feature_indices = []			# The indices of the features used for each tree
-
+		self.min_samples_split = min_samples_split
+		self.min_gain = min_gain
+		self.max_depth = max_depth
 		self.debug = debug
 
 		# Initialize decision trees
 		self.trees = []
 		for _ in range(n_estimators):
-			self.trees.append(DecisionTree())
+			self.trees.append(DecisionTree(min_samples_split=self.min_samples_split, min_gain=min_gain, max_depth=self.max_depth))
 
 
 	def fit(self, X, y):
@@ -84,7 +86,7 @@ def main():
 
 	X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4)
 
-	clf = RandomForest(n_estimators=80, debug=True)
+	clf = RandomForest(n_estimators=1000, min_samples_split=4, max_depth=2, debug=True)
 	clf.fit(X_train, y_train)
 	y_pred = clf.predict(X_test)
 
