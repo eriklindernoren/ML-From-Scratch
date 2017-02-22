@@ -21,6 +21,7 @@ The purpose of this project is purely self-educational.
 - Multi-class Linear Discriminant Analysis
 - Decision Tree
 - Random Forest
+- Support Vector Machine
 
 ####Unsupervised Learning:
 - Principal Component Analysis
