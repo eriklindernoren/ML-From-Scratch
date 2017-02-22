@@ -2,6 +2,7 @@ import sys, os
 from sklearn import datasets
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
 
 # Import helper functions
 dir_path = os.path.dirname(os.path.realpath(__file__))
@@ -110,6 +111,7 @@ for clf in y_pred:
 # .......
 #  PLOT
 # .......
-pca.plot_in_2d(X_test, y_test)
+plt.scatter(X_test[:,0], X_test[:,1], c=y_test)
+plt.show()
 
 
