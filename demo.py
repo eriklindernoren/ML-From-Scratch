@@ -9,6 +9,7 @@ dir_path = os.path.dirname(os.path.realpath(__file__))
 sys.path.insert(0, dir_path + "/utils")
 from data_manipulation import train_test_split, normalize
 from data_operation import accuracy_score
+from kernels import *
 # Import ML models
 sys.path.insert(0, dir_path + "/supervised_learning")
 from multi_class_lda import MultiClassLDA
@@ -20,6 +21,7 @@ from logistic_regression import LogisticRegression
 from perceptron import Perceptron
 from decision_tree import DecisionTree
 from random_forest import RandomForest
+from support_vector_machine import SupportVectorMachine
 # Import PCA
 sys.path.insert(0, dir_path + "/unsupervised_learning")
 from principal_component_analysis import PCA
@@ -51,8 +53,8 @@ X = normalize(X)
 # ..........................
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5)
 # Rescale label for Adaboost to {-1, 1}
-ada_y_train = 2*y_train - np.ones(np.shape(y_train))
-ada_y_test = 2*y_test - np.ones(np.shape(y_test))
+rescaled_y_train = 2*y_train - np.ones(np.shape(y_train))
+rescaled_y_test = 2*y_test - np.ones(np.shape(y_test))
 
 # .......
 #  SETUP
@@ -65,13 +67,14 @@ mlp = MultilayerPerceptron(n_hidden=20)
 perceptron = Perceptron()
 decision_tree = DecisionTree()
 random_forest = RandomForest(n_estimators=150)
+support_vector_machine = SupportVectorMachine(C=1, kernel=rbf_kernel)
 
 # ........
 #  TRAIN
 # ........
 print "Training:"
 print "\tAdaboost"
-adaboost.fit(X_train, ada_y_train)
+adaboost.fit(X_train, rescaled_y_train)
 print "\tNaive Bayes"
 naive_bayes.fit(X_train, y_train)
 print "\tLogistic Regression"
@@ -84,6 +87,8 @@ print "\tDecision Tree"
 decision_tree.fit(X_train, y_train)
 print "\tRandom Forest"
 random_forest.fit(X_train, y_train)
+print "\tSupport Vector Machine"
+support_vector_machine.fit(X_train, rescaled_y_train)
 
 # .........
 #  PREDICT
@@ -97,14 +102,15 @@ y_pred["Multilayer Perceptron"] = mlp.predict(X_test)
 y_pred["Perceptron"] = perceptron.predict(X_test)
 y_pred["Decision Tree"] = decision_tree.predict(X_test)
 y_pred["Random Forest"] = random_forest.predict(X_test)
+y_pred["Support Vector Machine"] = support_vector_machine.predict(X_test)
 
 # ..........
 #  ACCURACY
 # ..........
 print "Accuracy:"
 for clf in y_pred:
-	if clf == "Adaboost":
-		print "\t%-23s: %.5f" %(clf, accuracy_score(ada_y_test, y_pred[clf]))
+	if clf == "Adaboost" or clf == "Support Vector Machine":
+		print "\t%-23s: %.5f" %(clf, accuracy_score(rescaled_y_test, y_pred[clf]))
 	else:
 		print "\t%-23s: %.5f" %(clf, accuracy_score(y_test, y_pred[clf]))
 

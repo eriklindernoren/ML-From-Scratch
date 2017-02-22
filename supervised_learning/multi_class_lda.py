@@ -20,13 +20,15 @@ class MultiClassLDA():
         n_features = np.shape(X)[1]
         labels = np.unique(y)
 
-        # Within class scatter matrix
+        # Within class scatter matrix: 
+        # SW = sum{ (X_for_class - mean_of_X_for_class)^2 }
         SW = np.empty((n_features, n_features))
         for label in labels:
             _X = X[y == label]
             SW += (len(_X) - 1) * calculate_covariance_matrix(_X)
 
-        # Between class scatter
+        # Between class scatter: 
+        # SB = sum{ n_samples_for_class * (mean_for_class - total_mean)^2 }
         total_mean = np.mean(X, axis=0)
         SB = np.empty((n_features, n_features))
         for label in labels:
@@ -40,15 +42,21 @@ class MultiClassLDA():
     def transform(self, X, y, n_components):
         SW, SB = self._calculate_scatter_matrices(X, y)
 
-        # Solve for eigenvalues and eigenvectors 
+        # Compute SW^-1 * SB
         A = None
         if self.solver == "svd":
+            # Computationally cheaper than other option.
+            # Calculate SW^-1 * SB by SVD (pseudoinverse of diagonal matrix S)
             U,S,V = np.linalg.svd(SW)
             S = np.diag(S)
             SW_inverse = V.dot(np.linalg.pinv(S)).dot(U.T)
             A = SW_inverse.dot(SB)
         else:
+            # Computationally expensive.
+            # Determine SW^-1 * SB by calculating inverse of SW
             A = np.linalg.inv(SW).dot(SB)
+
+        # Get eigenvalues and eigenvectors of SW^-1 * SB
         eigenvalues, eigenvectors = np.linalg.eigh(A)
 
         # Sort the eigenvalues and corresponding eigenvectors from largest
@@ -57,7 +65,7 @@ class MultiClassLDA():
         eigenvalues = eigenvalues[idx][:n_components]
         eigenvectors = eigenvectors[:, idx][:, :n_components]
 
-        # Project the data onto principal components
+        # Project the data onto eigenvectors
         X_transformed = X.dot(eigenvectors)
 
         return X_transformed
