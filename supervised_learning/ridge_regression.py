@@ -17,8 +17,12 @@ class RidgeRegression():
 		# Insert constant ones for bias weights
 		X = np.insert(X, 0, 1, axis=1)
 		n_features = np.shape(X)[1]
-		# Get weights by least squares with regularization 
-		self.w = np.linalg.inv(X.T.dot(X) + self.delta * np.identity(n_features)).dot(X.T).dot(y)
+
+		# Get weights by least squares with regularization (by pseudoinverse)
+		U,S,V = np.linalg.svd(X.T.dot(X) + self.delta * np.identity(n_features))
+		S = np.diag(S)
+		X_sq_reg_inv = V.dot(np.linalg.pinv(S)).dot(U.T)
+		self.w = X_sq_reg_inv.dot(X.T).dot(y)
 
 	def predict(self, X):
 		# Insert constant ones for bias weights

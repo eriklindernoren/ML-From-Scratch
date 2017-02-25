@@ -31,7 +31,7 @@ class LogisticRegression():
 
         n_features = len(X_train[0])
 
-        # Initial weights between [-1/sqrt(N), 1/sqrt(N)] (w - hidden, v - output)
+        # Initial parameters between [-1/sqrt(N), 1/sqrt(N)]
         a = -1/math.sqrt(n_features)
         b = -a
         self.param = (b-a)*np.random.random((len(X_train[0]),)) + a
