@@ -1,6 +1,6 @@
 # Machine Learning From Scratch
 
-Python implementations of various Machine Learning models and algorithms from scratch using numpy.
+Python implementations of various Machine Learning models and algorithms from scratch.
 
 Some matrix and vector operations such as calculations of covariance and correlation matricies are
 implemented by hand even though there are numpy methods that enable these computations. 

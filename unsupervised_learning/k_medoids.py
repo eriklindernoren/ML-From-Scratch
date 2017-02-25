@@ -66,7 +66,7 @@ class KMedoids():
 				y_pred[sample_i] = cluster_i
 		return y_pred
 
-	# Do K-Means clustering and return cluster indices
+	# Do K-Medoids clustering and return cluster indices
 	def predict(self, X):
 		# Initialize medoids
 		medoids = self._init_random_medoids(X)

@@ -49,7 +49,7 @@ class MultilayerPerceptron():
         for i in range(n_iterations):
             # Calculate hidden layer
             hidden_input = X_train.dot(self.W) + self.biasW
-            # Calculate output of hidden neurons and add dummy values for bias weights V0
+            # Calculate output of hidden neurons
             hidden_output = sigmoid(hidden_input)
             
             # Calculate output layer
@@ -84,13 +84,12 @@ class MultilayerPerceptron():
 
     # Use the trained model to predict labels of X
     def predict(self, X):
-        # Insert dummy values for bias weights W0
         X_test = np.array(X, dtype=float)
-        # Insert dummy for bias weights V0
+        # Calculate the output of the hidden neurons
         hidden_output = sigmoid(np.dot(X_test,self.W) + self.biasW)
-        y_pred = np.round(sigmoid(np.dot(hidden_output, self.V) + self.biasV))
-        # Convert binary representation of y to nominal labels
-        y_pred = binary_to_categorical(y_pred)
+        # Set the class labels to the highest valued outputs
+        y_pred = np.argmax(sigmoid(np.dot(hidden_output, self.V) + self.biasV), axis=1)
+
         return y_pred
 
 # Demo

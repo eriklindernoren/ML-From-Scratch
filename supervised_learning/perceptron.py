@@ -67,8 +67,8 @@ class Perceptron():
     # Use the trained model to predict labels of X
     def predict(self, X):
         X_test = np.array(X, dtype=float)
-        y_pred = np.round(sigmoid(np.dot(X_test,self.W) + self.biasW))
-        y_pred = binary_to_categorical(y_pred)
+        # Set the class labels to the highest valued outputs
+        y_pred = np.argmax(sigmoid(np.dot(X_test,self.W) + self.biasW), axis=1)
         return y_pred
 
 # Demo
