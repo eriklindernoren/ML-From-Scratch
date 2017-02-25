@@ -34,8 +34,7 @@ class MultilayerPerceptron():
         # Convert the nominal y values to binary
         y_train = categorical_to_binary(y)
 
-        n_samples = np.shape(X_train)[0]
-        n_features = np.shape(X_train)[1]
+        n_samples, n_features = np.shape(X_train)
         n_outputs = np.shape(y_train)[1]
 
         # Initial weights between [-1/sqrt(N), 1/sqrt(N)]

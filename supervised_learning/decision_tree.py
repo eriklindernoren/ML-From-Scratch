@@ -43,8 +43,7 @@ class DecisionTree():
 		# Add y as last column of X
 		X_y = np.concatenate((X, np.expand_dims(y, axis=1)), axis=1)
 
-		n_features = np.shape(X)[1]
-		n_samples = np.shape(X)[0]
+		n_samples, n_features = np.shape(X)
 
 		if n_samples >= self.min_samples_split:
 			# Calculate the information gain for each feature

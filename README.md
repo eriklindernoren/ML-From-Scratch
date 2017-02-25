@@ -9,21 +9,22 @@ The purpose of this project is purely self-educational.
 
 ##Current implementations:
 ####Supervised Learning:
-- Linear Regression
-- Ridge Regression
-- Multilayer Perceptron
-- Perceptron
-- K Nearest Neighbors
 - Adaboost
-- Naive Bayes
-- Logistic Regression
-- Linear Discriminant Analysis
-- Multi-class Linear Discriminant Analysis
 - Decision Tree
+- K Nearest Neighbors
+- Linear Discriminant Analysis
+- Linear Regression
+- Logistic Regression
+- Multi-class Linear Discriminant Analysis
+- Multilayer Perceptron
+- Naive Bayes
+- Perceptron
 - Random Forest
+- Ridge Regression
 - Support Vector Machine
 
 ####Unsupervised Learning:
+- Gaussian Mixture Model
 - Principal Component Analysis
 - K-Means
-- Gaussian Mixture Model
+

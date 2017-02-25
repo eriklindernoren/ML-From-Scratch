@@ -13,7 +13,7 @@ from principal_component_analysis import PCA
 
 
 class GaussianMixtureModel():
-	def __init__(self, k=2, max_iterations=200, tolerance=1e-6):
+	def __init__(self, k=2, max_iterations=2000, tolerance=1e-8):
 		self.k = k
 		self.parameters = []
 		self.max_iterations = max_iterations
@@ -107,18 +107,13 @@ class GaussianMixtureModel():
 # Demo
 def main():
     # Load the dataset
-    data = datasets.load_digits()
-    X = data.data
-    y = data.target
-
-    # Reduce dimensionality
-    pca = PCA()
-    X_transform = pca.transform(X, n_components=10)
+    X, y = datasets.make_blobs()
 
     # Cluster the data using K-Means
-    clf = GaussianMixtureModel(k=10)
-    y_pred = clf.predict(X_transform)
+    clf = GaussianMixtureModel(k=3)
+    y_pred = clf.predict(X)
     
+    pca = PCA()
     pca.plot_in_2d(X, y_pred)
     pca.plot_in_2d(X, y)
 

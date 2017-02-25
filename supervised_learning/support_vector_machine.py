@@ -14,6 +14,7 @@ from kernels import *
 sys.path.insert(0, dir_path + "/../unsupervised_learning/")
 from principal_component_analysis import PCA
 
+# Hide cvxopt output
 cvxopt.solvers.options['show_progress'] = False
 
 class SupportVectorMachine(object):
@@ -23,10 +24,10 @@ class SupportVectorMachine(object):
         self.power = power
         self.gamma = gamma
         self.coef = coef
-        self.lagr_multipliers = []
-        self.support_vectors = []
-        self.support_vector_labels = []
-        self.intecept = np.NaN
+        self.lagr_multipliers = None
+        self.support_vectors = None
+        self.support_vector_labels = None
+        self.intecept = None
 
     def fit(self, X, y):
 
@@ -36,15 +37,16 @@ class SupportVectorMachine(object):
         if not self.gamma:
             self.gamma = 1 / n_features
 
+        # Initialize kernel method with parameters
         self.kernel = self.kernel(power=self.power, gamma=self.gamma, coef=self.coef)
 
         # Calculate kernel matrix
         kernel_matrix = np.zeros((n_samples, n_samples))
         for i in range(n_samples):
             for j in range(n_samples):
-                kernel_matrix[i, j] = self.kernel(X[i], X[j]) # Compare samples
+                kernel_matrix[i, j] = self.kernel(X[i], X[j])
 
-        # Use cvxopt to solve SVM optimization problem
+        # Define the quadratic optimization problem
         P = cvxopt.matrix(np.outer(y, y) * kernel_matrix, tc='d')
         q = cvxopt.matrix(np.ones(n_samples) * -1)
         A = cvxopt.matrix(y, (1, n_samples),  tc='d')
@@ -61,20 +63,19 @@ class SupportVectorMachine(object):
             h_min = cvxopt.matrix(np.ones(n_samples) * self.C)
             h = cvxopt.matrix(np.vstack((h_max, h_min)))
         
-
         # Solve the quadratic optimization problem using cvxopt
         minimization = cvxopt.solvers.qp(P, q, G, h, A, b)
 
         # Lagrange multipliers
         lagr_mult = np.ravel(minimization['x'])
 
-        #Extract support vectors
+        # Extract support vectors
         idx = lagr_mult > 1e-6                              # Get indexes of non-zero lagr. multipiers
         self.lagr_multipliers = lagr_mult[idx]              # Get the corresponding lagr. multipliers
         self.support_vectors = X[idx]                       # Get the samples that will act as support vectors
         self.support_vector_labels = y[idx]                 # Get the corresponding labels
 
-        # Calculate intercept by using first support vector
+        # Calculate intercept with first support vector
         self.intercept = self.support_vector_labels[0]
         for i in range(len(self.lagr_multipliers)):
             self.intercept -= self.lagr_multipliers[i] * self.support_vector_labels[i] * self.kernel(self.support_vectors[i], self.support_vectors[0])
@@ -100,7 +101,6 @@ def main():
     y[y == 2] = 1
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33)
 
-    # Perceptron
     clf = SupportVectorMachine(kernel=polynomial_kernel, power=4, coef=1)
     clf.fit(X_train, y_train)
     y_pred = clf.predict(X_test)

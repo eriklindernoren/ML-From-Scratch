@@ -31,8 +31,7 @@ class Perceptron():
         y_train = categorical_to_binary(y)
 
         n_outputs = np.shape(y_train)[1]
-        n_samples = np.shape(X_train)[0]
-        n_features = np.shape(X_train)[1]
+        n_samples, n_features = np.shape(X_train)
 
         # Initial weights between [-1/sqrt(N), 1/sqrt(N)]
         a = -1/math.sqrt(n_features)

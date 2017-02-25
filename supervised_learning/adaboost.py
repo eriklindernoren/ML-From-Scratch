@@ -24,8 +24,7 @@ class Adaboost():
         X_train = X
         y_train = y
 
-        n_samples = len(y_train)
-        n_features = len(X_train[0])
+        n_samples, n_features = np.shape(X_train)
 
         # Initialize weights to 1/N
         w = np.ones(n_samples)*(1/n_features)
