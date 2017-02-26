@@ -26,6 +26,7 @@ The purpose of this project is purely self-educational.
 
 ####Unsupervised Learning:
 - [Gaussian Mixture Model](https://github.com/eriklindernoren/ML-From-Scratch/blob/master/unsupervised_learning/gaussian_mixture_model.py)
+- [Partitioning Around Medoids](https://github.com/eriklindernoren/ML-From-Scratch/blob/master/unsupervised_learning/partitioning_around_medoids.py)
 - [Principal Component Analysis](https://github.com/eriklindernoren/ML-From-Scratch/blob/master/unsupervised_learning/principal_component_analysis.py)
 - [K-Means](https://github.com/eriklindernoren/ML-From-Scratch/blob/master/unsupervised_learning/k_means.py)
 
