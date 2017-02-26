@@ -35,7 +35,6 @@ class DecisionTree():
 		# Calculate the entropy by the label values
 		entropy = calculate_entropy(y)
 
-		# Save the best informaion gain
 		highest_info_gain = 0
 		best_criteria = None	# Feature index and threshold
 		best_sets = None		# Subsets of the data
@@ -57,9 +56,6 @@ class DecisionTree():
 				for threshold in unique_values:
 
 					Xy_1, Xy_2 = divide_on_feature(X_y, feature_i, threshold)
-					if np.shape(X_y)[0] != np.shape(Xy_1)[0] + np.shape(Xy_2)[0]:
-						print "Aj"
-						sys.exit(0)
 
 					# If one subset there is no use of calculating the information gain
 					if len(Xy_1) > 0 and len(Xy_2) > 0:

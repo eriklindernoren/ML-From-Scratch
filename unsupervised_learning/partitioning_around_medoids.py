@@ -11,10 +11,9 @@ sys.path.insert(0, dir_path + "/../unsupervised_learning/")
 from principal_component_analysis import PCA
 
 
-class PartitioningAroundMedoids():
-	def __init__(self, k=2, max_iterations=500):
+class PAM():
+	def __init__(self, k=2):
 		self.k = k
-		self.max_iterations = max_iterations
 
 	# Initialize the medoids as random samples
 	def _init_random_medoids(self, X):
@@ -45,16 +44,6 @@ class PartitioningAroundMedoids():
 			medoid_i = self._closest_medoid(sample, medoids)
 			clusters[medoid_i].append(sample_i)
 		return clusters
-
-	# Calculate new medoids as the median of the samples
-	# in each cluster
-	def _calculate_medoids(self, clusters, X):
-		n_features = np.shape(X)[1]
-		medoids = np.zeros((self.k, n_features))
-		for i, cluster in enumerate(clusters):
-			medoid = np.median(X[cluster], axis=0)
-			medoids[i] = medoid
-		return medoids
 
 	# Calculate the cost (total distance between samples and their medoids)
 	def _calculate_cost(self, X, clusters, medoids):
@@ -134,7 +123,7 @@ def main():
     X, y = datasets.make_blobs()
 
     # Cluster the data using K-Medoids
-    clf = PartitioningAroundMedoids(k=3)
+    clf = PAM(k=3)
     y_pred = clf.predict(X)
 
     # Project the data onto the 2 primary principal components

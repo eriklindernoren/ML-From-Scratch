@@ -15,12 +15,15 @@ class KNN():
 	def __init__(self, k=5):
 		self.k = k
 
+	# Do a majority vote among the neighbors
 	def _get_vote(self, neighbors, classes):
 		max_count = 0
 		label = None
+		# Count class occurences among neighbors
 		for c in classes:
 			count = 0
 			for neighbor in neighbors:
+				# Second element in the array is the label
 				if neighbor[1] == c:
 					count += 1
 			if count > max_count:
@@ -31,16 +34,24 @@ class KNN():
 	def predict(self, X_test, X_train, y_train):
 		classes = np.unique(y_train)
 		y_pred = []
+		# Determine the class of each sample
 		for i in range(len(X_test)):
 			test_sample = X_test[i]
 			neighbors = []
+			# Calculate the distance form each observed sample to the
+			# sample we wish to predict
 			for j in range(len(X_train)):
 				observed_sample = X_train[j]
 				distance = euclidean_distance(test_sample, observed_sample)
 				label = y_train[j]
+				# Add neighbor information
 				neighbors.append([distance, label])
 			neighbors = np.array(neighbors)
+			# Sort the list of observed samples from lowest to highest distance
+			# and select the k first
 			k_nearest_neighbors = neighbors[neighbors[:,0].argsort()][:self.k]
+			# Do a majority vote among the k neighbors and set prediction as the 
+			# class receing the most votes
 			label = self._get_vote(k_nearest_neighbors, classes)
 			y_pred.append(label)
 		return np.array(y_pred)
