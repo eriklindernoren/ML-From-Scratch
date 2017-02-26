@@ -90,7 +90,7 @@ class KMeans():
 # Demo
 def main():
     # Load the dataset
-    X, y = datasets.make_blobs(noise=0.1)
+    X, y = datasets.make_blobs()
 
     # Cluster the data using K-Means
     clf = KMeans(k=3)

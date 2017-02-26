@@ -109,7 +109,7 @@ def main():
     # Load the dataset
     X, y = datasets.make_blobs()
 
-    # Cluster the data using K-Means
+    # Cluster the data
     clf = GaussianMixtureModel(k=3)
     y_pred = clf.predict(X)
     

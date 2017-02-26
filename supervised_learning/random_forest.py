@@ -40,7 +40,7 @@ class RandomForest():
 		for i in range(self.n_estimators):
 			X_subset, y_subset = subsets[i]
 			# Feature bagging (select random subsets of the features)
-			idx = np.random.choice(range(n_features), size=self.max_features, replace=False)
+			idx = np.random.choice(range(n_features), size=self.max_features)
 			# Save the indices of the features for prediction
 			self.feature_indices.append(idx)
 			# Choose the features corresponding the the indices
@@ -86,7 +86,7 @@ def main():
 
 	X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4)
 
-	clf = RandomForest(n_estimators=1000, min_samples_split=4, max_depth=2, debug=True)
+	clf = RandomForest(n_estimators=50, debug=True)
 	clf.fit(X_train, y_train)
 	y_pred = clf.predict(X_test)
 

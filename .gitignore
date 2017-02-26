@@ -1,3 +1,6 @@
 *~
 \.DS_STORE
 *pyc
+build/
+dist/
+*egg-info*
