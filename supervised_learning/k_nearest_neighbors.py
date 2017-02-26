@@ -22,10 +22,11 @@ class KNN():
 		# Count class occurences among neighbors
 		for c in classes:
 			count = 0
-			for neighbor in neighbors:
-				# Second element in the array is the label
-				if neighbor[1] == c:
+			for sample in neighbors:
+				sample_class = sample[1]
+				if sample_class == c:
 					count += 1
+			# If vote is larger than highest previous => update label pred.
 			if count > max_count:
 				max_count = count
 				label = c
@@ -35,13 +36,11 @@ class KNN():
 		classes = np.unique(y_train)
 		y_pred = []
 		# Determine the class of each sample
-		for i in range(len(X_test)):
-			test_sample = X_test[i]
+		for test_sample in X_test:
 			neighbors = []
 			# Calculate the distance form each observed sample to the
 			# sample we wish to predict
-			for j in range(len(X_train)):
-				observed_sample = X_train[j]
+			for j, observed_sample in enumerate(X_train):
 				distance = euclidean_distance(test_sample, observed_sample)
 				label = y_train[j]
 				# Add neighbor information

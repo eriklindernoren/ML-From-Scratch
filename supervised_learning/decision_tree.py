@@ -2,6 +2,7 @@ from __future__ import division
 import numpy as np
 from sklearn import datasets
 import sys, os
+
 # Import helper functions
 dir_path = os.path.dirname(os.path.realpath(__file__))
 sys.path.insert(0, dir_path + "/../utils")
@@ -54,9 +55,7 @@ class DecisionTree():
 				# Iterate through all unique values of feature column i and
 				# calculate the informaion gain
 				for threshold in unique_values:
-
 					Xy_1, Xy_2 = divide_on_feature(X_y, feature_i, threshold)
-
 					# If one subset there is no use of calculating the information gain
 					if len(Xy_1) > 0 and len(Xy_2) > 0:
 						# Calculate information gain
@@ -70,14 +69,14 @@ class DecisionTree():
 						if info_gain > highest_info_gain:
 							highest_info_gain = info_gain
 							best_criteria = {"feature_i": feature_i, "threshold": threshold}
-							best_sets = np.array([Xy_1, Xy_2])
+							best_sets = {"left_branch": Xy_1, "right_branch": Xy_2}
 
 		# If we have any information gain to go by we build the tree deeper
 		if self.current_depth < self.max_depth and highest_info_gain > self.min_gain:
-			X_1, y_1 = best_sets[0][:, :-1], best_sets[0][:, -1]
-			X_2, y_2 = best_sets[1][:, :-1], best_sets[1][:, -1]
-			true_branch = self._build_tree(X_1, y_1)
-			false_branch = self._build_tree(X_2, y_2)
+			leftX, leftY = best_sets["left_branch"][:, :-1], best_sets["left_branch"][:, -1]	# X - all cols. but last, y - last
+			rightX, rightY = best_sets["right_branch"][:, :-1], best_sets["right_branch"][:, -1]	# X - all cols. but last, y - last
+			true_branch = self._build_tree(leftX, leftY)
+			false_branch = self._build_tree(rightX, rightY)
 			self.current_depth += 1
 			return DecisionNode(feature_i=best_criteria["feature_i"], threshold=best_criteria["threshold"], true_branch=true_branch, false_branch=false_branch)
 		# There's no recorded information gain so we are at a leaf

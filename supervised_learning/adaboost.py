@@ -21,10 +21,8 @@ class Adaboost():
         self.clfs = np.ones((4,self.n_clf))
 
     def fit(self, X, y):
-        X_train = X
-        y_train = y
-
-        n_samples, n_features = np.shape(X_train)
+        
+        n_samples, n_features = np.shape(X)
 
         # Initialize weights to 1/N
         w = np.ones(n_samples)*(1/n_features)
@@ -40,18 +38,18 @@ class Adaboost():
                 for t in range(n_samples):
                     err = 0
                     # Select feature as threshold
-                    tao = X_train[t, n]
+                    tao = X[t, n]
                     # Iterate through all samples and measure the corresponding features
                     # against the selected threshold and see if the threshold can help predict
                     # y
                     for m in range(n_samples):
-                        x = X_train[m, n]
-                        y = y_train[m]
+                        x = X[m, n]
+                        y_true = y[m]
                         h = 1.0
                         p = 1
                         if p*x < p*tao:
                             h = -1.0
-                        err = err + w[m]*(y != h)
+                        err = err + w[m]*(y_true != h)
                     # E.g err = 0.8 => (1 - err) = 0.2
                     # We flip the error and polarity
                     if err > 0.5 and err < 1:
@@ -72,11 +70,11 @@ class Adaboost():
             # Large weight => hard sample to classify
             for m in range(n_samples):
                 h = 1.0
-                x = X_train[m, feature_index]
-                y = y_train[m]
+                x = X[m, feature_index]
+                y_true = y[m]
                 if polarity*x < polarity*threshold:
                     h = -1.0
-                w[m] = w[m]*math.exp(-alpha*y*h)
+                w[m] = w[m]*math.exp(-alpha*y_true*h)
             # Renormalize the weight vector
             w = w * (1/np.sum(w))
 

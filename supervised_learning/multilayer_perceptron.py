@@ -101,7 +101,7 @@ def main():
 
     # MLP
     clf = MultilayerPerceptron(n_hidden=10)
-    clf.fit(X_train, y_train, n_iterations=4000, learning_rate=0.01)
+    clf.fit(X_train, y_train, n_iterations=4000, learning_rate=0.01, plot_errors=True)
     y_pred = clf.predict(X_test)
 
     print "Accuracy:", accuracy_score(y_test, y_pred)

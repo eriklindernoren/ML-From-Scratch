@@ -30,7 +30,7 @@ class Perceptron():
         X_train = np.array(X, dtype=float)
         y_train = categorical_to_binary(y)
 
-        n_outputs = np.shape(y_train)[1]
+        n_outputs = np.shape(y_train)[1]            
         n_samples, n_features = np.shape(X_train)
 
         # Initial weights between [-1/sqrt(N), 1/sqrt(N)]
@@ -80,7 +80,7 @@ def main():
 
     # Perceptron
     clf = Perceptron()
-    clf.fit(X_train, y_train)
+    clf.fit(X_train, y_train, plot_errors=True)
     y_pred = clf.predict(X_test)
 
     print "Accuracy:", accuracy_score(y_test, y_pred)

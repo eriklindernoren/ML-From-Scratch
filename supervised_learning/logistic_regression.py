@@ -41,10 +41,8 @@ class LogisticRegression():
             # Make a new prediction
             dot = X_train.dot(self.param)
             y_pred = sigmoid(dot)
-
             # Make a diagonal matrix of the sigmoid gradient column vector
             diag_gradient = make_diagonal(sigmoid_gradient(dot))
-
             # Batch opt:
             # (X^T * diag(sigm*(1 - sigm) * X) * X^T * (diag(sigm*(1 - sigm) * X * param + Y - Y_pred)
             self.param = np.linalg.pinv(X_train.T.dot(diag_gradient).dot(X_train)).dot(X_train.T).dot(diag_gradient.dot(X_train).dot(self.param) + y_train - y_pred)

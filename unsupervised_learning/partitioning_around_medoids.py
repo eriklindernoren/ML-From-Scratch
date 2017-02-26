@@ -38,7 +38,6 @@ class PAM():
 
 	# Assign the samples to the closest medoids to create clusters
 	def _create_clusters(self, X, medoids):
-		n_samples = np.shape(X)[0]
 		clusters = [[] for _ in range(self.k)]
 		for sample_i, sample in enumerate(X):
 			medoid_i = self._closest_medoid(sample, medoids)
@@ -109,7 +108,7 @@ class PAM():
 						swap = True
 						break
 				# If there was a swap start over
-				if swap == True:
+				if swap:
 					swap = False
 					break
 

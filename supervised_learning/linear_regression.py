@@ -14,7 +14,6 @@ class LinearRegression():
 	def fit(self, X, y):
 		# Insert constant ones for bias weights
 		X = np.insert(X, 0, 1, axis=1)	
-		
 		# Get weights by least squares (by pseudoinverse)
 		U,S,V = np.linalg.svd(X.T.dot(X))
 		S = np.diag(S)
