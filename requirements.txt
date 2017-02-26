@@ -1,4 +1,5 @@
 matplotlib
 numpy
-scikit-learn
+sklearn
+pandas
 cvxopt
