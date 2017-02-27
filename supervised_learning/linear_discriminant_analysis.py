@@ -47,10 +47,8 @@ class LDA():
 		y_pred = []
 		for sample in X:
 			h = sample.dot(self.w)
-			if h > 0:
-				y_pred.append(0)
-			else:
-				y_pred.append(1)
+			y = 1*(h < 0)
+			y_pred.append(y)
 		return y_pred
 
 # Demo
