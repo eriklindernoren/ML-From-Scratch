@@ -1,6 +1,6 @@
 # Machine Learning From Scratch
 
-Python implementations of various Machine Learning models and algorithms from scratch.
+Python implementations of some of the foundational Machine Learning models and algorithms from scratch.
 
 While some of the matrix operations that are implemented by hand (such as calculation of covariance matrix) are 
 available in numpy I have decided to add these as well to make sure that I understand how the linear algebra is applied.
@@ -25,6 +25,7 @@ The purpose of this project is purely self-educational.
 - [Support Vector Machine](https://github.com/eriklindernoren/ML-From-Scratch/blob/master/supervised_learning/support_vector_machine.py)
 
 ####Unsupervised Learning:
+- [DBSCAN](https://github.com/eriklindernoren/ML-From-Scratch/blob/master/unsupervised_learning/dbscan.py)
 - [Gaussian Mixture Model](https://github.com/eriklindernoren/ML-From-Scratch/blob/master/unsupervised_learning/gaussian_mixture_model.py)
 - [K-Means](https://github.com/eriklindernoren/ML-From-Scratch/blob/master/unsupervised_learning/k_means.py)
 - [Partitioning Around Medoids](https://github.com/eriklindernoren/ML-From-Scratch/blob/master/unsupervised_learning/partitioning_around_medoids.py)
