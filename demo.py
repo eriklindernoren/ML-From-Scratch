@@ -22,9 +22,17 @@ from perceptron import Perceptron
 from decision_tree import DecisionTree
 from random_forest import RandomForest
 from support_vector_machine import SupportVectorMachine
+from linear_discriminant_analysis import LDA
 # Import PCA
 sys.path.insert(0, dir_path + "/unsupervised_learning")
 from principal_component_analysis import PCA
+
+print
+print "#-------------------------------#"
+print "|                               |"
+print "| Machine Learning From Scratch |"
+print "|                               |"
+print "#-------------------------------#"
 
 # ...........
 #  LOAD DATA
@@ -67,10 +75,12 @@ perceptron = Perceptron()
 decision_tree = DecisionTree()
 random_forest = RandomForest(n_estimators=150)
 support_vector_machine = SupportVectorMachine(C=1, kernel=rbf_kernel)
+lda = LDA()
 
 # ........
 #  TRAIN
 # ........
+print 
 print "Training:"
 print "\tAdaboost"
 adaboost.fit(X_train, rescaled_y_train)
@@ -78,6 +88,8 @@ print "\tNaive Bayes"
 naive_bayes.fit(X_train, y_train)
 print "\tLogistic Regression"
 logistic_regression.fit(X_train, y_train)
+print "\tLDA"
+lda.fit(X_train, y_train)
 print "\tMultilayer Perceptron"
 mlp.fit(X_train, y_train, n_iterations=20000, learning_rate=0.1)
 print "\tPerceptron"
@@ -89,6 +101,7 @@ random_forest.fit(X_train, y_train)
 print "\tSupport Vector Machine"
 support_vector_machine.fit(X_train, rescaled_y_train)
 
+
 # .........
 #  PREDICT
 # .........
@@ -97,6 +110,7 @@ y_pred["Adaboost"] = adaboost.predict(X_test)
 y_pred["Naive Bayes"] = naive_bayes.predict(X_test)
 y_pred["K Nearest Neighbors"] = knn.predict(X_test, X_train, y_train)
 y_pred["Logistic Regression"] = logistic_regression.predict(X_test)
+y_pred["LDA"] = lda.predict(X_test)
 y_pred["Multilayer Perceptron"] = mlp.predict(X_test)
 y_pred["Perceptron"] = perceptron.predict(X_test)
 y_pred["Decision Tree"] = decision_tree.predict(X_test)
@@ -106,6 +120,7 @@ y_pred["Support Vector Machine"] = support_vector_machine.predict(X_test)
 # ..........
 #  ACCURACY
 # ..........
+print 
 print "Accuracy:"
 for clf in y_pred:
 	if clf == "Adaboost" or clf == "Support Vector Machine":

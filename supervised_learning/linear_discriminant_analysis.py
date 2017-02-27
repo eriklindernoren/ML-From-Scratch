@@ -7,14 +7,24 @@ import pandas as pd
 # Import helper functions
 dir_path = os.path.dirname(os.path.realpath(__file__))
 sys.path.insert(0, dir_path + "/../utils")
-from data_operation import calculate_covariance_matrix
-from data_manipulation import normalize, standardize
+from data_operation import calculate_covariance_matrix, accuracy_score
+from data_manipulation import normalize, standardize, train_test_split
+sys.path.insert(0, dir_path + "/../unsupervised_learning/")
+from principal_component_analysis import PCA
 
 
 class LDA():
-	def __init__(self): pass
+	def __init__(self):
+		self.w = None
 
 	def transform(self, X, y):
+		self.fit(X, y)
+
+		X_transform = X.dot(self.w)
+
+		return X_transform
+
+	def fit(self, X, y):
 		# Separate data by class
 		X1 = X[y == 0]
 		X2 = X[y == 1]
@@ -31,12 +41,17 @@ class LDA():
 
 		# Determine the vector which when X is projected onto it best separates the
 		# data by class. w = (mean1 - mean2) / (cov1 + cov2)
-		w = np.linalg.pinv(cov_tot).dot(mean_diff)
+		self.w = np.linalg.pinv(cov_tot).dot(mean_diff)
 
-		# Project data onto vector
-		X_transform = X.dot(w)
-
-		return X_transform
+	def predict(self, X):
+		y_pred = []
+		for sample in X:
+			h = sample.dot(self.w)
+			if h > 0:
+				y_pred.append(0)
+			else:
+				y_pred.append(1)
+		return y_pred
 
 # Demo
 def main():
@@ -49,12 +64,16 @@ def main():
 	X = X[y != 2]
 	y = y[y != 2]
 
-	# Transform data using LDA
-	lda = LDA()
-	X_transformed = lda.transform(X, y)
+	X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33)
 
-	# Plot the data
-	plt.scatter(X_transformed, X_transformed,c=y)
-	plt.show()
+	# Fit and predict using LDA
+	lda = LDA()
+	lda.fit(X_train, y_train)
+	y_pred = lda.predict(X_test)
+
+	print "Accuracy:", accuracy_score(y_test, y_pred)
+
+	pca = PCA()
+	pca.plot_in_2d(X_test, y_pred)
 
 if __name__ == "__main__": main()
