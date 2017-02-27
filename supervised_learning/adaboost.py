@@ -17,6 +17,7 @@ from principal_component_analysis import PCA
 class Adaboost():
     def __init__(self, n_clf=5):
         self.n_clf = n_clf
+        # List of weak classifiers
         # clf = [threshold, polarity, feature_index, alpha]
         self.clfs = np.ones((4,self.n_clf))
 
@@ -39,15 +40,14 @@ class Adaboost():
                     err = 0
                     # Select feature as threshold
                     tao = X[t, n]
-                    # Iterate through all samples and measure the corresponding features
-                    # against the selected threshold and see if the threshold can help predict
-                    # y
+                    # Iterate through all values of the threshold feature and measure the value
+                    # against the threshold and determine by the error if makes for a good predictor
                     for m in range(n_samples):
                         x = X[m, n]
                         y_true = y[m]
-                        h = 1.0
-                        p = 1
-                        if p*x < p*tao:
+                        h = 1.0             # Hypothesis
+                        p = 1               # Polarity
+                        if p*x < p*tao:     # If lower than threshold => h = -1
                             h = -1.0
                         err = err + w[m]*(y_true != h)
                     # E.g err = 0.8 => (1 - err) = 0.2
@@ -63,6 +63,7 @@ class Adaboost():
                         feature_index = n
                         err_min = err
             # Calculate the alpha which is used to update the sample weights
+            # and is an approximation of this classifiers proficiency
             alpha = 0.5*math.log((1.0001-err_min)/(err_min + 0.0001))
             # Save the classifier configuration
             self.clfs[:4,c] = [threshold, polarity, feature_index, alpha]
@@ -85,7 +86,7 @@ class Adaboost():
         for i in range(len(X[:,0])):
             s = 0
             for c in range(self.n_clf):
-                # Get classifier parameters
+                # Get classifier configuration
                 clf = self.clfs[:, c]
                 threshold = clf[0]
                 polarity = clf[1]
@@ -95,7 +96,7 @@ class Adaboost():
                 h = 1
                 if polarity*x < polarity*threshold:
                     h = -1
-                # Weight prediction by classifiers proficiency
+                # Weight prediction by classifiers approximated proficiency
                 s += alpha*h
             y = np.sign(s)
             y_pred.append(y)
