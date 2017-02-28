@@ -27,11 +27,11 @@ sys.path.insert(0, dir_path + "/unsupervised_learning")
 from principal_component_analysis import PCA
 
 print
-print "#-------------------------------------------#"
+print "+-------------------------------------------+"
 print "|                                           |"
 print "|       Machine Learning From Scratch       |"
 print "|                                           |"
-print "#-------------------------------------------#"
+print "+-------------------------------------------+"
 print
 
 # ...........
