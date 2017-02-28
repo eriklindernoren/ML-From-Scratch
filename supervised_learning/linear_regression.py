@@ -24,10 +24,8 @@ class LinearRegression():
         if self.gradient_descent:
             # Get weights by gradient descent opt.
             n_features = np.shape(X)[1]
-            # Initial weights between [-1/sqrt(N), 1/sqrt(N)]
-            a = -1 / math.sqrt(n_features)
-            b = -a
-            self.w = (b - a) * np.random.random((n_features, )) + a
+            # Initial weights randomly [0, 1]
+            self.w = np.random.random((n_features, ))
             # Tune weights for n_iterations
             for _ in range(self.n_iterations):
                 w_gradient = -(y - X.dot(self.w)).dot(X)
