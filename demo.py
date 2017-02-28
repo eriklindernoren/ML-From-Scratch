@@ -28,11 +28,12 @@ sys.path.insert(0, dir_path + "/unsupervised_learning")
 from principal_component_analysis import PCA
 
 print
-print "#-------------------------------#"
-print "|                               |"
-print "| Machine Learning From Scratch |"
-print "|                               |"
-print "#-------------------------------#"
+print "#-------------------------------------------#"
+print "|                                           |"
+print "|       Machine Learning From Scratch       |"
+print "|                                           |"
+print "#-------------------------------------------#"
+print
 
 # ...........
 #  LOAD DATA
@@ -80,7 +81,6 @@ lda = LDA()
 # ........
 #  TRAIN
 # ........
-print 
 print "Training:"
 print "\tAdaboost"
 adaboost.fit(X_train, rescaled_y_train)
@@ -127,7 +127,7 @@ for clf in y_pred:
 		print "\t%-23s: %.5f" %(clf, accuracy_score(rescaled_y_test, y_pred[clf]))
 	else:
 		print "\t%-23s: %.5f" %(clf, accuracy_score(y_test, y_pred[clf]))
-
+print 
 # .......
 #  PLOT
 # .......

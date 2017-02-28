@@ -1,4 +1,6 @@
-import sys, os, math
+import sys
+import os
+import math
 from sklearn import datasets
 import numpy as np
 import pandas as pd
@@ -12,55 +14,53 @@ from data_operation import accuracy_score
 sys.path.insert(0, dir_path + "/../unsupervised_learning/")
 from principal_component_analysis import PCA
 
+
 # The sigmoid function
 def sigmoid(x):
-    return 1/(1+np.exp(-x))
+    return 1 / (1 + np.exp(-x))
 
+# Gradient of the sigmoid func.
 def sigmoid_gradient(x):
-    return sigmoid(x)*(1-sigmoid(x))
+    return sigmoid(x) * (1 - sigmoid(x))
+
 
 class LogisticRegression():
     def __init__(self):
         self.param = None
 
     def fit(self, X, y, n_iterations=4):
-        X_train = np.array(X, dtype=float)
-        # Add one to take bias weights into consideration
-        X_train = np.insert(X_train, 0, 1, axis=1)
-        y_train = np.atleast_1d(y)
+        # Add dummy ones for bias weights
+        X = np.insert(X, 0, 1, axis=1)
 
-        n_features = len(X_train[0])
+        n_samples, n_features = np.shape(X)
 
         # Initial parameters between [-1/sqrt(N), 1/sqrt(N)]
-        a = -1/math.sqrt(n_features)
+        a = -1 / math.sqrt(n_features)
         b = -a
-        self.param = (b-a)*np.random.random((len(X_train[0]),)) + a
+        self.param = (b - a) * np.random.random((n_features,)) + a
 
         # Tune parameters for n iterations
         for i in range(n_iterations):
             # Make a new prediction
-            dot = X_train.dot(self.param)
-            y_pred = sigmoid(dot)
+            y_pred = sigmoid(X.dot(self.param))
             # Make a diagonal matrix of the sigmoid gradient column vector
-            diag_gradient = make_diagonal(sigmoid_gradient(dot))
+            diag_gradient = make_diagonal(sigmoid_gradient(X.dot(self.param)))
             # Batch opt:
-            # (X^T * diag(sigm*(1 - sigm) * X) * X^T * (diag(sigm*(1 - sigm) * X * param + Y - Y_pred)
-            self.param = np.linalg.pinv(X_train.T.dot(diag_gradient).dot(X_train)).dot(X_train.T).dot(diag_gradient.dot(X_train).dot(self.param) + y_train - y_pred)
+            self.param = np.linalg.pinv(X.T.dot(diag_gradient).dot(X)).dot(X.T).dot(diag_gradient.dot(X).dot(self.param) + y - y_pred)
 
     def predict(self, X):
-        X_test = np.array(X, dtype=float)
-        # Add ones to take bias weights into consideration
-        X_test = np.insert(X_test, 0, 1, axis=1)
+        # Add dummy ones for bias weights
+        X = np.insert(X, 0, 1, axis=1)
         # Print a final prediction
-        dot = X_test.dot(self.param)
+        dot = X.dot(self.param)
         y_pred = np.round(sigmoid(dot)).astype(int)
         return y_pred
 
-# Demo
-def main():
 
+def main():
+    # Load dataset
     data = datasets.load_iris()
-    X = data.data[data.target != 0]
+    X = normalize(data.data[data.target != 0])
     y = data.target[data.target != 0]
     y[y == 1] = 0
     y[y == 2] = 1
@@ -73,9 +73,9 @@ def main():
 
     print "Accuracy:", accuracy_score(y_test, y_pred)
 
-     # Reduce dimension to two using PCA and plot the results
+    # Reduce dimension to two using PCA and plot the results
     pca = PCA()
     pca.plot_in_2d(X_test, y_pred)
 
-if __name__ == "__main__": main()
-
+if __name__ == "__main__":
+    main()

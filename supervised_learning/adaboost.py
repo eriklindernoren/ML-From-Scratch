@@ -1,5 +1,7 @@
 from __future__ import division
-import math, sys, os
+import math
+import sys
+import os
 import numpy as np
 from sklearn.datasets import make_gaussian_quantiles
 import matplotlib.pyplot as plt
@@ -19,14 +21,14 @@ class Adaboost():
         self.n_clf = n_clf
         # List of weak classifiers
         # clf = [threshold, polarity, feature_index, alpha]
-        self.clfs = np.ones((4,self.n_clf))
+        self.clfs = np.ones((4, self.n_clf))
 
     def fit(self, X, y):
-        
+
         n_samples, n_features = np.shape(X)
 
         # Initialize weights to 1/N
-        w = np.ones(n_samples)*(1/n_features)
+        w = np.ones(n_samples) * (1 / n_features)
         # Iterate through classifiers
         for c in range(self.n_clf):
             # Initial values
@@ -41,15 +43,16 @@ class Adaboost():
                     # Select feature as threshold
                     tao = X[t, n]
                     # Iterate through all values of the threshold feature and measure the value
-                    # against the threshold and determine by the error if makes for a good predictor
+                    # against the threshold and determine by the error if makes
+                    # for a good predictor
                     for m in range(n_samples):
                         x = X[m, n]
                         y_true = y[m]
                         h = 1.0             # Hypothesis
                         p = 1               # Polarity
-                        if p*x < p*tao:     # If lower than threshold => h = -1
+                        if p * x < p * tao:     # If lower than threshold => h = -1
                             h = -1.0
-                        err = err + w[m]*(y_true != h)
+                        err = err + w[m] * (y_true != h)
                     # E.g err = 0.8 => (1 - err) = 0.2
                     # We flip the error and polarity
                     if err > 0.5 and err < 1:
@@ -64,26 +67,26 @@ class Adaboost():
                         err_min = err
             # Calculate the alpha which is used to update the sample weights
             # and is an approximation of this classifiers proficiency
-            alpha = 0.5*math.log((1.0001-err_min)/(err_min + 0.0001))
+            alpha = 0.5 * math.log((1.0001 - err_min) / (err_min + 0.0001))
             # Save the classifier configuration
-            self.clfs[:4,c] = [threshold, polarity, feature_index, alpha]
-            # Iterate through samples and update weights 
+            self.clfs[:4, c] = [threshold, polarity, feature_index, alpha]
+            # Iterate through samples and update weights
             # Large weight => hard sample to classify
             for m in range(n_samples):
                 h = 1.0
                 x = X[m, feature_index]
                 y_true = y[m]
-                if polarity*x < polarity*threshold:
+                if polarity * x < polarity * threshold:
                     h = -1.0
-                w[m] = w[m]*math.exp(-alpha*y_true*h)
+                w[m] = w[m] * math.exp(-alpha * y_true * h)
             # Renormalize the weight vector
-            w = w * (1/np.sum(w))
+            w = w * (1 / np.sum(w))
 
     def predict(self, X):
         y_pred = []
         correct = 0
         # Iterate through each test sample and classify by commitee
-        for i in range(len(X[:,0])):
+        for i in range(len(X[:, 0])):
             s = 0
             for c in range(self.n_clf):
                 # Get classifier configuration
@@ -94,15 +97,15 @@ class Adaboost():
                 alpha = clf[3]
                 x = X[i, feature_index]
                 h = 1
-                if polarity*x < polarity*threshold:
+                if polarity * x < polarity * threshold:
                     h = -1
                 # Weight prediction by classifiers approximated proficiency
-                s += alpha*h
+                s += alpha * h
             y = np.sign(s)
             y_pred.append(y)
         return y_pred
 
-# Demo
+
 def main():
     df = pd.read_csv(dir_path + "/../data/iris.csv")
     # Change class labels from strings to numbers
@@ -114,9 +117,9 @@ def main():
     X = df.loc[df['species'] != "2"].drop("species", axis=1).as_matrix()
     y = df.loc[df['species'] != "2"]["species"].as_matrix()
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33)
-    
+
     # Adaboost classification
-    clf = Adaboost(n_clf = 8)
+    clf = Adaboost(n_clf=8)
     clf.fit(X_train, y_train)
     y_pred = clf.predict(X_test)
 
@@ -127,4 +130,5 @@ def main():
     pca.plot_in_2d(X_test, y_pred)
 
 
-if __name__ == "__main__": main()
+if __name__ == "__main__":
+    main()
