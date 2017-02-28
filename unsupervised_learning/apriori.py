@@ -77,10 +77,10 @@ class Apriori():
                 return False
         return True
 
-    # Returns the set of frequent itemsets in D
-    def find_frequent_itemsets(self, D):
+    # Returns the set of frequent itemsets in the list of transactions
+    def find_frequent_itemsets(self, transactions):
         # Get the list of all frequent items
-        self.freq_itemsets = [self._get_frequent_items(D)]
+        self.freq_itemsets = [self._get_frequent_items(transactions)]
         while(True):
             # Generate new candidates from last added frequent itemsets
             candidates = self._generate_candidates(self.freq_itemsets[-1])
@@ -88,11 +88,11 @@ class Apriori():
             # Add candidate as frequent if it has minimum support
             for candidate in candidates:
                 count = 0
-                for transaction in D:
+                for transaction in transactions:
                     if self._items_in_transaction(candidate, transaction):
                         count += 1
                 # Check minimum support
-                if count / len(D) >= self.min_sup:
+                if count / len(transactions) >= self.min_sup:
                     freq.append(candidate)
 
             # If we have an empty list we're done
