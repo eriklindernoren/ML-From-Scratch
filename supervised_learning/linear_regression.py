@@ -21,17 +21,17 @@ class LinearRegression():
     def fit(self, X, y):
         # Insert constant ones for bias weights
         X = np.insert(X, 0, 1, axis=1)
+        # Get weights by gradient descent opt.
         if self.gradient_descent:
-            # Get weights by gradient descent opt.
             n_features = np.shape(X)[1]
             # Initial weights randomly [0, 1]
             self.w = np.random.random((n_features, ))
-            # Tune weights for n_iterations
+            # Do gradient descent for n_iterations
             for _ in range(self.n_iterations):
-                w_gradient = -(y - X.dot(self.w)).dot(X)
+                w_gradient = X.T.dot(X.dot(self.w) - y)
                 self.w -= self.learning_rate * w_gradient
+        # Get weights by least squares (by pseudoinverse)
         else:
-            # Get weights by least squares (by pseudoinverse)
             U, S, V = np.linalg.svd(X.T.dot(X))
             S = np.diag(S)
             X_sq_inv = V.dot(np.linalg.pinv(S)).dot(U.T)
