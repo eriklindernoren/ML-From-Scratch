@@ -4,9 +4,11 @@ Python implementations of some of the foundational Machine Learning models and a
 
 While some of the matrix operations that are implemented by hand (such as calculation of covariance matrix) are 
 available in numpy I have decided to add these as well to make sure that I understand how the linear algebra is applied.
-
+The only reason the project uses scikit-learn is to evaluate the implementations on sklearn.datasets.
 
 The purpose of this project is purely self-educational.
+
+Feel free to [contact me](mailto:eriklindernoren@gmail.com) if you have ideas for new implementations.
 
 ##Current implementations:
 ####Supervised Learning:
