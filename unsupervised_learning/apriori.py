@@ -142,6 +142,7 @@ class Apriori():
                     antecedent = antecedent[0]
                 if len(concequent) == 1:
                     concequent = concequent[0]
+
                 # Add rule to list of rules
                 rules.append(Rule(antecedent=antecedent, concequent=concequent, confidence=confidence, support=support))
                 # If there are subsets that could result in rules
@@ -167,12 +168,15 @@ def main():
     # Example 2: https://en.wikipedia.org/wiki/Apriori_algorithm
     transactions = np.array([[1,2,3,4], [1,2,4], [1,2], [2,3,4], [2,3], [3,4], [2,4]])
     print "- Apriori -"
+    min_sup = 3/7
+    min_conf = 0.8
+    print "Minimum - support: %.2f, confidence: %s" % (min_sup, min_conf)
     print "Transactions:"
     print transactions
 
-    apriori = Apriori(min_sup=3/7, min_conf=0.8)
+    apriori = Apriori(min_sup=min_sup, min_conf=min_conf)
     
-    # Get and print the frequent itemsets within transactions
+    # Get and print the frequent itemsets
     frequent_itemsets = apriori.find_frequent_itemsets(transactions)
     print "Frequent Itemsets:\n%s" % frequent_itemsets
 
