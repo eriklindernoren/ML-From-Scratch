@@ -53,7 +53,7 @@ class RandomForest():
             self.feature_indices.append(idx)
             # Choose the features corresponding the the indices
             X_subset = X_subset[:, idx]
-            # Fit the data to the tree
+            # Fit the tree to the data
             self.trees[i].fit(X_subset, y_subset)
 
             progress = 100 * (i / self.n_estimators)
@@ -79,11 +79,15 @@ class RandomForest():
             # Do a majority vote over the predictions (columns)
             max_count = 0
             most_common = None
+            # For each unique predicted label -> count occurences
+            # and save the most predicted label
             for label in np.unique(sample_predictions):
                 count = len(sample_predictions[sample_predictions == label])
                 if count > max_count:
                     max_count = count
                     most_common = label
+            # The most common prediction gets added as final prediction 
+            # of the sample
             y_pred.append(most_common)
         return y_pred
 

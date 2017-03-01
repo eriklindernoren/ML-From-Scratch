@@ -11,6 +11,7 @@ class Rule():
         self.confidence = confidence
         self.support = support
 
+
 class Apriori():
     def __init__(self, min_sup=0.3, min_conf=0.81):
         self.min_sup = min_sup
@@ -19,12 +20,12 @@ class Apriori():
         self.transactions = None
 
     def _calculate_support(self, itemset):
-            count = 0
-            for transaction in self.transactions:
-                if self._transaction_contains_items(transaction, itemset):
-                    count += 1
-            support = count / len(self.transactions)
-            return support
+        count = 0
+        for transaction in self.transactions:
+            if self._transaction_contains_items(transaction, itemset):
+                count += 1
+        support = count / len(self.transactions)
+        return support
 
     def _get_frequent_itemsets(self, candidates):
         frequent = []
@@ -35,20 +36,19 @@ class Apriori():
                 frequent.append(itemset)
         return frequent
 
-    # True or false depending on the candidate has any 
+    # True or false depending on the candidate has any
     # subset with size k - 1 that is not in the frequent
     # itemset
     def _has_infrequent_itemsets(self, candidate):
         k = len(candidate)
         # Find all combinations of size k-1 in candidate
-        subsets = list(itertools.combinations(candidate, k-1))
+        subsets = list(itertools.combinations(candidate, k - 1))
         for t in subsets:
             # t - is tuple. If size == 1 get the element
             subset = list(t) if len(t) > 1 else t[0]
             if not subset in self.freq_itemsets[-1]:
                 return True
         return False
-
 
     # Joins the elements in the frequent itemset and prunes
     # resulting sets if they contain subsets that have been determined
@@ -68,7 +68,7 @@ class Apriori():
                     valid = True
 
                 if valid:
-                    # Add the last element in itemset2 to itemset1 to 
+                    # Add the last element in itemset2 to itemset1 to
                     # create a new candidate
                     if single_item:
                         candidate = [itemset1, itemset2]
@@ -81,8 +81,7 @@ class Apriori():
                         candidates.append(candidate)
         return candidates
 
-
-    # True or false depending on each item in the itemset is 
+    # True or false depending on each item in the itemset is
     # in the transaction
     def _transaction_contains_items(self, transaction, items):
         # If items is in fact only one item
@@ -116,7 +115,8 @@ class Apriori():
             self.freq_itemsets.append(freq)
 
         # Flatten the array and return every frequent itemset
-        frequent_itemsets = [itemset for sublist in self.freq_itemsets for itemset in sublist]
+        frequent_itemsets = [
+            itemset for sublist in self.freq_itemsets for itemset in sublist]
         return frequent_itemsets
 
     # Recursive function which returns the rules where confidence >= min_confidence
@@ -125,7 +125,7 @@ class Apriori():
         rules = []
         k = len(itemset)
         # Get all combinations of sub-itemsets of size k - 1 from itemset
-        subsets = list(itertools.combinations(itemset, k-1))
+        subsets = list(itertools.combinations(itemset, k - 1))
         support = self._calculate_support(full_itemset)
         for antecedent in subsets:
             # itertools.combinations returns tuples => convert to list
@@ -144,19 +144,24 @@ class Apriori():
                     concequent = concequent[0]
 
                 # Add rule to list of rules
-                rules.append(Rule(antecedent=antecedent, concequent=concequent, confidence=confidence, support=support))
+                rules.append(
+                    Rule(
+                        antecedent=antecedent,
+                        concequent=concequent,
+                        confidence=confidence,
+                        support=support))
                 # If there are subsets that could result in rules
                 # recursively add rules from subsets
                 if k - 1 > 1:
                     rules.append(self._rules_from_itemset(full_itemset, subset))
         return rules
 
-
     def generate_rules(self, transactions):
         self.transactions = transactions
         frequent_itemsets = self.find_frequent_itemsets(transactions)
         # Only consider itemsets of size >= 2 items
-        frequent_itemsets = [itemset for itemset in frequent_itemsets if not isinstance(itemset, int)]
+        frequent_itemsets = [itemset for itemset in frequent_itemsets if not isinstance(
+                itemset, int)]
         rules = []
         for itemset in frequent_itemsets:
             rules += self._rules_from_itemset(itemset, itemset)
@@ -166,25 +171,26 @@ class Apriori():
 def main():
     # Demo transaction set
     # Example 2: https://en.wikipedia.org/wiki/Apriori_algorithm
-    transactions = np.array([[1,2,3,4], [1,2,4], [1,2], [2,3,4], [2,3], [3,4], [2,4]])
+    transactions = np.array([[1, 2, 3, 4], [1, 2, 4], [1, 2], [2, 3, 4], [2, 3], [3, 4], [2, 4]])
     print "- Apriori -"
-    min_sup = 3/7
+    min_sup = 3 / 7
     min_conf = 0.8
     print "Minimum - support: %.2f, confidence: %s" % (min_sup, min_conf)
     print "Transactions:"
-    print transactions
+    for transaction in transactions:
+        print "\t%s" % transaction
 
     apriori = Apriori(min_sup=min_sup, min_conf=min_conf)
-    
+
     # Get and print the frequent itemsets
     frequent_itemsets = apriori.find_frequent_itemsets(transactions)
-    print "Frequent Itemsets:\n%s" % frequent_itemsets
+    print "Frequent Itemsets:\n\t%s" % frequent_itemsets
 
     # Get and print the rules
     rules = apriori.generate_rules(transactions)
     print "Rules:"
     for rule in rules:
-        print "%s -> %s (conf:%s, sup:%.2f)" % (rule.antecedent, rule.concequent, rule.confidence, rule.support)
+        print "\t%s -> %s (conf:%s, sup:%.2f)" % (rule.antecedent, rule.concequent, rule.confidence, rule.support)
 
 
 if __name__ == "__main__":
