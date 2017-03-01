@@ -130,17 +130,16 @@ class Apriori():
         for antecedent in subsets:
             # itertools.combinations returns tuples => convert to list
             antecedent = list(antecedent)
-            # If single item => get item
-            if len(antecedent) == 1:
-                antecedent = antecedent[0]
             antecedent_support = self._calculate_support(antecedent)
             # Calculate the confidence as sup(A and B) / sub(B), if antecedent
             # is B in an itemset of A and B
             confidence = float("{0:.2f}".format(support / antecedent_support))
             if confidence >= self.min_conf:
                 # Concequent is the full_itemset except for antecedent
-                concequent = [itemset for itemset in full_itemset if itemset != antecedent]
+                concequent = [itemset for itemset in full_itemset if not itemset in antecedent]
                 # If single item => get item
+                if len(antecedent) == 1:
+                    antecedent = antecedent[0]
                 if len(concequent) == 1:
                     concequent = concequent[0]
                 # Add rule to list of rules
