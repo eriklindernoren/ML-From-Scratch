@@ -14,13 +14,7 @@ class Apriori():
         for itemset in candidates:
             count = 0
             for transaction in transactions:
-                # If the itemset contains many items (list of ints)
-                single_item = not isinstance(itemset, int)
-                # If list of items and transaction contains all items
-                if not single_item and self._items_in_transaction(itemset, transaction):
-                    count += 1
-                # If single item and transaction contains item
-                if single_item and itemset in transaction:
+                if self._items_in_transaction(itemset, transaction):
                     count += 1
             support = count / len(transactions)
             if support >= self.min_sup:
@@ -74,9 +68,14 @@ class Apriori():
         return candidates
 
 
-    # True or false depending on each item in the itemset is also
+    # True or false depending on each item in the itemset is 
     # in the transaction
     def _items_in_transaction(self, items, transaction):
+        # If items is in fact only one item
+        if isinstance(items, int):
+            return items in transaction
+        # Iterate through list of items and make sure that
+        # all items are in the transaction
         for item in items:
             if not item in transaction:
                 return False
