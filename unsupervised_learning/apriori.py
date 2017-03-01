@@ -8,18 +8,23 @@ class Apriori():
         self.min_sup = min_sup
         self.freq_itemsets = None
 
-    def _get_frequent_items(self, transactions):
+    def _get_frequent_itemsets(self, candidates, transactions):
         frequent = []
-        # Get all unique items in the transactions
-        unique_items = set(item for transaction in transactions for item in transaction)
         # Find frequent items
-        for item in unique_items:
+        for itemset in candidates:
             count = 0
             for transaction in transactions:
-                if item in transaction:
+                # If the itemset contains many items (list of ints)
+                single_item = not isinstance(itemset, int)
+                # If list of items and transaction contains all items
+                if not single_item and self._items_in_transaction(itemset, transaction):
                     count += 1
-            if count / len(transactions) >= self.min_sup:
-                frequent.append(item)
+                # If single item and transaction contains item
+                if single_item and itemset in transaction:
+                    count += 1
+            support = count / len(transactions)
+            if support >= self.min_sup:
+                frequent.append(itemset)
         return frequent
 
     # True or false depending on the candidate has any 
@@ -79,26 +84,21 @@ class Apriori():
 
     # Returns the set of frequent itemsets in the list of transactions
     def find_frequent_itemsets(self, transactions):
-        # Get the list of all frequent items
-        self.freq_itemsets = [self._get_frequent_items(transactions)]
+        # Get all unique items in the transactions
+        unique_items = set(item for transaction in transactions for item in transaction)
+        # Get the frequent items
+        self.freq_itemsets = [self._get_frequent_itemsets(unique_items, transactions)]
         while(True):
             # Generate new candidates from last added frequent itemsets
             candidates = self._generate_candidates(self.freq_itemsets[-1])
-            freq = []
-            # Add candidate as frequent if it has minimum support
-            for candidate in candidates:
-                count = 0
-                for transaction in transactions:
-                    if self._items_in_transaction(candidate, transaction):
-                        count += 1
-                # Check minimum support
-                if count / len(transactions) >= self.min_sup:
-                    freq.append(candidate)
+            # Get the frequent itemsets among those candidates
+            freq = self._get_frequent_itemsets(candidates, transactions)
 
             # If we have an empty list we're done
             if not freq:
                 break
 
+            # Add them to the total list of frequent itemsets and start over
             self.freq_itemsets.append(freq)
 
         # Flatten the array and return every frequent itemset
