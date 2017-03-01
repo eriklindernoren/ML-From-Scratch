@@ -42,6 +42,7 @@ class Apriori():
     def _has_infrequent_itemsets(self, candidate):
         k = len(candidate)
         # Find all combinations of size k-1 in candidate
+        # E.g [1,2,3] => [[1,2],[1,3],[2,3]]
         subsets = list(itertools.combinations(candidate, k - 1))
         for t in subsets:
             # t - is tuple. If size == 1 get the element
@@ -121,12 +122,13 @@ class Apriori():
 
     # Recursive function which returns the rules where confidence >= min_confidence
     # Starts with large itemset and recursively explores rules for subsets
-    def _rules_from_itemset(self, full_itemset, itemset):
+    def _rules_from_itemset(self, initial_itemset, itemset):
         rules = []
         k = len(itemset)
         # Get all combinations of sub-itemsets of size k - 1 from itemset
+        # E.g [1,2,3] => [[1,2],[1,3],[2,3]]
         subsets = list(itertools.combinations(itemset, k - 1))
-        support = self._calculate_support(full_itemset)
+        support = self._calculate_support(initial_itemset)
         for antecedent in subsets:
             # itertools.combinations returns tuples => convert to list
             antecedent = list(antecedent)
@@ -135,25 +137,25 @@ class Apriori():
             # is B in an itemset of A and B
             confidence = float("{0:.2f}".format(support / antecedent_support))
             if confidence >= self.min_conf:
-                # Concequent is the full_itemset except for antecedent
-                concequent = [itemset for itemset in full_itemset if not itemset in antecedent]
+                # The concequent is the initial_itemset except for antecedent
+                concequent = [itemset for itemset in initial_itemset if not itemset in antecedent]
                 # If single item => get item
                 if len(antecedent) == 1:
                     antecedent = antecedent[0]
                 if len(concequent) == 1:
                     concequent = concequent[0]
-
-                # Add rule to list of rules
-                rules.append(
-                    Rule(
+                # Create new rule
+                rule = Rule(
                         antecedent=antecedent,
                         concequent=concequent,
                         confidence=confidence,
-                        support=support))
+                        support=support)
+                rules.append(rule)
+                    
                 # If there are subsets that could result in rules
                 # recursively add rules from subsets
                 if k - 1 > 1:
-                    rules.append(self._rules_from_itemset(full_itemset, subset))
+                    rules.append(self._rules_from_itemset(initial_itemset, subset))
         return rules
 
     def generate_rules(self, transactions):
