@@ -69,13 +69,13 @@ class Apriori():
                     valid = True
 
                 if valid:
-                    # Add the last element in itemset2 to itemset1 to
+                    # JOIN: Add the last element in itemset2 to itemset1 to
                     # create a new candidate
                     if single_item:
                         candidate = [itemset1, itemset2]
                     else:
                         candidate = itemset1 + [itemset2[-1]]
-                    # Check if any subset of candidate have been determined
+                    # PRUNE: Check if any subset of candidate have been determined
                     # to be infrequent
                     infrequent = self._has_infrequent_itemsets(candidate)
                     if not infrequent:
@@ -133,7 +133,7 @@ class Apriori():
             # itertools.combinations returns tuples => convert to list
             antecedent = list(antecedent)
             antecedent_support = self._calculate_support(antecedent)
-            # Calculate the confidence as sup(A and B) / sub(B), if antecedent
+            # Calculate the confidence as sup(A and B) / sup(B), if antecedent
             # is B in an itemset of A and B
             confidence = float("{0:.2f}".format(support / antecedent_support))
             if confidence >= self.min_conf:

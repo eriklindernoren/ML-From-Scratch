@@ -30,7 +30,7 @@ class SupportVectorMachine(object):
         self.lagr_multipliers = None
         self.support_vectors = None
         self.support_vector_labels = None
-        self.intecept = None
+        self.intercept = None
 
     def fit(self, X, y):
 

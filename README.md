@@ -8,7 +8,7 @@ The reason the project uses scikit-learn is to evaluate the implementations on s
 
 The purpose of this project is purely self-educational.
 
-Feel free to [reach out](mailto:eriklindernoren@gmail.com) if you have ideas about how to expand this project.
+Feel free to [reach out](mailto:eriklindernoren@gmail.com) if you have ideas about ways to expand this project.
 
 ##Current implementations:
 ####Supervised Learning:
