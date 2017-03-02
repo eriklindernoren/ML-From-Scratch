@@ -126,15 +126,16 @@ class FPGrowth():
             itemset_key = str(itemset[0])
         return itemset_key
 
-    def _build_frequent_itemsets(self, conditional_database, suffix):
+    def _determine_frequent_itemsets(self, conditional_database, suffix):
         # Calculate new frequent 1D items from the conditional database
         # of suffix
         items_sup = self._get_frequent_items(conditional_database)
         frequent_items = [[el[0]] for el in items_sup]
 
-        # Add the suffix as the last element of the frequent itemsets
-        frequent_items = [el + suffix for el in frequent_items]
-        self.frequent_itemsets += frequent_items
+        if suffix:
+            # Add the suffix as the last element of the frequent itemsets
+            frequent_items = [el + suffix for el in frequent_items]
+            self.frequent_itemsets += frequent_items
 
         self.prefixes = {}
         for itemset in frequent_items:
@@ -145,7 +146,7 @@ class FPGrowth():
                 for el in self.prefixes[itemset_key]:
                     for _ in range(el["support"]):
                         conditional_database.append(el["prefix"])
-                self._build_frequent_itemsets(conditional_database, suffix=itemset)
+                self._determine_frequent_itemsets(conditional_database, suffix=itemset)
     
 
     def find_frequent_itemsets(self, transactions, suffix=None, show_tree=False):
@@ -162,23 +163,8 @@ class FPGrowth():
             print "FP Growth Tree:"
             self.print_tree(self.tree_root)
 
-        self.prefixes = {}
-        for itemset in frequent_items:
-            # Determine prefixes to itemset by traversing the
-            # fp growth tree
-            self._determine_prefixes(itemset, self.tree_root)
-            conditional_database = []
-            itemset_key = self._get_itemset_key(itemset)
-            # If the frequent itemset is a prefix
-            if itemset_key in self.prefixes:
-                # Add prefix itemsets to the conditional database
-                for el in self.prefixes[itemset_key]:
-                    # E.g: 3 in support => add it 3 times 
-                    for _ in range(el["support"]):
-                        conditional_database.append(el["prefix"])
-                # Start building out frequent sets recursively by exploring 
-                # prefixes to the frequent item
-                self._build_frequent_itemsets(conditional_database, suffix=itemset)
+        # Call recursive method
+        self._determine_frequent_itemsets(transactions, suffix=None)
 
         return self.frequent_itemsets
             
