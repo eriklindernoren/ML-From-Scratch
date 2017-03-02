@@ -29,7 +29,7 @@ Feel free to [reach out](mailto:eriklindernoren@gmail.com) if you have ideas abo
 ####Unsupervised Learning:
 - [Apriori](https://github.com/eriklindernoren/ML-From-Scratch/blob/master/unsupervised_learning/apriori.py)
 - [DBSCAN](https://github.com/eriklindernoren/ML-From-Scratch/blob/master/unsupervised_learning/dbscan.py)
-- [FP Growth](https://github.com/eriklindernoren/ML-From-Scratch/blob/master/unsupervised_learning/fp_growth.py)
+- [FP-Growth](https://github.com/eriklindernoren/ML-From-Scratch/blob/master/unsupervised_learning/fp_growth.py)
 - [Gaussian Mixture Model](https://github.com/eriklindernoren/ML-From-Scratch/blob/master/unsupervised_learning/gaussian_mixture_model.py)
 - [K-Means](https://github.com/eriklindernoren/ML-From-Scratch/blob/master/unsupervised_learning/k_means.py)
 - [Partitioning Around Medoids](https://github.com/eriklindernoren/ML-From-Scratch/blob/master/unsupervised_learning/partitioning_around_medoids.py)
