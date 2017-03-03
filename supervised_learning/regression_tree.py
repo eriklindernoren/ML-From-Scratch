@@ -76,9 +76,9 @@ class RegressionTree():
                         # Calculate the variance reduction
                         variance_reduction = var_tot - (var_1 + var_2)
 
-                        # If this threshold resulted in a higher information gain than previously
-                        # recorded save the threshold value and the feature
-                        # index
+                        # If this threshold resulted in a larger variance reduction than
+                        # previously registered we save the feature index and threshold
+                        # and the two sets
                         if variance_reduction > largest_variance_reduction:
                             largest_variance_reduction = variance_reduction
                             best_criteria = {
