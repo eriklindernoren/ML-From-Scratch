@@ -130,32 +130,36 @@ class FPGrowth():
         return itemset_key
 
     def _determine_frequent_itemsets(self, conditional_database, suffix):
-        # Calculate new frequent 1D items from the conditional database
+        # Calculate new frequent items from the conditional database
         # of suffix
         frequent_items = self._get_frequent_items(conditional_database)
 
         cond_tree = None
 
         if suffix:
-            # Add the suffix as the last element of the frequent itemsets
             cond_tree = self._construct_tree(conditional_database)
+            # Output new frequent itemset as the suffix added to the frequent items
             self.frequent_itemsets += [el + suffix for el in frequent_items]
 
         # Determine larger frequent itemset by checking prefixes
         # of the frequent itemsets
         self.prefixes = {}
         for itemset in frequent_items:
+            # If no suffix (first run)
             if not cond_tree:
                 cond_tree = self.tree_root
+            # Determine prefixes to itemset
             self._determine_prefixes(itemset, cond_tree)
             conditional_database = []
             itemset_key = self._get_itemset_key(itemset)
+            # Build conditional database
             if itemset_key in self.prefixes:
                 for el in self.prefixes[itemset_key]:
                     # If support = 4 => add 4 of the corresponding prefix set
                     for _ in range(el["support"]):
                         conditional_database.append(el["prefix"])
-                new_suffix = suffix + itemset if suffix else itemset
+                # Create new suffix
+                new_suffix = itemset + suffix if suffix else itemset
                 self._determine_frequent_itemsets(conditional_database, suffix=new_suffix)
     
 
