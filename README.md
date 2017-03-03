@@ -14,6 +14,7 @@ Feel free to [reach out](mailto:eriklindernoren@gmail.com) if you can think of w
 ####Supervised Learning:
 - [Adaboost](https://github.com/eriklindernoren/ML-From-Scratch/blob/master/supervised_learning/adaboost.py)
 - [Decision Tree](https://github.com/eriklindernoren/ML-From-Scratch/blob/master/supervised_learning/decision_tree.py)
+- [Gradient Boosting Regression](https://github.com/eriklindernoren/ML-From-Scratch/blob/master/supervised_learning/gradient_boosting_regressor.py)
 - [K Nearest Neighbors](https://github.com/eriklindernoren/ML-From-Scratch/blob/master/supervised_learning/k_nearest_neighbors.py)
 - [Linear Discriminant Analysis](https://github.com/eriklindernoren/ML-From-Scratch/blob/master/supervised_learning/linear_discriminant_analysis.py)
 - [Linear Regression](https://github.com/eriklindernoren/ML-From-Scratch/blob/master/supervised_learning/linear_regression.py)

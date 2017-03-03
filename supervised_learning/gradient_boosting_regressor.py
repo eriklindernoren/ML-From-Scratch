@@ -36,12 +36,14 @@ class GradientBoostingRegressor():
                     max_depth=self.max_depth))
 
     def fit(self, X, y):
+        # Set initial prediction to zero
         y_pred = np.zeros(np.shape(y))
         for tree in self.trees:
+            # Calculate the gradient of the loss (MSE)
             residuals = -(y - y_pred)
             tree.fit(X, residuals)
-            gradient = tree.predict(X)
-            y_pred -= np.multiply(self.learning_rate, gradient)
+            residual_pred = tree.predict(X)
+            y_pred -= np.multiply(self.learning_rate, residual_pred)
 
     def predict(self, X):
         y_pred = np.zeros(np.shape(X)[0])
