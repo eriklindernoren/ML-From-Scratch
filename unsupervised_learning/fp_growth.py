@@ -66,9 +66,10 @@ class FPGrowth():
         self._insert_tree(node.children[child.item], children[1:])
 
 
-    def _construct_tree(self, transactions):
-        # Get a list of frequent 1D items and support ([item, support]) sorted by support
-        frequent_items = self._get_frequent_items(transactions)
+    def _construct_tree(self, transactions, frequent_items=None):
+        if not frequent_items:
+            # Get a list of frequent 1D items and support ([item, support]) sorted by support
+            frequent_items = self._get_frequent_items(transactions)
         unique_frequent_items = list(set(item for itemset in frequent_items for item in itemset))
         # Construct the root of the FP Growth tree
         root = FPTreeNode()
@@ -131,19 +132,22 @@ class FPGrowth():
     def _determine_frequent_itemsets(self, conditional_database, suffix):
         # Calculate new frequent 1D items from the conditional database
         # of suffix
-        items_sup = self._get_frequent_items(conditional_database)
-        frequent_items = [[el[0]] for el in items_sup]
+        frequent_items = self._get_frequent_items(conditional_database)
+
+        cond_tree = None
 
         if suffix:
             # Add the suffix as the last element of the frequent itemsets
-            frequent_items = [el + suffix for el in frequent_items]
-            self.frequent_itemsets += frequent_items
+            cond_tree = self._construct_tree(conditional_database)
+            self.frequent_itemsets += [el + suffix for el in frequent_items]
 
         # Determine larger frequent itemset by checking prefixes
         # of the frequent itemsets
         self.prefixes = {}
         for itemset in frequent_items:
-            self._determine_prefixes(itemset, self.tree_root)
+            if not cond_tree:
+                cond_tree = self.tree_root
+            self._determine_prefixes(itemset, cond_tree)
             conditional_database = []
             itemset_key = self._get_itemset_key(itemset)
             if itemset_key in self.prefixes:
@@ -151,7 +155,8 @@ class FPGrowth():
                     # If support = 4 => add 4 of the corresponding prefix set
                     for _ in range(el["support"]):
                         conditional_database.append(el["prefix"])
-                self._determine_frequent_itemsets(conditional_database, suffix=itemset)
+                new_suffix = suffix + itemset if suffix else itemset
+                self._determine_frequent_itemsets(conditional_database, suffix=new_suffix)
     
 
     def find_frequent_itemsets(self, transactions, suffix=None, show_tree=False):
@@ -160,10 +165,9 @@ class FPGrowth():
         # Build the FP Growth Tree
         self.tree_root = self._construct_tree(transactions)
         if show_tree:
-            print "FP Growth Tree:"
+            print "FP-Growth Tree:"
             self.print_tree(self.tree_root)
 
-        # Determine frequent itemsets
         self._determine_frequent_itemsets(transactions, suffix=None)
 
         return self.frequent_itemsets
@@ -182,7 +186,7 @@ def main():
         ["B","C","D"]
         ])
 
-    print "- FPGrowth -"
+    print "- FP-Growth -"
     min_sup = 3
     print "Minimum - support: %s" % min_sup
     print "Transactions:"
