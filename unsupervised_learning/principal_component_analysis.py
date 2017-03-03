@@ -14,16 +14,10 @@ from data_manipulation import standardize
 class PCA():
     def __init__(self): pass
 
-    # Get the covariance of X
-    def get_covariance(self, X):
-        # Calculate the covariance matrix for the data
-        covariance = calculate_covariance_matrix(X)
-        return covariance
-
     # Fit the dataset to the number of principal components
     # specified in the constructor and return the transform dataset
     def transform(self, X, n_components):
-        covariance = self.get_covariance(X)
+        covariance = calculate_covariance_matrix(X)
 
         # Get the eigenvalues and eigenvectors.
         # (eigenvector[:,0] corresponds to eigenvalue[0])

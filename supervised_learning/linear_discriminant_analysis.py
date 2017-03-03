@@ -20,7 +20,6 @@ class LDA():
 
     def transform(self, X, y):
         self.fit(X, y)
-
         # Project data onto vector
         X_transform = X.dot(self.w)
 

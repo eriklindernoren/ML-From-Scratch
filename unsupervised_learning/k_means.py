@@ -21,8 +21,7 @@ class KMeans():
 
     # Initialize the centroids as random samples
     def _init_random_centroids(self, X):
-        n_samples = np.shape(X)[0]
-        n_features = np.shape(X)[1]
+        n_samples, n_features = np.shape(X)
         centroids = np.zeros((self.k, n_features))
         for i in range(self.k):
             centroid = X[np.random.choice(range(n_samples))]
@@ -63,8 +62,7 @@ class KMeans():
     def _get_cluster_labels(self, clusters, X):
         # One prediction for each sample
         y_pred = np.zeros(np.shape(X)[0])
-        for cluster_i in range(len(clusters)):
-            cluster = clusters[cluster_i]
+        for cluster_i, cluster in enumerate(clusters):
             for sample_i in cluster:
                 y_pred[sample_i] = cluster_i
         return y_pred

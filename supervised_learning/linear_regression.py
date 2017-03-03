@@ -16,7 +16,7 @@ class LinearRegression():
         self.w = None
         self.n_iterations = n_iterations
         self.learning_rate = learning_rate
-        self.gradient_descent = gradient_descent
+        self.gradient_descent = gradient_descent    # Opt. method. If False => Least squares
 
     def fit(self, X, y):
         # Insert constant ones for bias weights

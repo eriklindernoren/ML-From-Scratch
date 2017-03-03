@@ -192,7 +192,7 @@ def main():
     rules = apriori.generate_rules(transactions)
     print "Rules:"
     for rule in rules:
-        print "\t%s -> %s (conf:%s, sup:%.2f)" % (rule.antecedent, rule.concequent, rule.confidence, rule.support)
+        print "\t%s -> %s (support: %.2f, confidence: %s)" % (rule.antecedent, rule.concequent, rule.support, rule.confidence,)
 
 
 if __name__ == "__main__":

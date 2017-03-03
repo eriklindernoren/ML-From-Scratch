@@ -2,14 +2,12 @@ from __future__ import division
 import pandas as pd
 import numpy as np
 import itertools
-import sys
 
 
 class FPTreeNode():
-    def __init__(self, item=None, support=1, parent=None):
+    def __init__(self, item=None, support=1):
         self.item = item
         self.support = support
-        self.parent = None
         self.children = {}
         self.frequent_itemsets = []
 
@@ -19,7 +17,6 @@ class FPGrowth():
         self.min_sup = min_sup
         self.tree_root = None
         self.prefixes = {}
-        self.count = 0
         self.frequent_itemsets = []
 
     # Count the number of transactions that contains item.
@@ -53,10 +50,9 @@ class FPGrowth():
     def _insert_tree(self, node, children):
         if not children:
             return
-
         # Create new node as the first item in children list
         child_item = children[0]
-        child = FPTreeNode(item=child_item, parent=node)
+        child = FPTreeNode(item=child_item)
         # If parent already contains item => increase the support
         if child_item in node.children:
             node.children[child.item].support += 1
@@ -146,8 +142,9 @@ class FPGrowth():
             # items
             self.frequent_itemsets += [el + suffix for el in frequent_items]
 
-        # Determine larger frequent itemset by checking prefixes
-        # of the frequent items in the conditional tree
+        # Find larger frequent itemset by finding prefixes
+        # of the frequent items in the FP Growth Tree for the conditional
+        # database.
         self.prefixes = {}
         for itemset in frequent_items:
             # If no suffix (first run)
@@ -157,7 +154,7 @@ class FPGrowth():
             self._determine_prefixes(itemset, cond_tree)
             conditional_database = []
             itemset_key = self._get_itemset_key(itemset)
-            # Build conditional database
+            # Build new conditional database
             if itemset_key in self.prefixes:
                 for el in self.prefixes[itemset_key]:
                     # If support = 4 => add 4 of the corresponding prefix set

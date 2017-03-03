@@ -82,7 +82,6 @@ class PAM():
         # Assign samples to closest medoids
         clusters = self._create_clusters(X, medoids)
 
-        # Set initial cost to inf
         cost = float("inf")
         # Calculate the initial cost (total distance between samples and
         # corresponding medoids)
@@ -106,7 +105,7 @@ class PAM():
                     _new_cost = self._calculate_cost(
                         X, new_clusters, new_medoids)
                     # If the swap gives us a lower cost start over with new
-                    # medoids
+                    # medoid configuration
                     if _new_cost < new_cost:
                         new_cost = _new_cost
                         medoids = new_medoids
