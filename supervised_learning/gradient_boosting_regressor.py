@@ -8,23 +8,20 @@ import matplotlib.pyplot as plt
 # Import helper functions
 dir_path = os.path.dirname(os.path.realpath(__file__))
 sys.path.insert(0, dir_path + "/../utils")
-from data_manipulation import divide_on_feature, train_test_split
-from data_operation import calculate_variance, mean_squared_error
-sys.path.insert(0, dir_path + "/../unsupervised_learning/")
-from principal_component_analysis import PCA
+from data_manipulation import train_test_split
+from data_operation import mean_squared_error
 from regression_tree import RegressionTree
 
 
 class GradientBoostingRegressor():
     def __init__(self, n_estimators=20, learning_rate=1, max_features=None, min_samples_split=10,
-                 min_var_red=1e-4, max_depth=10, debug=False):
+                 min_var_red=1e-4, max_depth=10):
         self.n_estimators = n_estimators            # Number of trees
         self.learning_rate = learning_rate
         self.max_features = max_features            # Maxmimum number of features per tree
         self.min_samples_split = min_samples_split
         self.min_var_red = min_var_red              # Minimum variance reduction to continue
         self.max_depth = max_depth                  # Maximum depth for tree
-        self.debug = debug
 
         # Initialize regression trees
         self.trees = []
@@ -43,6 +40,7 @@ class GradientBoostingRegressor():
             residuals = -(y - y_pred)
             tree.fit(X, residuals)
             residual_pred = tree.predict(X)
+            # Update y prediction by the estimated residual value
             y_pred -= np.multiply(self.learning_rate, residual_pred)
 
     def predict(self, X):
