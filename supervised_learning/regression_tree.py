@@ -50,7 +50,7 @@ class RegressionTree():
         n_samples, n_features = np.shape(X)
 
         if n_samples >= self.min_samples_split:
-            # Calculate the information gain for each feature
+            # Calculate the variance reduction for each feature
             for feature_i in range(n_features):
                 # All values of feature_i
                 feature_values = np.expand_dims(X[:, feature_i], axis=1)
@@ -64,17 +64,17 @@ class RegressionTree():
                     # information gain
                     if len(Xy_1) > 0 and len(Xy_2) > 0:
 
-                        X_1 = Xy_1[:, :-1]
-                        X_2 = Xy_2[:, :-1]
+                        y_1 = Xy_1[:, -1]
+                        y_2 = Xy_2[:, -1]
 
-                        # Calculate the variance of the data set and the 
-                        # two split sets
-                        var_tot = calculate_variance(X)
-                        var_1 = calculate_variance(X_1)
-                        var_2 = calculate_variance(X_2)
+                        var_tot = calculate_variance(np.expand_dims(y, axis=1))
+                        var_1 = calculate_variance(np.expand_dims(y_1, axis=1))
+                        var_2 = calculate_variance(np.expand_dims(y_2, axis=1))
+                        frac_1 = len(y_1) / len(y)
+                        frac_2 = len(y_2) / len(y)
 
                         # Calculate the variance reduction
-                        variance_reduction = var_tot - (var_1 + var_2)
+                        variance_reduction = var_tot - (frac_1 * var_1 + frac_2 * var_2)
 
                         # If this threshold resulted in a larger variance reduction than
                         # previously registered we save the feature index and threshold
