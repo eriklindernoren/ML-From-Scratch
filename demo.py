@@ -18,7 +18,7 @@ from k_nearest_neighbors import KNN
 from multilayer_perceptron import MultilayerPerceptron
 from logistic_regression import LogisticRegression
 from perceptron import Perceptron
-from decision_tree import DecisionTree
+from decision_tree import ClassificationTree
 from random_forest import RandomForest
 from support_vector_machine import SupportVectorMachine
 from linear_discriminant_analysis import LDA
@@ -72,7 +72,7 @@ knn = KNN(k=4)
 logistic_regression = LogisticRegression()
 mlp = MultilayerPerceptron(n_hidden=20)
 perceptron = Perceptron()
-decision_tree = DecisionTree()
+decision_tree = ClassificationTree()
 random_forest = RandomForest(n_estimators=150)
 support_vector_machine = SupportVectorMachine(C=1, kernel=rbf_kernel)
 lda = LDA()
