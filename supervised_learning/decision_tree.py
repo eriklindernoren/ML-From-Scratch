@@ -230,7 +230,6 @@ def main():
     clf.fit(X_train, y_train)
     y_pred = clf.predict(X_test)
 
-    # Print the mean squared error
     print "Mean Squared Error:", mean_squared_error(y_test, y_pred)
 
     # Plot the results

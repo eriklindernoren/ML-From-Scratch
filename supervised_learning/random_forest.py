@@ -11,7 +11,7 @@ from data_manipulation import divide_on_feature, train_test_split, get_random_su
 from data_operation import accuracy_score, calculate_entropy
 sys.path.insert(0, dir_path + "/../unsupervised_learning/")
 from principal_component_analysis import PCA
-from decision_tree import DecisionTree
+from decision_tree import ClassificationTree
 
 
 class RandomForest():
@@ -29,9 +29,9 @@ class RandomForest():
         self.trees = []
         for _ in range(n_estimators):
             self.trees.append(
-                DecisionTree(
+                ClassificationTree(
                     min_samples_split=self.min_samples_split,
-                    min_gain=min_gain,
+                    min_impurity=min_gain,
                     max_depth=self.max_depth))
 
     def fit(self, X, y):
