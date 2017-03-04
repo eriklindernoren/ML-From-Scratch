@@ -1,5 +1,6 @@
 # Machine Learning From Scratch
 
+####About
 Python implementations of some of the foundational Machine Learning models and algorithms from scratch.
 
 While some of the matrix operations that are implemented by hand (such as calculation of covariance matrix) are 
@@ -10,10 +11,10 @@ The purpose of this project is purely self-educational.
 
 Feel free to [reach out](mailto:eriklindernoren@gmail.com) if you can think of ways to expand this project.
 
-## Installation
+#### Installation
     pip install -r requirements.txt
 
-## Running demo programs:
+#### Running demo programs:
     python demo.py
     python supervised_learning/multilayer_perceptron.py
 
