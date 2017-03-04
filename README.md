@@ -12,6 +12,8 @@ Feel free to [reach out](mailto:eriklindernoren@gmail.com) if you can think of w
 
 ## Installation
     pip install -r requirements.txt
+
+## Running demo programs:
     python demo.py
     python supervised_learning/multilayer_perceptron.py
 
