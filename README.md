@@ -17,7 +17,7 @@ Feel free to [reach out](mailto:eriklindernoren@gmail.com) if you can think of w
     pip install -r requirements.txt
 
 
-### Testing Implementations:
+### Running Implementations:
     python demo.py
     python supervised_learning/multilayer_perceptron.py
 
