@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 # Import helper functions
 dir_path = os.path.dirname(os.path.realpath(__file__))
 sys.path.insert(0, dir_path + "/../utils")
-from data_manipulation import divide_on_feature, train_test_split
+from data_manipulation import divide_on_feature, train_test_split, standardize
 from data_operation import calculate_variance, mean_squared_error
 sys.path.insert(0, dir_path + "/../unsupervised_learning/")
 from principal_component_analysis import PCA
@@ -35,8 +35,10 @@ class RegressionTree():
 
     def fit(self, X, y):
         # Build tree
+        X = standardize(X)
         self.current_depth = 0
         self.root = self._build_tree(X, y)
+
 
     def _build_tree(self, X, y):
 
@@ -129,6 +131,7 @@ class RegressionTree():
     # Classify samples one by one and return the set of labels
     def predict(self, X):
         y_pred = []
+        X = standardize(X)
         for x in X:
             y_pred.append(self.predict_value(x))
         return y_pred

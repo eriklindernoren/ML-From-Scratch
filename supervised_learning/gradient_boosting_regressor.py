@@ -21,6 +21,7 @@ class GradientBoostingRegressor():
         self.min_samples_split = min_samples_split
         self.min_var_red = min_var_red              # Minimum variance reduction to continue
         self.max_depth = max_depth                  # Maximum depth for tree
+        self.init_estimate = None
 
         # Initialize regression trees
         self.trees = []
@@ -33,7 +34,8 @@ class GradientBoostingRegressor():
 
     def fit(self, X, y):
         # Set initial predictions to zero
-        y_pred = np.zeros(np.shape(y))
+        self.init_estimate = np.mean(y)
+        y_pred = self.init_estimate * np.ones(np.shape(y))
         for tree in self.trees:
             # Calculate the gradient of the loss (MSE)
             residuals = -(y - y_pred)
@@ -43,7 +45,7 @@ class GradientBoostingRegressor():
             y_pred -= np.multiply(self.learning_rate, residual_pred)
 
     def predict(self, X):
-        y_pred = np.zeros(np.shape(X)[0])
+        y_pred = self.init_estimate * np.ones(np.shape(X)[0])
         for tree in self.trees:
             y_pred -= np.multiply(self.learning_rate, tree.predict(X))
         return y_pred
@@ -52,7 +54,7 @@ class GradientBoostingRegressor():
 
 def main():
 
-    X, y = datasets.make_regression(n_features=1, n_samples=100, bias=10, noise=5)
+    X, y = datasets.make_regression(n_features=1, n_samples=200, bias=100, noise=5)
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3)
 
