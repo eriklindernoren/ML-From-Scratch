@@ -17,16 +17,16 @@ Feel free to [reach out](mailto:eriklindernoren@gmail.com) if you can think of w
     pip install -r requirements.txt
 
 
-### Testing Implementations:
+### Testing Implementations
     python demo.py
     python supervised_learning/multilayer_perceptron.py
 
 
-##Current Implementations:
+##Current Implementations
 ####Supervised Learning:
 - [Adaboost](supervised_learning/adaboost.py)
 - [Decision Tree (regression and classification)](supervised_learning/decision_tree.py)
-- [Gradient Boosting Regression](supervised_learning/gradient_boosting_regressor.py)
+- [Gradient Boosting (regression)](supervised_learning/gradient_boosting_regressor.py)
 - [K Nearest Neighbors](supervised_learning/k_nearest_neighbors.py)
 - [Linear Discriminant Analysis](supervised_learning/linear_discriminant_analysis.py)
 - [Linear Regression](supervised_learning/linear_regression.py)
