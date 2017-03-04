@@ -1,3 +1,4 @@
+from __future__ import print_function
 import sys
 import os
 import math
@@ -67,7 +68,7 @@ def main():
 
     clf = KNN(k=3)
     y_pred = clf.predict(X_test, X_train, y_train)
-    print "Accuracy score:", accuracy_score(y_test, y_pred)
+    print ("Accuracy score:", accuracy_score(y_test, y_pred))
 
     # Reduce dimensions to 2d using pca and plot the results
     pca = PCA()

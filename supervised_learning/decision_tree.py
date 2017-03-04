@@ -1,4 +1,4 @@
-from __future__ import division
+from __future__ import division, print_function
 import numpy as np
 from sklearn import datasets
 import matplotlib.pyplot as plt
@@ -19,10 +19,10 @@ from principal_component_analysis import PCA
 # Class that represents a decision node or leaf in the decision tree
 class DecisionNode():
     def __init__(self, feature_i=None, threshold=None,
-                 label=None, true_branch=None, false_branch=None):
+                 value=None, true_branch=None, false_branch=None):
         self.feature_i = feature_i          # Index for the feature that is tested
         self.threshold = threshold          # Threshold value for feature
-        self.label = label                  # Label if the node is a leaf in the tree
+        self.value = value                  # Value if the node is a leaf in the tree
         self.true_branch = true_branch      # 'Left' subtree
         self.false_branch = false_branch    # 'Right' subtree
 
@@ -99,17 +99,17 @@ class DecisionTree(object):
         # We're at leaf => determine value
         leaf_value = self._leaf_value_calculation(y)
 
-        return DecisionNode(label=leaf_value)
+        return DecisionNode(value=leaf_value)
 
-    # Do a recursive search down the tree and label the data sample by the
+    # Do a recursive search down the tree and make a predict of the data sample by the
     # value of the leaf that we end up at
     def classify_sample(self, x, tree=None):
         if tree is None:
             tree = self.root
 
-        # If we have a label => classify
-        if tree.label is not None:
-            return tree.label
+        # If we have a value => return prediction
+        if tree.value is not None:
+            return tree.value
 
         # Choose the feature that we will test
         feature_value = x[tree.feature_i]
@@ -137,17 +137,17 @@ class DecisionTree(object):
             tree = self.root
 
         # If we're at leaf => print the label
-        if tree.label is not None:
-            print tree.label
+        if tree.value is not None:
+            print (tree.value)
         # Go deeper down the tree
         else:
             # Print test
-            print "%s:%s? " % (tree.feature_i, tree.threshold)
+            print ("%s:%s? " % (tree.feature_i, tree.threshold))
             # Print the true scenario
-            print "%sT->" % (indent),
+            print ("%sT->" % (indent), end="")
             self.print_tree(tree.true_branch, indent + indent)
             # Print the false scenario
-            print "%sF->" % (indent),
+            print ("%sF->" % (indent), end="")
             self.print_tree(tree.false_branch, indent + indent)
 
 
@@ -203,7 +203,7 @@ class ClassificationTree(DecisionTree):
 
 def main():
 
-    print "-- Classification Tree --"
+    print ("-- Classification Tree --")
 
     data = datasets.load_iris()
     X = data.data
@@ -215,12 +215,12 @@ def main():
     clf.fit(X_train, y_train)
     y_pred = clf.predict(X_test)
 
-    print "Accuracy:", accuracy_score(y_test, y_pred)
+    print ("Accuracy:", accuracy_score(y_test, y_pred))
 
     pca = PCA()
     pca.plot_in_2d(X_test, y_pred)
 
-    print "-- Regression Tree --"
+    print ("-- Regression Tree --")
 
     X, y = datasets.make_regression(n_features=1, n_samples=100, bias=0, noise=5)
 
@@ -230,7 +230,8 @@ def main():
     clf.fit(X_train, y_train)
     y_pred = clf.predict(X_test)
 
-    print "Mean Squared Error:", mean_squared_error(y_test, y_pred)
+
+    print ("Mean Squared Error:", mean_squared_error(y_test, y_pred))
 
     # Plot the results
     plt.scatter(X_test[:, 0], y_test, color='black')

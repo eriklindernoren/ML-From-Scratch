@@ -1,4 +1,4 @@
-from __future__ import division
+from __future__ import division, print_function
 import numpy as np
 from sklearn import datasets
 import sys
@@ -42,7 +42,7 @@ class RandomForest():
             self.max_features = int(math.sqrt(n_features))
 
         if self.debug:
-            print "Training (%s estimators):" % (self.n_estimators)
+            print ("Training (%s estimators):" % (self.n_estimators))
         # Choose one random subset of the data for each tree
         subsets = get_random_subsets(X, y, self.n_estimators)
         for i in range(self.n_estimators):
@@ -58,7 +58,7 @@ class RandomForest():
 
             progress = 100 * (i / self.n_estimators)
             if self.debug:
-                print "Progress: %.2f%%" % progress
+                print ("Progress: %.2f%%" % progress)
 
     def predict(self, X):
         y_preds = []
@@ -103,7 +103,7 @@ def main():
     clf.fit(X_train, y_train)
     y_pred = clf.predict(X_test)
 
-    print "Accuracy:", accuracy_score(y_test, y_pred)
+    print ("Accuracy:", accuracy_score(y_test, y_pred))
 
     pca = PCA()
     pca.plot_in_2d(X_test, y_pred)

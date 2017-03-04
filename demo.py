@@ -1,3 +1,4 @@
+from __future__ import print_function
 import sys, os
 from sklearn import datasets
 import numpy as np
@@ -26,13 +27,13 @@ from linear_discriminant_analysis import LDA
 sys.path.insert(0, dir_path + "/unsupervised_learning")
 from principal_component_analysis import PCA
 
-print
-print "+-------------------------------------------+"
-print "|                                           |"
-print "|       Machine Learning From Scratch       |"
-print "|                                           |"
-print "+-------------------------------------------+"
-print
+
+print ("+-------------------------------------------+")
+print ("|                                           |")
+print ("|       Machine Learning From Scratch       |")
+print ("|                                           |")
+print ("+-------------------------------------------+")
+
 
 # ...........
 #  LOAD DATA
@@ -80,24 +81,24 @@ lda = LDA()
 # ........
 #  TRAIN
 # ........
-print "Training:"
-print "\tAdaboost"
+print ("Training:")
+print ("\tAdaboost")
 adaboost.fit(X_train, rescaled_y_train)
-print "\tNaive Bayes"
+print ("\tNaive Bayes")
 naive_bayes.fit(X_train, y_train)
-print "\tLogistic Regression"
+print ("\tLogistic Regression")
 logistic_regression.fit(X_train, y_train)
-print "\tLDA"
+print ("\tLDA")
 lda.fit(X_train, y_train)
-print "\tMultilayer Perceptron"
+print ("\tMultilayer Perceptron")
 mlp.fit(X_train, y_train, n_iterations=20000, learning_rate=0.1)
-print "\tPerceptron"
+print ("\tPerceptron")
 perceptron.fit(X_train, y_train)
-print "\tDecision Tree"
+print ("\tDecision Tree")
 decision_tree.fit(X_train, y_train)
-print "\tRandom Forest"
+print ("\tRandom Forest")
 random_forest.fit(X_train, y_train)
-print "\tSupport Vector Machine"
+print ("\tSupport Vector Machine")
 support_vector_machine.fit(X_train, rescaled_y_train)
 
 
@@ -119,14 +120,14 @@ y_pred["Support Vector Machine"] = support_vector_machine.predict(X_test)
 # ..........
 #  ACCURACY
 # ..........
-print 
-print "Accuracy:"
+
+print ("Accuracy:")
 for clf in y_pred:
 	if clf == "Adaboost" or clf == "Support Vector Machine":
-		print "\t%-23s: %.5f" %(clf, accuracy_score(rescaled_y_test, y_pred[clf]))
+		print ("\t%-23s: %.5f" %(clf, accuracy_score(rescaled_y_test, y_pred[clf])))
 	else:
-		print "\t%-23s: %.5f" %(clf, accuracy_score(y_test, y_pred[clf]))
-print 
+		print ("\t%-23s: %.5f" %(clf, accuracy_score(y_test, y_pred[clf])))
+
 # .......
 #  PLOT
 # .......

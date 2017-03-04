@@ -1,4 +1,4 @@
-from __future__ import division
+from __future__ import division, print_function
 import numpy as np
 from sklearn import datasets
 import sys
@@ -33,8 +33,8 @@ class GradientBoostingRegressor():
                     max_depth=self.max_depth))
 
     def fit(self, X, y):
-        # Set initial predictions to mean of y
-        self.init_estimate = np.mean(y)
+        # Set initial predictions to median of y
+        self.init_estimate = np.median(y)
         y_pred = self.init_estimate * np.ones(np.shape(y))
         for tree in self.trees:
             # Calculate the gradient of the loss (MSE)
@@ -63,7 +63,7 @@ def main():
     y_pred = clf.predict(X_test)
 
     # Print the mean squared error
-    print "Mean Squared Error:", mean_squared_error(y_test, y_pred)
+    print ("Mean Squared Error:", mean_squared_error(y_test, y_pred))
 
     # Plot the results
     plt.scatter(X_test[:, 0], y_test, color='black')

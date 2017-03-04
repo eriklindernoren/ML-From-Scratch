@@ -1,3 +1,4 @@
+from __future__ import print_function
 import matplotlib.pyplot as plt
 import numpy as np
 from sklearn import datasets
@@ -57,7 +58,7 @@ def main():
     # Finding regularization constant using cross validation
     lowest_error = float("inf")
     best_reg_factor = None
-    print "Finding regularization constant using cross validation:"
+    print ("Finding regularization constant using cross validation:")
     k = 10
     for regularization_factor in np.arange(0, 0.3, 0.001):
         cross_validation_sets = k_fold_cross_validation_sets(
@@ -72,7 +73,7 @@ def main():
         mse /= k
 
         # Print the mean squared error
-        print "\tMean Squared Error: %s (regularization: %s)" % (mse, regularization_factor)
+        print ("\tMean Squared Error: %s (regularization: %s)" % (mse, regularization_factor))
 
         # Save reg. constant that gave lowest error
         if mse < lowest_error:
@@ -84,7 +85,7 @@ def main():
     clf.fit(X_train, y_train)
     y_pred = clf.predict(X_test)
     mse = mean_squared_error(y_test, y_pred)
-    print "Mean squared error: %s (given by reg. factor: %s)" % (lowest_error, best_reg_factor)
+    print ("Mean squared error: %s (given by reg. factor: %s)" % (lowest_error, best_reg_factor))
     # Plot the results
     plt.scatter(X_test[:, 0], y_test, color='black')
     plt.plot(X_test[:, 0], y_pred, color='blue', linewidth=3)

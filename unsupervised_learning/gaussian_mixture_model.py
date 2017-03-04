@@ -1,4 +1,4 @@
-from __future__ import division
+from __future__ import division, print_function
 import sys
 import os
 import math
@@ -95,7 +95,7 @@ class GaussianMixtureModel():
             return False
         diff = np.linalg.norm(
             self.responsibilities[-1] - self.responsibilities[-2])
-        print "Likelihood update: %s (tol: %s)" % (diff, self.tolerance)
+        print ("Likelihood update: %s (tol: %s)" % (diff, self.tolerance))
         return diff <= self.tolerance
 
     # Run GMM and return the cluster indices

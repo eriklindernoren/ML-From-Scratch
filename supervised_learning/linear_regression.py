@@ -1,3 +1,4 @@
+from __future__ import print_function
 import matplotlib.pyplot as plt
 import numpy as np
 from sklearn import datasets
@@ -54,7 +55,7 @@ def main():
     y_pred = clf.predict(X_test)
 
     # Print the mean squared error
-    print "Mean Squared Error:", mean_squared_error(y_test, y_pred)
+    print ("Mean Squared Error:", mean_squared_error(y_test, y_pred))
 
     # Plot the results
     plt.scatter(X_test[:, 0], y_test, color='black')

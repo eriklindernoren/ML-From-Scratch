@@ -1,5 +1,5 @@
 
-from __future__ import division
+from __future__ import division, print_function
 import math
 import sys
 import os
@@ -117,7 +117,7 @@ def main():
     clf.fit(X_train, y_train)
     y_pred = clf.predict(X_test)
 
-    print "Accuracy:", accuracy_score(y_test, y_pred)
+    print ("Accuracy:", accuracy_score(y_test, y_pred))
 
     # Reduce dimension to two using PCA and plot the results
     pca = PCA()

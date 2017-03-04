@@ -1,4 +1,4 @@
-from __future__ import division
+from __future__ import division, print_function
 import pandas as pd
 import numpy as np
 import itertools
@@ -85,7 +85,7 @@ class FPGrowth():
         if not node:
             node = self.tree_root
         indent = "    " * indent_times
-        print "%s%s:%s" % (indent, node.item, node.support)
+        print ("%s%s:%s" % (indent, node.item, node.support))
         for child_key in node.children:
             child = node.children[child_key]
             self.print_tree(child, indent_times + 1)
@@ -170,7 +170,7 @@ class FPGrowth():
         # Build the FP Growth Tree
         self.tree_root = self._construct_tree(transactions)
         if show_tree:
-            print "FP-Growth Tree:"
+            print ("FP-Growth Tree:")
             self.print_tree(self.tree_root)
 
         self._determine_frequent_itemsets(transactions, suffix=None)
@@ -191,22 +191,21 @@ def main():
         ["B", "C", "D"]
     ])
 
-    print "- FP-Growth -"
+    print ("- FP-Growth -")
     min_sup = 3
-    print "Minimum - support: %s" % min_sup
-    print "Transactions:"
+    print ("Minimum - support: %s" % min_sup)
+    print ("Transactions:")
     for transaction in transactions:
-        print "\t%s" % transaction
-    print
+        print ("\t%s" % transaction)
+
     fp_growth = FPGrowth(min_sup=min_sup)
 
     # Get and print the frequent itemsets
     frequent_itemsets = fp_growth.find_frequent_itemsets(
         transactions, show_tree=True)
-    print
-    print "Frequent itemsets:"
+    print ("Frequent itemsets:")
     for itemset in frequent_itemsets:
-        print "\t%s" % itemset
+        print ("\t%s" % itemset)
 
 
 if __name__ == "__main__":
