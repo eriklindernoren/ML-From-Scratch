@@ -10,6 +10,11 @@ The purpose of this project is purely self-educational.
 
 Feel free to [reach out](mailto:eriklindernoren@gmail.com) if you can think of ways to expand this project.
 
+## Installation
+    pip install -r requirements.txt
+    python demo.py
+    python supervised_learning/multilayer_perceptron.py
+
 ##Current implementations:
 ####Supervised Learning:
 - [Adaboost](https://github.com/eriklindernoren/ML-From-Scratch/blob/master/supervised_learning/adaboost.py)
