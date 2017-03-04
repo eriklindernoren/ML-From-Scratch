@@ -1,6 +1,7 @@
 *~
 \.DS_STORE
-*pyc
 build/
 dist/
 *egg-info*
+*__pycache__/
+*.py[cod]

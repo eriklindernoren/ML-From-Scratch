@@ -6,16 +6,23 @@ import itertools
 
 class FPTreeNode():
     def __init__(self, item=None, support=1):
+        # 'Value' of the item
         self.item = item
+        # Number of times the item occurs in a
+        # transaction
         self.support = support
+        # Child nodes in the FP Growth Tree
         self.children = {}
-        self.frequent_itemsets = []
 
 
 class FPGrowth():
     def __init__(self, min_sup=0.3):
+        # The minimum fraction of transactions an itemets needs to
+        # occur in to be deemed frequent
         self.min_sup = min_sup
+        # The root of the initial FP Growth Tree
         self.tree_root = None
+        # Prefixes of itemsets in the FP Growth Tree
         self.prefixes = {}
         self.frequent_itemsets = []
 

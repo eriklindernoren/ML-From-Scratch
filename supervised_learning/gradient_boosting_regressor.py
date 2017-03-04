@@ -18,10 +18,10 @@ class GradientBoostingRegressor():
                  min_var_red=1e-4, max_depth=4):
         self.n_estimators = n_estimators            # Number of trees
         self.learning_rate = learning_rate
-        self.min_samples_split = min_samples_split
+        self.min_samples_split = min_samples_split  # The minimum n of sampels to justify split
         self.min_var_red = min_var_red              # Minimum variance reduction to continue
         self.max_depth = max_depth                  # Maximum depth for tree
-        self.init_estimate = None
+        self.init_estimate = None                   # The initial prediction of y
 
         # Initialize regression trees
         self.trees = []
@@ -45,6 +45,7 @@ class GradientBoostingRegressor():
             y_pred -= np.multiply(self.learning_rate, residual_pred)
 
     def predict(self, X):
+        # Make initial prediction as the median of the training values
         y_pred = self.init_estimate * np.ones(np.shape(X)[0])
         for tree in self.trees:
             y_pred -= np.multiply(self.learning_rate, tree.predict(X))

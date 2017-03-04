@@ -14,10 +14,14 @@ class Rule():
 
 class Apriori():
     def __init__(self, min_sup=0.3, min_conf=0.81):
+        # The minimum fraction of transactions an itemets needs to
+        # occur in to be deemed frequent
         self.min_sup = min_sup
+        # The minimum fraction of times the antecedent needs to imply
+        # the concequent to justify rule
         self.min_conf = min_conf
-        self.freq_itemsets = None
-        self.transactions = None
+        self.freq_itemsets = None       # List of freqeuent itemsets
+        self.transactions = None        # List of transactions
 
     def _calculate_support(self, itemset):
         count = 0
@@ -27,6 +31,8 @@ class Apriori():
         support = count / len(self.transactions)
         return support
 
+    # Prunes the candidates that are not frequent
+    # => returns list with only frequent itemsets
     def _get_frequent_itemsets(self, candidates):
         frequent = []
         # Find frequent items
@@ -106,14 +112,14 @@ class Apriori():
             # Generate new candidates from last added frequent itemsets
             candidates = self._generate_candidates(self.freq_itemsets[-1])
             # Get the frequent itemsets among those candidates
-            freq = self._get_frequent_itemsets(candidates)
+            frequent_itemsets = self._get_frequent_itemsets(candidates)
 
-            # If we have an empty list we're done
-            if not freq:
+            # If there are no frequent itemsets we're done
+            if not frequent_itemsets:
                 break
 
             # Add them to the total list of frequent itemsets and start over
-            self.freq_itemsets.append(freq)
+            self.freq_itemsets.append(frequent_itemsets)
 
         # Flatten the array and return every frequent itemset
         frequent_itemsets = [

@@ -32,10 +32,15 @@ class DecisionTree(object):
     def __init__(self, min_samples_split=2, min_impurity=1e-7,
                  max_depth=float("inf")):
         self.root = None  # Root node in dec. tree
+        # Minimum n of samples to justify split
         self.min_samples_split = min_samples_split
+        # The minimum impurity to justify split
         self.min_impurity = min_impurity
+        # The maximum depth to grow the tree to
         self.max_depth = max_depth
+        # Function to calculate impurity (classif.=>info gain, regr=>variance reduct.)
         self._impurity_calculation = None
+        # Function to determine prediction of y at leaf
         self._leaf_value_calculation = None
 
     def fit(self, X, y):
