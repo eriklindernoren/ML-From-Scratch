@@ -15,7 +15,7 @@ from regression_tree import RegressionTree
 
 class GradientBoostingRegressor():
     def __init__(self, n_estimators=20, learning_rate=1, min_samples_split=10,
-                 min_var_red=1e-4, max_depth=10):
+                 min_var_red=1e-4, max_depth=4):
         self.n_estimators = n_estimators            # Number of trees
         self.learning_rate = learning_rate
         self.min_samples_split = min_samples_split

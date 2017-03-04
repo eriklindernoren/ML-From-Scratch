@@ -40,7 +40,7 @@ class RegressionTree():
         self.root = self._build_tree(X, y)
 
 
-    def _build_tree(self, X, y):
+    def _build_tree(self, X, y, current_depth=0):
 
         largest_variance_reduction = 0
         best_criteria = None    # Feature index and threshold
@@ -58,12 +58,16 @@ class RegressionTree():
                 feature_values = np.expand_dims(X[:, feature_i], axis=1)
                 unique_values = np.unique(feature_values)
 
+                # Find points to split at as the mean of every following
+                # pair of points
+                x = unique_values
+                split_points = [(x[i-1]+x[i])/2 for i in range(1,len(x))]
+
                 # Iterate through all unique values of feature column i and
-                # calculate the informaion gain
-                for threshold in unique_values:
+                # calculate the variance reduction
+                for threshold in split_points:
                     Xy_1, Xy_2 = divide_on_feature(X_y, feature_i, threshold)
-                    # If one subset there is no use of calculating the
-                    # information gain
+
                     if len(Xy_1) > 0 and len(Xy_2) > 0:
 
                         y_1 = Xy_1[:, -1]
@@ -89,14 +93,13 @@ class RegressionTree():
                                 "left_branch": Xy_1, "right_branch": Xy_2}
 
         # If we have any information gain to go by we build the tree deeper
-        if self.current_depth < self.max_depth and largest_variance_reduction > self.min_var_red:
+        if current_depth < self.max_depth and largest_variance_reduction > self.min_var_red:
             leftX, leftY = best_sets["left_branch"][
                 :, :-1], best_sets["left_branch"][:, -1]    # X - all cols. but last, y - last
             rightX, rightY = best_sets["right_branch"][
                 :, :-1], best_sets["right_branch"][:, -1]    # X - all cols. but last, y - last
-            true_branch = self._build_tree(leftX, leftY)
-            false_branch = self._build_tree(rightX, rightY)
-            self.current_depth += 1
+            true_branch = self._build_tree(leftX, leftY, current_depth + 1)
+            false_branch = self._build_tree(rightX, rightY, current_depth + 1)
             return RegressionNode(feature_i=best_criteria["feature_i"], threshold=best_criteria[
                                 "threshold"], true_branch=true_branch, false_branch=false_branch)
 
