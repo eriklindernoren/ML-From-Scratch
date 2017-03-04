@@ -35,7 +35,6 @@ class RegressionTree():
 
     def fit(self, X, y):
         # Build tree
-        X = standardize(X)
         self.current_depth = 0
         self.root = self._build_tree(X, y)
 
@@ -134,7 +133,6 @@ class RegressionTree():
     # Classify samples one by one and return the set of labels
     def predict(self, X):
         y_pred = []
-        X = standardize(X)
         for x in X:
             y_pred.append(self.predict_value(x))
         return y_pred
@@ -162,7 +160,7 @@ def main():
 
     X, y = datasets.make_regression(n_features=1, n_samples=100, bias=0, noise=5)
 
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3)
+    X_train, X_test, y_train, y_test = train_test_split(standardize(X), y, test_size=0.3)
 
     clf = RegressionTree()
     clf.fit(X_train, y_train)

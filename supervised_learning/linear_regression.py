@@ -45,7 +45,7 @@ class LinearRegression():
 
 def main():
 
-    X, y = datasets.make_regression(n_features=1, n_samples=100, bias=3, noise=15)
+    X, y = datasets.make_regression(n_features=1, n_samples=200, bias=100, noise=5)
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4)
 

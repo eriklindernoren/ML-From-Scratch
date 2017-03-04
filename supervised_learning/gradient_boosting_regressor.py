@@ -8,13 +8,13 @@ import matplotlib.pyplot as plt
 # Import helper functions
 dir_path = os.path.dirname(os.path.realpath(__file__))
 sys.path.insert(0, dir_path + "/../utils")
-from data_manipulation import train_test_split
+from data_manipulation import train_test_split, standardize
 from data_operation import mean_squared_error
 from regression_tree import RegressionTree
 
 
 class GradientBoostingRegressor():
-    def __init__(self, n_estimators=20, learning_rate=1, min_samples_split=10,
+    def __init__(self, n_estimators=20, learning_rate=0.5, min_samples_split=10,
                  min_var_red=1e-4, max_depth=4):
         self.n_estimators = n_estimators            # Number of trees
         self.learning_rate = learning_rate
@@ -54,9 +54,9 @@ class GradientBoostingRegressor():
 
 def main():
 
-    X, y = datasets.make_regression(n_features=1, n_samples=200, bias=100, noise=5)
+    X, y = datasets.make_regression(n_features=1, n_samples=200, bias=100, noise=1)
 
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3)
+    X_train, X_test, y_train, y_test = train_test_split(standardize(X), y, test_size=0.4)
 
     clf = GradientBoostingRegressor()
     clf.fit(X_train, y_train)
