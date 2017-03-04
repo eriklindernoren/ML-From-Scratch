@@ -13,7 +13,7 @@ Feel free to [reach out](mailto:eriklindernoren@gmail.com) if you can think of w
 ##Current implementations:
 ####Supervised Learning:
 - [Adaboost](https://github.com/eriklindernoren/ML-From-Scratch/blob/master/supervised_learning/adaboost.py)
-- [Decision Tree](https://github.com/eriklindernoren/ML-From-Scratch/blob/master/supervised_learning/decision_tree.py)
+- [Decision Tree (regression and classification)](https://github.com/eriklindernoren/ML-From-Scratch/blob/master/supervised_learning/decision_tree.py)
 - [Gradient Boosting Regression](https://github.com/eriklindernoren/ML-From-Scratch/blob/master/supervised_learning/gradient_boosting_regressor.py)
 - [K Nearest Neighbors](https://github.com/eriklindernoren/ML-From-Scratch/blob/master/supervised_learning/k_nearest_neighbors.py)
 - [Linear Discriminant Analysis](https://github.com/eriklindernoren/ML-From-Scratch/blob/master/supervised_learning/linear_discriminant_analysis.py)
@@ -24,7 +24,6 @@ Feel free to [reach out](mailto:eriklindernoren@gmail.com) if you can think of w
 - [Naive Bayes](https://github.com/eriklindernoren/ML-From-Scratch/blob/master/supervised_learning/naive_bayes.py)
 - [Perceptron](https://github.com/eriklindernoren/ML-From-Scratch/blob/master/supervised_learning/perceptron.py)
 - [Random Forest](https://github.com/eriklindernoren/ML-From-Scratch/blob/master/supervised_learning/random_forest.py)
-- [Regression Tree](https://github.com/eriklindernoren/ML-From-Scratch/blob/master/supervised_learning/regression_tree.py)
 - [Ridge Regression](https://github.com/eriklindernoren/ML-From-Scratch/blob/master/supervised_learning/ridge_regression.py)
 - [Support Vector Machine](https://github.com/eriklindernoren/ML-From-Scratch/blob/master/supervised_learning/support_vector_machine.py)
 

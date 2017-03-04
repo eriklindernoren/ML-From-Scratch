@@ -10,11 +10,11 @@ dir_path = os.path.dirname(os.path.realpath(__file__))
 sys.path.insert(0, dir_path + "/../utils")
 from data_manipulation import train_test_split, standardize
 from data_operation import mean_squared_error
-from regression_tree import RegressionTree
+from decision_tree import RegressionTree
 
 
 class GradientBoostingRegressor():
-    def __init__(self, n_estimators=20, learning_rate=0.5, min_samples_split=10,
+    def __init__(self, n_estimators=20, learning_rate=0.5, min_samples_split=20,
                  min_var_red=1e-4, max_depth=4):
         self.n_estimators = n_estimators            # Number of trees
         self.learning_rate = learning_rate
@@ -29,11 +29,11 @@ class GradientBoostingRegressor():
             self.trees.append(
                 RegressionTree(
                     min_samples_split=self.min_samples_split,
-                    min_var_red=min_var_red,
+                    min_impurity=min_var_red,
                     max_depth=self.max_depth))
 
     def fit(self, X, y):
-        # Set initial predictions to zero
+        # Set initial predictions to mean of y
         self.init_estimate = np.mean(y)
         y_pred = self.init_estimate * np.ones(np.shape(y))
         for tree in self.trees:
