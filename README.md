@@ -26,7 +26,7 @@ Feel free to [reach out](mailto:eriklindernoren@gmail.com) if you can think of w
 ####Supervised Learning:
 - [Adaboost](supervised_learning/adaboost.py)
 - [Decision Tree (regression and classification)](supervised_learning/decision_tree.py)
-- [Gradient Boosting (regression)](supervised_learning/gradient_boosting_regressor.py)
+- [Gradient Boosting (regression and classification)](supervised_learning/gradient_boosting_regressor.py)
 - [K Nearest Neighbors](supervised_learning/k_nearest_neighbors.py)
 - [Linear Discriminant Analysis](supervised_learning/linear_discriminant_analysis.py)
 - [Linear Regression](supervised_learning/linear_regression.py)

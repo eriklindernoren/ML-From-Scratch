@@ -23,6 +23,7 @@ from decision_tree import ClassificationTree
 from random_forest import RandomForest
 from support_vector_machine import SupportVectorMachine
 from linear_discriminant_analysis import LDA
+from gradient_boosting import GradientBoostingClassifier
 # Import PCA
 sys.path.insert(0, dir_path + "/unsupervised_learning")
 from principal_component_analysis import PCA
@@ -77,6 +78,7 @@ decision_tree = ClassificationTree()
 random_forest = RandomForest(n_estimators=150)
 support_vector_machine = SupportVectorMachine(C=1, kernel=rbf_kernel)
 lda = LDA()
+gbc = GradientBoostingClassifier()
 
 # ........
 #  TRAIN
@@ -84,22 +86,25 @@ lda = LDA()
 print ("Training:")
 print ("\tAdaboost")
 adaboost.fit(X_train, rescaled_y_train)
-print ("\tNaive Bayes")
-naive_bayes.fit(X_train, y_train)
-print ("\tLogistic Regression")
-logistic_regression.fit(X_train, y_train)
-print ("\tLDA")
-lda.fit(X_train, y_train)
-print ("\tMultilayer Perceptron")
-mlp.fit(X_train, y_train, n_iterations=20000, learning_rate=0.1)
-print ("\tPerceptron")
-perceptron.fit(X_train, y_train)
 print ("\tDecision Tree")
 decision_tree.fit(X_train, y_train)
+print ("\tGradient Boosting")
+gbc.fit(X_train, y_train)
+print ("\tLDA")
+lda.fit(X_train, y_train)
+print ("\tLogistic Regression")
+logistic_regression.fit(X_train, y_train)
+print ("\tMultilayer Perceptron")
+mlp.fit(X_train, y_train, n_iterations=20000, learning_rate=0.1)
+print ("\tNaive Bayes")
+naive_bayes.fit(X_train, y_train)
+print ("\tPerceptron")
+perceptron.fit(X_train, y_train)
 print ("\tRandom Forest")
 random_forest.fit(X_train, y_train)
 print ("\tSupport Vector Machine")
 support_vector_machine.fit(X_train, rescaled_y_train)
+
 
 
 # .........
@@ -107,6 +112,7 @@ support_vector_machine.fit(X_train, rescaled_y_train)
 # .........
 y_pred = {}
 y_pred["Adaboost"] = adaboost.predict(X_test)
+y_pred["Gradient Boosting"] = gbc.predict(X_test)
 y_pred["Naive Bayes"] = naive_bayes.predict(X_test)
 y_pred["K Nearest Neighbors"] = knn.predict(X_test, X_train, y_train)
 y_pred["Logistic Regression"] = logistic_regression.predict(X_test)

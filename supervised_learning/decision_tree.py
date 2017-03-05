@@ -42,10 +42,13 @@ class DecisionTree(object):
         self._impurity_calculation = None
         # Function to determine prediction of y at leaf
         self._leaf_value_calculation = None
+        # If y is nominal
+        self.one_dim = None
 
     def fit(self, X, y):
         # Build tree
         self.current_depth = 0
+        self.one_dim = len(np.shape(y)) == 1
         self.root = self._build_tree(X, y)
 
     def _build_tree(self, X, y):
@@ -54,8 +57,12 @@ class DecisionTree(object):
         best_criteria = None    # Feature index and threshold
         best_sets = None        # Subsets of the data
 
+        expand_needed = len(np.shape(y)) == 1
+        if expand_needed:
+            y = np.expand_dims(y, axis=1)
+
         # Add y as last column of X
-        X_y = np.concatenate((X, np.expand_dims(y, axis=1)), axis=1)
+        X_y = np.concatenate((X, y), axis=1)
 
         n_samples, n_features = np.shape(X)
 
@@ -70,11 +77,10 @@ class DecisionTree(object):
                 # calculate the impurity
                 for threshold in unique_values:
                     Xy_1, Xy_2 = divide_on_feature(X_y, feature_i, threshold)
-                    # If one subset there is no use of calculating the
-                    # information gain
+                    
                     if len(Xy_1) > 0 and len(Xy_2) > 0:
-                        y_1 = Xy_1[:, -1]
-                        y_2 = Xy_2[:, -1]
+                        y_1 = Xy_1[:, n_features:]
+                        y_2 = Xy_2[:, n_features:]
 
                         # Calculate impurity
                         impurity = self._impurity_calculation(y, y_1, y_2)
@@ -91,10 +97,10 @@ class DecisionTree(object):
 
         # If we have any information gain to go by we build the tree deeper
         if self.current_depth < self.max_depth and largest_impurity > self.min_impurity:
-            leftX, leftY = best_sets["left_branch"][
-                :, :-1], best_sets["left_branch"][:, -1]    # X - all cols. but last, y - last
-            rightX, rightY = best_sets["right_branch"][
-                :, :-1], best_sets["right_branch"][:, -1]    # X - all cols. but last, y - last
+            leftX = best_sets["left_branch"][:, :n_features]
+            leftY = best_sets["left_branch"][:, n_features:]    # X - all cols. but last, y - last
+            rightX = best_sets["right_branch"][:, :n_features]
+            rightY = best_sets["right_branch"][:, n_features:]    # X - all cols. but last, y - last
             true_branch = self._build_tree(leftX, leftY)
             false_branch = self._build_tree(rightX, rightY)
             self.current_depth += 1
@@ -158,19 +164,20 @@ class DecisionTree(object):
 
 class RegressionTree(DecisionTree):
     def _calculate_variance_reduction(self, y, y_1, y_2):
-        var_tot = calculate_variance(np.expand_dims(y, axis=1))
-        var_1 = calculate_variance(np.expand_dims(y_1, axis=1))
-        var_2 = calculate_variance(np.expand_dims(y_2, axis=1))
+
+        var_tot = calculate_variance(y)
+        var_1 = calculate_variance(y_1)
+        var_2 = calculate_variance(y_2)
         frac_1 = len(y_1) / len(y)
         frac_2 = len(y_2) / len(y)
 
         # Calculate the variance reduction
         variance_reduction = var_tot - (frac_1 * var_1 + frac_2 * var_2)
 
-        return variance_reduction
+        return sum(variance_reduction)
 
     def _mean_of_y(self, y):
-        return np.mean(y)
+        return np.mean(y, axis=0)
 
     def fit(self, X, y):
         self._impurity_calculation = self._calculate_variance_reduction
