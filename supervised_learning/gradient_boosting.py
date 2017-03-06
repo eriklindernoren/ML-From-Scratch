@@ -53,9 +53,8 @@ class GradientBoosting(object):
             tree.fit(X, gradient)
             gradient_est = tree.predict(X)
 
-            # Turn shape (n, 1) to (n, )
-            if np.shape(gradient_est)[1] == 1:
-                gradient_est = np.array(gradient_est)[:, 0]
+            # Make sure shape is same as y_pred
+            gradient_est = np.array(gradient_est).reshape(np.shape(y_pred))
 
             # Update y prediction by the estimated gradient value
             y_pred -= np.multiply(self.learning_rate, gradient_est)
@@ -71,9 +70,7 @@ class GradientBoosting(object):
         # Make predictions
         for tree in self.trees:
             prediction = tree.predict(X)
-            # Turn shape (n, 1) to (n, )
-            if np.shape(prediction)[1] == 1:
-                prediction = np.array(prediction)[:, 0]
+            prediction = np.array(prediction).reshape(np.shape(y_pred))
             y_pred -= np.multiply(self.learning_rate, prediction)
 
         if not self.regression:

@@ -161,7 +161,7 @@ class Apriori():
                 # If there are subsets that could result in rules
                 # recursively add rules from subsets
                 if k - 1 > 1:
-                    rules.append(self._rules_from_itemset(initial_itemset, subset))
+                    rules += self._rules_from_itemset(initial_itemset, antecedent)
         return rules
 
     def generate_rules(self, transactions):
@@ -173,6 +173,7 @@ class Apriori():
         rules = []
         for itemset in frequent_itemsets:
             rules += self._rules_from_itemset(itemset, itemset)
+        # Remove empty values
         return rules
 
 
@@ -181,7 +182,7 @@ def main():
     # Example 2: https://en.wikipedia.org/wiki/Apriori_algorithm
     transactions = np.array([[1, 2, 3, 4], [1, 2, 4], [1, 2], [2, 3, 4], [2, 3], [3, 4], [2, 4]])
     print ("- Apriori -")
-    min_sup = 3 / 7
+    min_sup = 0.2
     min_conf = 0.8
     print ("Minimum - support: %.2f, confidence: %s" % (min_sup, min_conf))
     print ("Transactions:")
