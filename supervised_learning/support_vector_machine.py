@@ -21,7 +21,7 @@ cvxopt.solvers.options['show_progress'] = False
 
 
 class SupportVectorMachine(object):
-    def __init__(self, C=0, kernel=linear_kernel, power=2, gamma=None, coef=1):
+    def __init__(self, C=0.5, kernel=rbf_kernel, power=4, gamma=None, coef=4):
         self.C = C
         self.kernel = kernel
         self.power = power

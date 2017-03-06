@@ -34,7 +34,8 @@ class Adaboost():
         n_samples, n_features = np.shape(X)
 
         # Initialize weights to 1/N
-        w = np.full(n_samples, (1 / n_features))
+        w = np.ones(n_samples) * (1 / n_samples)
+        
         # Iterate through classifiers
         for _ in range(self.n_clf):
             clf = DecisionStump()
@@ -56,9 +57,10 @@ class Adaboost():
                     err = sum(w[y != prediction])
                     # E.g err = 0.8 => (1 - err) = 0.2
                     # We flip the error and polarity
-                    if err > 0.5 and err <= 1:
+                    if err > 0.5 and err < 1:
                         err = 1 - err
                         p = -1
+
                     # If this threshold resulted in the smallest error we save the
                     # configuration
                     if err < err_min:
@@ -68,7 +70,7 @@ class Adaboost():
                         err_min = err
             # Calculate the alpha which is used to update the sample weights
             # and is an approximation of this classifiers proficiency
-            clf.alpha = 0.5 * math.log((1.0 - err_min) / (err_min + 0.0001))
+            clf.alpha = 0.5 * math.log((1.00001 - err_min) / (err_min + 0.00001))
 
             # Set all predictions to '1' initially
             predictions = np.ones(np.shape(y))

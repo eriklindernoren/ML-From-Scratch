@@ -78,7 +78,7 @@ mlp = MultilayerPerceptron(n_hidden=20)
 perceptron = Perceptron()
 decision_tree = ClassificationTree()
 random_forest = RandomForest(n_estimators=150)
-support_vector_machine = SupportVectorMachine(C=1, kernel=rbf_kernel)
+support_vector_machine = SupportVectorMachine()
 lda = LDA()
 gbc = GradientBoostingClassifier()
 
