@@ -8,6 +8,7 @@ class SquareLoss():
     def loss(self, y_true, y_pred):
         return 0.5 * np.power((y_true - y_pred), 2)
 
+    # W.r.t y_pred
     def gradient(self, y_true, y_pred):
         return -1 * (y_true - y_pred)
 
@@ -24,5 +25,6 @@ class LogisticLoss():
     def loss(self, y_true, y_pred):
         return (1/len(y_true)) * (-y_true.T.dot(self.log_func(y_pred) - (1 - y_true.T).dot(self.log_func(y_pred))))
 
+    # W.r.t y_pred
     def gradient(self, y_true, y_pred):
         return self.log_func(y_pred) - y_true

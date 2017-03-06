@@ -50,6 +50,8 @@ y[y == digit2] = 1
 X = data.data[idx]
 X = normalize(X)
 
+print ("Dataset: The Digit Dataset (digits %s and %s)" % (digit1, digit2))
+
 # ..........................
 #  DIMENSIONALITY REDUCTION
 # ..........................

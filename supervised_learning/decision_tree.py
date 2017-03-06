@@ -47,11 +47,10 @@ class DecisionTree(object):
 
     def fit(self, X, y):
         # Build tree
-        self.current_depth = 0
         self.one_dim = len(np.shape(y)) == 1
         self.root = self._build_tree(X, y)
 
-    def _build_tree(self, X, y):
+    def _build_tree(self, X, y, current_depth=0):
 
         largest_impurity = 0
         best_criteria = None    # Feature index and threshold
@@ -96,14 +95,13 @@ class DecisionTree(object):
                                 "left_branch": Xy_1, "right_branch": Xy_2}
 
         # If we have any information gain to go by we build the tree deeper
-        if self.current_depth < self.max_depth and largest_impurity > self.min_impurity:
+        if current_depth < self.max_depth and largest_impurity > self.min_impurity:
             leftX = best_sets["left_branch"][:, :n_features]
             leftY = best_sets["left_branch"][:, n_features:]    # X - all cols. but last, y - last
             rightX = best_sets["right_branch"][:, :n_features]
             rightY = best_sets["right_branch"][:, n_features:]    # X - all cols. but last, y - last
-            true_branch = self._build_tree(leftX, leftY)
-            false_branch = self._build_tree(rightX, rightY)
-            self.current_depth += 1
+            true_branch = self._build_tree(leftX, leftY, current_depth + 1)
+            false_branch = self._build_tree(rightX, rightY, current_depth + 1)
             return DecisionNode(feature_i=best_criteria["feature_i"], threshold=best_criteria[
                                 "threshold"], true_branch=true_branch, false_branch=false_branch)
 

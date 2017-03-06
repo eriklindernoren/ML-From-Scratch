@@ -16,6 +16,7 @@ sys.path.insert(0, dir_path + "/../unsupervised_learning/")
 from principal_component_analysis import PCA
 
 
+# Super class to GradientBoostingRegressor and GradientBoostingClassifier
 class GradientBoosting(object):
     def __init__(self, n_estimators, learning_rate, min_samples_split,
                  min_impurity, max_depth, regression):
@@ -82,8 +83,8 @@ class GradientBoosting(object):
 
 
 class GradientBoostingRegressor(GradientBoosting):
-    def __init__(self, n_estimators=20, learning_rate=0.5, min_samples_split=20,
-                 min_var_red=1e-4, max_depth=4):
+    def __init__(self, n_estimators=20, learning_rate=.8, min_samples_split=20,
+                 min_var_red=1e-4, max_depth=20):
         super(GradientBoostingRegressor, self).__init__(n_estimators=n_estimators, 
             learning_rate=learning_rate, 
             min_samples_split=min_samples_split, 
@@ -92,8 +93,8 @@ class GradientBoostingRegressor(GradientBoosting):
             regression=True)
 
 class GradientBoostingClassifier(GradientBoosting):
-    def __init__(self, n_estimators=20, learning_rate=0.5, min_samples_split=20,
-                 min_info_gain=1e-4, max_depth=4):
+    def __init__(self, n_estimators=20, learning_rate=1, min_samples_split=20,
+                 min_info_gain=1e-7, max_depth=20):
         super(GradientBoostingClassifier, self).__init__(n_estimators=n_estimators, 
             learning_rate=learning_rate, 
             min_samples_split=min_samples_split, 
@@ -114,7 +115,7 @@ def main():
     X = data.data
     y = data.target
 
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5)
 
     clf = GradientBoostingClassifier()
     clf.fit(X_train, y_train)
@@ -129,7 +130,7 @@ def main():
 
     X, y = datasets.make_regression(n_features=1, n_samples=100, bias=0, noise=5)
 
-    X_train, X_test, y_train, y_test = train_test_split(standardize(X), y, test_size=0.3)
+    X_train, X_test, y_train, y_test = train_test_split(standardize(X), y, test_size=0.5)
 
     clf = GradientBoostingRegressor()
     clf.fit(X_train, y_train)
