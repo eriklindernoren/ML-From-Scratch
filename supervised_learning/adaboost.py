@@ -3,7 +3,7 @@ import math
 import sys
 import os
 import numpy as np
-from sklearn.datasets import make_gaussian_quantiles
+from sklearn import datasets
 import matplotlib.pyplot as plt
 import pandas as pd
 
@@ -34,43 +34,44 @@ class Adaboost():
         n_samples, n_features = np.shape(X)
 
         # Initialize weights to 1/N
-        w = np.ones(n_samples) * (1 / n_samples)
+        w = np.full(n_samples, (1 / n_samples))
         
         # Iterate through classifiers
         for _ in range(self.n_clf):
             clf = DecisionStump()
-            # Initial values
-            err_min = 1
-            # Iterate throught every unique sample for each feature
+            # Minimum error given for using a certain feature value threshold
+            # for predicting sample label
+            min_error = 1
+            # Iterate throught every unique feature value and see what value
+            # makes the best threshold for predicting y
             for feature_i in range(n_features):
                 feature_values = np.expand_dims(X[:, feature_i], axis=1)
                 unique_values = np.unique(feature_values)
                 # Try every unique feature value as threshold
                 for threshold in unique_values:
                     p = 1
-                    err = 0
                     # Set all predictions to '1' initially
                     prediction = np.ones(np.shape(y))
                     # Label the samples whose values are below threshold as '-1'
                     prediction[X[:, feature_i] < threshold] = -1
-                    # Error = missclassified_samples * weights_of_samples
-                    err = sum(w[y != prediction])
-                    # E.g err = 0.8 => (1 - err) = 0.2
+                    # Error = sum of weights of missclassified samples
+                    error = sum(w[y != prediction])
+                    # E.g error = 0.8 => (1 - error) = 0.2
                     # We flip the error and polarity
-                    if err > 0.5 and err < 1:
-                        err = 1 - err
+                    if error > 0.5 and error < 1:
+                        error = 1 - error
                         p = -1
 
                     # If this threshold resulted in the smallest error we save the
                     # configuration
-                    if err < err_min:
+                    if error < min_error:
                         clf.polarity = p
                         clf.threshold = threshold
                         clf.feature_index = feature_i
-                        err_min = err
+                        min_error = error
             # Calculate the alpha which is used to update the sample weights
             # and is an approximation of this classifiers proficiency
-            clf.alpha = 0.5 * math.log((1.00001 - err_min) / (err_min + 0.00001))
+            clf.alpha = 0.5 * math.log((1.0 - min_error) / (min_error + 1e-10))
 
             # Set all predictions to '1' initially
             predictions = np.ones(np.shape(y))
@@ -88,15 +89,19 @@ class Adaboost():
             self.clfs.append(clf)
 
     def predict(self, X):
-        y_pred = np.zeros((np.shape(X)[0], 1))
-        # For each classifier label the samples
+        n_samples = np.shape(X)[0]
+        y_pred = np.zeros((n_samples, 1))
+        # For each classifier => label the samples
         for clf in self.clfs:
-            pred = np.full((np.shape(X)[0], 1), 1.0)
+            # Set all predictions to '1' initially
+            predictions = np.ones(np.shape(y_pred))
+            # The indexes where the sample values are below threshold
             negative_idx = (clf.polarity * X[:, clf.feature_index] < clf.polarity * clf.threshold)
-            pred[negative_idx] = -1.0
+            # Label those as '-1'
+            predictions[negative_idx] = -1
             # Add column of predictions weighted by the classifiers alpha
             # (alpha indicative of classifiers profieciency)
-            y_pred = np.concatenate((y_pred, clf.alpha * pred), axis=1)
+            y_pred = np.concatenate((y_pred, clf.alpha * predictions), axis=1)
         # Sum weighted predictions and return sign of prediction sum
         y_pred = np.sign(np.sum(y_pred, axis=1))
 
@@ -104,19 +109,19 @@ class Adaboost():
 
 
 def main():
-    df = pd.read_csv(dir_path + "/../data/iris.csv")
-    # Change class labels from strings to numbers
-    df = df.replace(to_replace="setosa", value="-1")
-    df = df.replace(to_replace="virginica", value="1")
-    df = df.replace(to_replace="versicolor", value="2")
+    data = datasets.load_iris()
+    X = data.data
+    y = data.target
 
-    # Only select data for two classes
-    X = df.loc[df['species'] != "2"].drop("species", axis=1).as_matrix()
-    y = df.loc[df['species'] != "2"]["species"].as_matrix()
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33)
+    X = X[y != 2]
+    y = y[y != 2]
+    y[y == 0] = -1
+    y[y == 1] = 1
+
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5)
 
     # Adaboost classification
-    clf = Adaboost(n_clf=8)
+    clf = Adaboost(n_clf=10)
     clf.fit(X_train, y_train)
     y_pred = clf.predict(X_test)
 

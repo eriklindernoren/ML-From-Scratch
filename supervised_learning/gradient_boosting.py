@@ -47,7 +47,7 @@ class GradientBoosting(object):
     def fit(self, X, y):
         # Set initial predictions to median of y
         self.init_estimate = np.median(y, axis=0)
-        y_pred = self.init_estimate * np.ones(np.shape(y))
+        y_pred = np.full(np.shape(y), self.init_estimate)
         for tree in self.trees:
             
             gradient = self.loss.gradient(y, y_pred)
@@ -64,9 +64,10 @@ class GradientBoosting(object):
         # Fix shape of y_pred as (n_samples, n_outputs)
         n_samples = np.shape(X)[0]
         if not np.shape(self.init_estimate):
-            y_pred = self.init_estimate * np.ones((n_samples, ))
+            y_pred = np.full(n_samples, self.init_estimate)
         else:
-            y_pred = self.init_estimate * np.ones((n_samples, np.shape(self.init_estimate)[0]))
+            n_outputs = np.shape(self.init_estimate)[0]
+            y_pred = np.full((n_samples, n_outputs), self.init_estimate)
 
         # Make predictions
         for tree in self.trees:

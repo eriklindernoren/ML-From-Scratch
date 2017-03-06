@@ -21,7 +21,7 @@ cvxopt.solvers.options['show_progress'] = False
 
 
 class SupportVectorMachine(object):
-    def __init__(self, C=0.5, kernel=rbf_kernel, power=4, gamma=None, coef=4):
+    def __init__(self, C=1, kernel=rbf_kernel, power=4, gamma=None, coef=4):
         self.C = C
         self.kernel = kernel
         self.power = power
@@ -77,7 +77,7 @@ class SupportVectorMachine(object):
 
         # Extract support vectors
         # Get indexes of non-zero lagr. multipiers
-        idx = lagr_mult > 1e-6
+        idx = lagr_mult > 1e-7
         # Get the corresponding lagr. multipliers
         self.lagr_multipliers = lagr_mult[idx]
         # Get the samples that will act as support vectors

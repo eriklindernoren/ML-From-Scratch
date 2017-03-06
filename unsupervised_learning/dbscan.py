@@ -25,7 +25,7 @@ class DBSCAN():
         self.visited_samples = []
         # Hashmap {"sample_index": [neighbor1, neighbor2, ...]}
         self.neighbors = {}
-        self.X = None                       # Dataset
+        self.X = None   # Dataset
 
     # Return a list of neighboring samples
     # A sample_2 is considered a neighbor of sample_1 if the distance between
