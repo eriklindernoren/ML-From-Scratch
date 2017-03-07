@@ -4,9 +4,11 @@ import math
 import sys
 
 
-def shuffle_data(X, y):
+def shuffle_data(X, y, seed=None):
     # Concatenate x and y and do a random shuffle
     X_y = np.concatenate((X, y.reshape((1, len(y))).T), axis=1)
+    if seed:
+        np.random.seed(seed)
     np.random.shuffle(X_y)
     X = X_y[:, :-1]  # every column except the last
     y = X_y[:, -1].astype(int)  # last column
@@ -74,9 +76,9 @@ def standardize(X):
 
 
 # Split the data into train and test sets
-def train_test_split(X, y, test_size=0.5, shuffle=True):
+def train_test_split(X, y, test_size=0.5, shuffle=True, seed=None):
     if shuffle:
-        X, y = shuffle_data(X, y)
+        X, y = shuffle_data(X, y, seed)
     # Split the training data from test data in the ratio specified in
     # test_size
     split_i = len(y) - int(len(y) // (1 / test_size))

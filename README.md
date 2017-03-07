@@ -25,8 +25,8 @@ Feel free to [reach out](mailto:eriklindernoren@gmail.com) if you can think of w
 ##Current Implementations
 ####Supervised Learning:
 - [Adaboost](supervised_learning/adaboost.py)
-- [Decision Tree (regression and classification)](supervised_learning/decision_tree.py)
-- [Gradient Boosting (regression and classification)](supervised_learning/gradient_boosting.py)
+- [Decision Tree](supervised_learning/decision_tree.py)
+- [Gradient Boosting](supervised_learning/gradient_boosting.py)
 - [K Nearest Neighbors](supervised_learning/k_nearest_neighbors.py)
 - [Linear Discriminant Analysis](supervised_learning/linear_discriminant_analysis.py)
 - [Linear Regression](supervised_learning/linear_regression.py)
@@ -38,6 +38,7 @@ Feel free to [reach out](mailto:eriklindernoren@gmail.com) if you can think of w
 - [Random Forest](supervised_learning/random_forest.py)
 - [Ridge Regression](supervised_learning/ridge_regression.py)
 - [Support Vector Machine](supervised_learning/support_vector_machine.py)
+- [XGBoost](supervised_learning/xgboost.py)
 
 ####Unsupervised Learning:
 - [Apriori](unsupervised_learning/apriori.py)

@@ -24,6 +24,7 @@ from random_forest import RandomForest
 from support_vector_machine import SupportVectorMachine
 from linear_discriminant_analysis import LDA
 from gradient_boosting import GradientBoostingClassifier
+from xgboost import XGBoost
 # Import PCA
 sys.path.insert(0, dir_path + "/unsupervised_learning")
 from principal_component_analysis import PCA
@@ -77,10 +78,11 @@ logistic_regression = LogisticRegression()
 mlp = MultilayerPerceptron(n_hidden=20)
 perceptron = Perceptron()
 decision_tree = ClassificationTree()
-random_forest = RandomForest(n_estimators=150)
+random_forest = RandomForest(n_estimators=50)
 support_vector_machine = SupportVectorMachine()
 lda = LDA()
-gbc = GradientBoostingClassifier()
+gbc = GradientBoostingClassifier(n_estimators=20, learning_rate=1)
+xgboost = XGBoost()
 
 # ........
 #  TRAIN
@@ -106,6 +108,8 @@ print ("\tRandom Forest")
 random_forest.fit(X_train, y_train)
 print ("\tSupport Vector Machine")
 support_vector_machine.fit(X_train, rescaled_y_train)
+print ("\tXGBoost")
+xgboost.fit(X_train, y_train)
 
 
 
@@ -124,6 +128,7 @@ y_pred["Perceptron"] = perceptron.predict(X_test)
 y_pred["Decision Tree"] = decision_tree.predict(X_test)
 y_pred["Random Forest"] = random_forest.predict(X_test)
 y_pred["Support Vector Machine"] = support_vector_machine.predict(X_test)
+y_pred["XGBoost"] = xgboost.predict(X_test)
 
 # ..........
 #  ACCURACY

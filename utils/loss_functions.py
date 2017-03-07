@@ -22,9 +22,16 @@ class LogisticLoss():
         else:
             return 1 / (1 + np.exp(-t))
 
-    def loss(self, y_true, y_pred):
-        return (1/len(y_true)) * (-y_true.T.dot(self.log_func(y_pred) - (1 - y_true.T).dot(self.log_func(y_pred))))
+    def loss(self, y, y_pred):
+        l = -y * self.log_func(y_pred)
+        r = -(1 - y) * self.log_func(y_pred)
+        loss = (1/len(y)) * (l + r)
+        return loss
 
-    # W.r.t y_pred
-    def gradient(self, y_true, y_pred):
-        return self.log_func(y_pred) - y_true
+    def gradient(self, y, y_pred):
+        return -(y - self.log_func(y_pred))
+
+    def hess(self, y, y_pred):
+        p = self.log_func(y_pred)
+        return p * (1 - p)
+

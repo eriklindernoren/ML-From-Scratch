@@ -4,7 +4,7 @@ import os
 import math
 import numpy as np
 import matplotlib.pyplot as plt
-from sklearn.datasets import load_iris
+from sklearn import datasets
 
 # Import helper functions
 dir_path = os.path.dirname(os.path.realpath(__file__))
@@ -61,7 +61,7 @@ class KNN():
 
 
 def main():
-    iris = load_iris()
+    iris = datasets.load_iris()
     X = normalize(iris.data)
     y = iris.target
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33)

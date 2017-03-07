@@ -30,7 +30,7 @@ class DecisionNode():
 # Super class of RegressionTree and ClassificationTree
 class DecisionTree(object):
     def __init__(self, min_samples_split=2, min_impurity=1e-7,
-                 max_depth=float("inf")):
+                 max_depth=float("inf"), loss=None):
         self.root = None  # Root node in dec. tree
         # Minimum n of samples to justify split
         self.min_samples_split = min_samples_split
@@ -45,10 +45,16 @@ class DecisionTree(object):
         # If y is nominal
         self.one_dim = None
 
-    def fit(self, X, y):
+        # If Gradient Boost
+        self.loss = None
+        self.xgboost = False
+
+    def fit(self, X, y, loss=None):
         # Build tree
         self.one_dim = len(np.shape(y)) == 1
         self.root = self._build_tree(X, y)
+
+        self.loss=None
 
     def _build_tree(self, X, y, current_depth=0):
 
@@ -65,7 +71,7 @@ class DecisionTree(object):
 
         n_samples, n_features = np.shape(X)
 
-        if n_samples >= self.min_samples_split:
+        if n_samples >= self.min_samples_split and current_depth <= self.max_depth:
             # Calculate the impurity for each feature
             for feature_i in range(n_features):
                 # All values of feature_i
@@ -94,8 +100,8 @@ class DecisionTree(object):
                             best_sets = {
                                 "left_branch": Xy_1, "right_branch": Xy_2}
 
-        # If we have any information gain to go by we build the tree deeper
-        if current_depth < self.max_depth and largest_impurity > self.min_impurity:
+
+        if largest_impurity > self.min_impurity:
             leftX = best_sets["left_branch"][:, :n_features]
             leftY = best_sets["left_branch"][:, n_features:]    # X - all cols. but last, y - last
             rightX = best_sets["right_branch"][:, :n_features]
@@ -112,7 +118,7 @@ class DecisionTree(object):
 
     # Do a recursive search down the tree and make a predict of the data sample by the
     # value of the leaf that we end up at
-    def classify_sample(self, x, tree=None):
+    def predict_value(self, x, tree=None):
         if tree is None:
             tree = self.root
 
@@ -132,13 +138,13 @@ class DecisionTree(object):
             branch = tree.true_branch
 
         # Test subtree
-        return self.classify_sample(x, branch)
+        return self.predict_value(x, branch)
 
     # Classify samples one by one and return the set of labels
     def predict(self, X):
         y_pred = []
         for x in X:
-            y_pred.append(self.classify_sample(x))
+            y_pred.append(self.predict_value(x))
         return y_pred
 
     def print_tree(self, tree=None, indent=" "):
@@ -160,6 +166,47 @@ class DecisionTree(object):
             self.print_tree(tree.false_branch, indent + indent)
 
 
+
+class XGBoostRegressionTree(DecisionTree):
+
+    # For XGBoost
+    # http://homes.cs.washington.edu/~tqchen/pdf/BoostedTree.pdf
+
+    def _gain(self, y, y_pred):
+        nom = np.power(self.loss.gradient(y, y_pred).sum(), 2)
+        denom = self.loss.hess(y, y_pred).sum()
+        return 0.5 * (nom / denom)
+
+    def _gain_by_taylor(self, y, y_1, y_2):
+        # y_true left part, y_pred right part
+        split = int(np.shape(y)[1]/2)
+        y_pred = y[:, split:]
+        y = y[:, :split]
+        y_1_pred = y_1[:, split:]
+        y_1 = y_1[:, :split]
+        y_2_pred = y_2[:, split:]
+        y_2 = y_2[:, :split]
+
+        true_gain = self._gain(y_1, y_1_pred)
+        false_gain = self._gain(y_2, y_2_pred)
+        gain = self._gain(y, y_pred)
+        return true_gain + false_gain - gain
+
+    def _approx(self, y):
+        split = int(np.shape(y)[1]/2)
+        y_pred = y[:, split:]
+        y = y[:, :split]
+        value = np.sum(self.loss.gradient(y, y_pred), axis=0) / np.sum(self.loss.hess(y, y_pred).sum(), axis=0)
+        return value
+
+    def fit(self, X, y, loss):
+        self.loss = loss
+        self.xgboost = True
+        self._impurity_calculation = self._gain_by_taylor
+        self._leaf_value_calculation = self._approx
+        super(XGBoostRegressionTree, self).fit(X, y)
+
+
 class RegressionTree(DecisionTree):
     def _calculate_variance_reduction(self, y, y_1, y_2):
 
@@ -174,11 +221,35 @@ class RegressionTree(DecisionTree):
 
         return sum(variance_reduction)
 
-    def _mean_of_y(self, y):
-        return np.mean(y, axis=0)
+    # For XGBoost
+    # http://homes.cs.washington.edu/~tqchen/pdf/BoostedTree.pdf
+    def _gain_by_taylor(self, y, y_1, y_2):
+        # y_true left part, y_pred right part
+        split = int(np.shape(y)[1]/2)
+        y_pred = y[:, split:]
+        y = y[:, :split]
+        y_1_pred = y_1[:, split:]
+        y_1 = y_1[:, :split]
+        y_2_pred = y_2[:, split:]
+        y_2 = y_2[:, :split]
 
-    def fit(self, X, y):
+
+        true_gain = self.loss.gain(y_1, y_1_pred)
+        false_gain = self.loss.gain(y_2, y_2_pred)
+        gain = self.loss.gain(y, y_pred)
+        return true_gain + false_gain - gain
+
+    def _mean_of_y(self, y):
+        value = np.mean(y, axis=0)
+        value = value if len(value) > 1 else value[0]
+        return value
+
+    def fit(self, X, y, loss=None):
         self._impurity_calculation = self._calculate_variance_reduction
+        self.loss = loss
+        if self.loss:
+            self.xgboost = True
+            self._impurity_calculation = self._gain_by_taylor
         self._leaf_value_calculation = self._mean_of_y
         super(RegressionTree, self).fit(X, y)
 
@@ -219,7 +290,7 @@ def main():
     X = data.data
     y = data.target
 
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4, seed=4)
 
     clf = ClassificationTree()
     clf.fit(X_train, y_train)

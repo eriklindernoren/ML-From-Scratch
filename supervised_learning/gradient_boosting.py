@@ -19,7 +19,7 @@ from principal_component_analysis import PCA
 # Super class to GradientBoostingRegressor and GradientBoostingClassifier
 class GradientBoosting(object):
     def __init__(self, n_estimators, learning_rate, min_samples_split,
-                 min_impurity, max_depth, regression):
+                 min_impurity, max_depth, regression, debug):
         self.n_estimators = n_estimators            # Number of trees
         self.learning_rate = learning_rate
         self.min_samples_split = min_samples_split  # The minimum n of sampels to justify split
@@ -27,6 +27,7 @@ class GradientBoosting(object):
         self.max_depth = max_depth                  # Maximum depth for tree
         self.init_estimate = None                   # The initial prediction of y
         self.regression = regression
+        self.debug = debug
         
         # Square loss for regression
         # Log loss for classification
@@ -48,7 +49,7 @@ class GradientBoosting(object):
         # Set initial predictions to median of y
         self.init_estimate = np.median(y, axis=0)
         y_pred = np.full(np.shape(y), self.init_estimate)
-        for tree in self.trees:
+        for i, tree in enumerate(self.trees):
             
             gradient = self.loss.gradient(y, y_pred)
             tree.fit(X, gradient)
@@ -60,6 +61,10 @@ class GradientBoosting(object):
             # Update y prediction by the estimated gradient value
             y_pred -= np.multiply(self.learning_rate, gradient_est)
 
+            if self.debug:
+                progress = 100 * (i / self.n_estimators)
+                print ("Progress: %.2f%%" % progress)
+
     def predict(self, X):
         # Fix shape of y_pred as (n_samples, n_outputs)
         n_samples = np.shape(X)[0]
@@ -70,7 +75,7 @@ class GradientBoosting(object):
             y_pred = np.full((n_samples, n_outputs), self.init_estimate)
 
         # Make predictions
-        for tree in self.trees:
+        for i, tree in enumerate(self.trees):
             prediction = tree.predict(X)
             prediction = np.array(prediction).reshape(np.shape(y_pred))
             y_pred -= np.multiply(self.learning_rate, prediction)
@@ -85,23 +90,25 @@ class GradientBoosting(object):
 
 class GradientBoostingRegressor(GradientBoosting):
     def __init__(self, n_estimators=20, learning_rate=.8, min_samples_split=20,
-                 min_var_red=1e-4, max_depth=20):
+                 min_var_red=1e-4, max_depth=20, debug=False):
         super(GradientBoostingRegressor, self).__init__(n_estimators=n_estimators, 
             learning_rate=learning_rate, 
             min_samples_split=min_samples_split, 
             min_impurity=min_var_red,
             max_depth=max_depth,
-            regression=True)
+            regression=True,
+            debug=debug)
 
 class GradientBoostingClassifier(GradientBoosting):
-    def __init__(self, n_estimators=20, learning_rate=1, min_samples_split=20,
-                 min_info_gain=1e-7, max_depth=20):
+    def __init__(self, n_estimators=100, learning_rate=.5, min_samples_split=20,
+                 min_info_gain=1e-7, max_depth=20, debug=False):
         super(GradientBoostingClassifier, self).__init__(n_estimators=n_estimators, 
             learning_rate=learning_rate, 
             min_samples_split=min_samples_split, 
             min_impurity=min_info_gain,
             max_depth=max_depth,
-            regression=False)
+            regression=False,
+            debug=debug)
 
     def fit(self, X, y):
         y = categorical_to_binary(y)
@@ -116,7 +123,7 @@ def main():
     X = data.data
     y = data.target
 
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4, seed=2)
 
     clf = GradientBoostingClassifier()
     clf.fit(X_train, y_train)

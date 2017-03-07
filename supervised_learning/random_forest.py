@@ -48,7 +48,7 @@ class RandomForest():
         for i in range(self.n_estimators):
             X_subset, y_subset = subsets[i]
             # Feature bagging (select random subsets of the features)
-            idx = np.random.choice(range(n_features), size=self.max_features)
+            idx = np.random.choice(range(n_features), size=self.max_features, replace=True)
             # Save the indices of the features for prediction
             self.feature_indices.append(idx)
             # Choose the features corresponding the the indices
@@ -97,15 +97,17 @@ def main():
     X = data.data
     y = data.target
 
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4)
+    pca = PCA()
+    X = pca.transform(X, n_components=5) # Reduce to 5 dimensions
 
-    clf = RandomForest(n_estimators=50, debug=True)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4, seed=1)
+
+    clf = RandomForest(debug=True)
     clf.fit(X_train, y_train)
     y_pred = clf.predict(X_test)
 
     print ("Accuracy:", accuracy_score(y_test, y_pred))
 
-    pca = PCA()
     pca.plot_in_2d(X_test, y_pred)
 
 
