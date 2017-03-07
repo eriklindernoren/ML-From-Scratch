@@ -46,8 +46,7 @@ class DecisionTree(object):
         self.one_dim = None
 
         # If Gradient Boost
-        self.loss = None
-        self.xgboost = False
+        self.loss = loss
 
     def fit(self, X, y, loss=None):
         # Build tree
@@ -178,12 +177,15 @@ class XGBoostRegressionTree(DecisionTree):
         return 0.5 * (nom / denom)
 
     def _gain_by_taylor(self, y, y_1, y_2):
-        # y_true left part, y_pred right part
+        # y split into y, y_pred
         split = int(np.shape(y)[1]/2)
+
         y_pred = y[:, split:]
         y = y[:, :split]
+
         y_1_pred = y_1[:, split:]
         y_1 = y_1[:, :split]
+
         y_2_pred = y_2[:, split:]
         y_2 = y_2[:, :split]
 
@@ -193,15 +195,15 @@ class XGBoostRegressionTree(DecisionTree):
         return true_gain + false_gain - gain
 
     def _approx(self, y):
+        # y split into y, y_pred
         split = int(np.shape(y)[1]/2)
         y_pred = y[:, split:]
         y = y[:, :split]
+        # Newton
         value = np.sum(self.loss.gradient(y, y_pred), axis=0) / np.sum(self.loss.hess(y, y_pred).sum(), axis=0)
         return value
 
-    def fit(self, X, y, loss):
-        self.loss = loss
-        self.xgboost = True
+    def fit(self, X, y):
         self._impurity_calculation = self._gain_by_taylor
         self._leaf_value_calculation = self._approx
         super(XGBoostRegressionTree, self).fit(X, y)
@@ -221,35 +223,13 @@ class RegressionTree(DecisionTree):
 
         return sum(variance_reduction)
 
-    # For XGBoost
-    # http://homes.cs.washington.edu/~tqchen/pdf/BoostedTree.pdf
-    def _gain_by_taylor(self, y, y_1, y_2):
-        # y_true left part, y_pred right part
-        split = int(np.shape(y)[1]/2)
-        y_pred = y[:, split:]
-        y = y[:, :split]
-        y_1_pred = y_1[:, split:]
-        y_1 = y_1[:, :split]
-        y_2_pred = y_2[:, split:]
-        y_2 = y_2[:, :split]
-
-
-        true_gain = self.loss.gain(y_1, y_1_pred)
-        false_gain = self.loss.gain(y_2, y_2_pred)
-        gain = self.loss.gain(y, y_pred)
-        return true_gain + false_gain - gain
-
     def _mean_of_y(self, y):
         value = np.mean(y, axis=0)
         value = value if len(value) > 1 else value[0]
         return value
 
-    def fit(self, X, y, loss=None):
+    def fit(self, X, y):
         self._impurity_calculation = self._calculate_variance_reduction
-        self.loss = loss
-        if self.loss:
-            self.xgboost = True
-            self._impurity_calculation = self._gain_by_taylor
         self._leaf_value_calculation = self._mean_of_y
         super(RegressionTree, self).fit(X, y)
 

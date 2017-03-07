@@ -53,7 +53,8 @@ class XGBoost(object):
             tree = XGBoostRegressionTree(
                     min_samples_split=self.min_samples_split,
                     min_impurity=min_impurity,
-                    max_depth=self.max_depth)
+                    max_depth=self.max_depth,
+                    loss=self.loss)
 
             self.trees.append(tree)
 
@@ -66,7 +67,7 @@ class XGBoost(object):
         for i, tree in enumerate(self.trees):
             gradient = self.loss.gradient(y, y_pred)
             y_and_pred = np.concatenate((y, y_pred), axis=1)
-            tree.fit(X, y_and_pred, self.loss)
+            tree.fit(X, y_and_pred)
 
             gradient_est = tree.predict(X)
 
