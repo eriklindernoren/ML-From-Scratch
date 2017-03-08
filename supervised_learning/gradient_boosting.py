@@ -79,8 +79,8 @@ class GradientBoosting(object):
 
 
 class GradientBoostingRegressor(GradientBoosting):
-    def __init__(self, n_estimators=20, learning_rate=.8, min_samples_split=20,
-                 min_var_red=1e-4, max_depth=20, debug=False):
+    def __init__(self, n_estimators=200, learning_rate=0.5, min_samples_split=2,
+                 min_var_red=1e-7, max_depth=4, debug=False):
         super(GradientBoostingRegressor, self).__init__(n_estimators=n_estimators, 
             learning_rate=learning_rate, 
             min_samples_split=min_samples_split, 
@@ -124,23 +124,23 @@ def main():
     pca = PCA()
     pca.plot_in_2d(X_test, y_pred)
 
-    # print ("-- Gradient Boosting Regression --")
+    print ("-- Gradient Boosting Regression --")
 
-    # X, y = datasets.make_regression(n_features=1, n_samples=100, bias=0, noise=5)
+    X, y = datasets.make_regression(n_features=1, n_samples=150, bias=0, noise=5)
 
-    # X_train, X_test, y_train, y_test = train_test_split(standardize(X), y, test_size=0.5)
+    X_train, X_test, y_train, y_test = train_test_split(standardize(X), y, test_size=0.5)
 
-    # clf = GradientBoostingRegressor()
-    # clf.fit(X_train, y_train)
-    # y_pred = clf.predict(X_test)
+    clf = GradientBoostingRegressor(debug=True)
+    clf.fit(X_train, y_train)
+    y_pred = clf.predict(X_test)
 
 
-    # print ("Mean Squared Error:", mean_squared_error(y_test, y_pred))
+    print ("Mean Squared Error:", mean_squared_error(y_test, y_pred))
 
-    # # Plot the results
-    # plt.scatter(X_test[:, 0], y_test, color='black')
-    # plt.scatter(X_test[:, 0], y_pred, color='green')
-    # plt.show()
+    # Plot the results
+    plt.scatter(X_test[:, 0], y_test, color='black')
+    plt.scatter(X_test[:, 0], y_pred, color='green')
+    plt.show()
 
 
 if __name__ == "__main__":
