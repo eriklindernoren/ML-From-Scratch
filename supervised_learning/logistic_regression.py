@@ -26,12 +26,16 @@ def sigmoid_gradient(x):
 
 
 class LogisticRegression():
-    def __init__(self):
+    def __init__(self, learning_rate=.1, gradient_descent=True):
         self.param = None
+        self.learning_rate = learning_rate
+        self.gradient_descent = gradient_descent
 
-    def fit(self, X, y, n_iterations=4):
+
+    def fit(self, X, y, n_iterations=4000):
         # Add dummy ones for bias weights
         X = np.insert(X, 0, 1, axis=1)
+
 
         n_samples, n_features = np.shape(X)
 
@@ -44,10 +48,15 @@ class LogisticRegression():
         for i in range(n_iterations):
             # Make a new prediction
             y_pred = sigmoid(X.dot(self.param))
-            # Make a diagonal matrix of the sigmoid gradient column vector
-            diag_gradient = make_diagonal(sigmoid_gradient(X.dot(self.param)))
-            # Batch opt:
-            self.param = np.linalg.pinv(X.T.dot(diag_gradient).dot(X)).dot(X.T).dot(diag_gradient.dot(X).dot(self.param) + y - y_pred)
+            if self.gradient_descent:
+                # Move against the gradient of the loss function with 
+                # respect to the parameter to minimize the loss
+                self.param -= self.learning_rate * X.T.dot(y_pred - y)
+            else:
+                # Make a diagonal matrix of the sigmoid gradient column vector
+                diag_gradient = make_diagonal(sigmoid_gradient(X.dot(self.param)))
+                # Batch opt:
+                self.param = np.linalg.pinv(X.T.dot(diag_gradient).dot(X)).dot(X.T).dot(diag_gradient.dot(X).dot(self.param) + y - y_pred)
 
     def predict(self, X):
         # Add dummy ones for bias weights
@@ -66,9 +75,9 @@ def main():
     y[y == 1] = 0
     y[y == 2] = 1
 
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, seed=1)
 
-    clf = LogisticRegression()
+    clf = LogisticRegression(gradient_descent=True)
     clf.fit(X_train, y_train)
     y_pred = clf.predict(X_test)
 

@@ -67,16 +67,16 @@ class MultilayerPerceptron():
             errors.append(mse)
 
             # Calculate loss gradients:
-            # Output layer weights V
+            # Gradient of squared loss w.r.t each parameter
             v_gradient = -2 * (y - output_layer_pred) * \
                 sigmoid_gradient(output_layer_input)
             biasV_gradient = v_gradient
-            # Hidden layer weights W
             w_gradient = v_gradient.dot(
                 self.V.T) * sigmoid_gradient(hidden_input)
             biasW_gradient = w_gradient
 
             # Update weights
+            # Move against the gradient to minimize loss
             self.V -= learning_rate * hidden_output.T.dot(v_gradient)
             self.biasV -= learning_rate * np.ones((1, n_samples)).dot(biasV_gradient)
             self.W -= learning_rate * X.T.dot(w_gradient)

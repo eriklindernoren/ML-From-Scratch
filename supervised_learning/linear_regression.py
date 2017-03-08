@@ -20,7 +20,7 @@ class LinearRegression():
         self.gradient_descent = gradient_descent    # Opt. method. If False => Least squares
 
     def fit(self, X, y):
-        # Insert constant ones for bias weights
+        # Insert constant ones as first column (for bias weights)
         X = np.insert(X, 0, 1, axis=1)
         # Get weights by gradient descent opt.
         if self.gradient_descent:
@@ -29,7 +29,9 @@ class LinearRegression():
             self.w = np.random.random((n_features, ))
             # Do gradient descent for n_iterations
             for _ in range(self.n_iterations):
+                # Gradient of squared loss w.r.t the weights
                 w_gradient = X.T.dot(X.dot(self.w) - y)
+                # Move against the gradient to minimize loss
                 self.w -= self.learning_rate * w_gradient
         # Get weights by least squares (by pseudoinverse)
         else:
