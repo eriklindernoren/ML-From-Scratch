@@ -32,10 +32,9 @@ class LogisticLoss():
         return prob * (1 - prob)
 
 
-# Super class to GradientBoostingRegressor and GradientBoostingClassifier
 class XGBoost(object):
-    def __init__(self, n_estimators=20, learning_rate=0.5, min_samples_split=2,
-                 min_impurity=1e-7, max_depth=float("inf"), debug=False):
+    def __init__(self, n_estimators=200, learning_rate=0.01, min_samples_split=2,
+                 min_impurity=1e-7, max_depth=2, debug=False):
         self.n_estimators = n_estimators            # Number of trees
         self.learning_rate = learning_rate
         self.min_samples_split = min_samples_split  # The minimum n of sampels to justify split
@@ -65,14 +64,11 @@ class XGBoost(object):
         self.init_estimate = np.median(y, axis=0)
         y_pred = np.zeros(np.shape(y))
         for i, tree in enumerate(self.trees):
-            gradient = self.loss.gradient(y, y_pred)
             y_and_pred = np.concatenate((y, y_pred), axis=1)
             tree.fit(X, y_and_pred)
+            update_pred = tree.predict(X)
 
-            gradient_est = tree.predict(X)
-
-            # Update y prediction by the gradient value
-            y_pred += np.multiply(self.learning_rate, gradient_est)
+            y_pred += np.multiply(self.learning_rate, update_pred)
 
             progress = 100 * (i / self.n_estimators)
             if self.debug:
@@ -81,17 +77,13 @@ class XGBoost(object):
     def predict(self, X):
         # Fix shape of y_pred as (n_samples, n_outputs)
         n_samples = np.shape(X)[0]
-        if not np.shape(self.init_estimate):
-            y_pred = np.full(n_samples, self.init_estimate)
-        else:
-            n_outputs = np.shape(self.init_estimate)[0]
-            y_pred = np.full((n_samples, n_outputs), self.init_estimate)
+        y_pred = np.array([])
         # Make predictions
         for tree in self.trees:
             # Estimate gradient and update prediction
-            gradient_est = tree.predict(X)
-            gradient_est = np.array(gradient_est).reshape(np.shape(y_pred))
-            y_pred += np.multiply(self.learning_rate, gradient_est)
+            update_pred = tree.predict(X)
+            update = np.multiply(self.learning_rate, update_pred)
+            y_pred = update if not y_pred.any() else y_pred + update
 
         # Turn into probability distribution
         y_pred = np.exp(y_pred) / np.expand_dims(np.sum(np.exp(y_pred), axis=1), axis=1)

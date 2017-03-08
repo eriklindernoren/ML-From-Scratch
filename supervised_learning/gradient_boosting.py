@@ -4,6 +4,7 @@ from sklearn import datasets
 import sys
 import os
 import matplotlib.pyplot as plt
+from scipy.optimize import line_search
 
 # Import helper functions
 dir_path = os.path.dirname(os.path.realpath(__file__))
@@ -28,6 +29,7 @@ class GradientBoosting(object):
         self.init_estimate = None                   # The initial prediction of y
         self.regression = regression
         self.debug = debug
+        self.multipliers = []
         
         # Square loss for regression
         # Log loss for classification
@@ -42,43 +44,31 @@ class GradientBoosting(object):
                     min_samples_split=self.min_samples_split,
                     min_impurity=min_impurity,
                     max_depth=self.max_depth)
-
             self.trees.append(tree)
 
+
     def fit(self, X, y):
-        # Set initial predictions to median of y
-        self.init_estimate = np.median(y, axis=0)
-        y_pred = np.full(np.shape(y), self.init_estimate)
+        y_pred = np.full(np.shape(y), np.mean(y, axis=0))
         for i, tree in enumerate(self.trees):
             
             gradient = self.loss.gradient(y, y_pred)
             tree.fit(X, gradient)
-            gradient_est = tree.predict(X)
-
-            # Make sure shape is same as y_pred
-            gradient_est = np.array(gradient_est).reshape(np.shape(y_pred))
-
-            # Update y prediction by the estimated gradient value
-            y_pred -= np.multiply(self.learning_rate, gradient_est)
-
+            update = tree.predict(X)
+            # Update y prediction
+            y_pred -= np.multiply(self.learning_rate, update)
+            
             if self.debug:
                 progress = 100 * (i / self.n_estimators)
                 print ("Progress: %.2f%%" % progress)
 
     def predict(self, X):
-        # Fix shape of y_pred as (n_samples, n_outputs)
-        n_samples = np.shape(X)[0]
-        if not np.shape(self.init_estimate):
-            y_pred = np.full(n_samples, self.init_estimate)
-        else:
-            n_outputs = np.shape(self.init_estimate)[0]
-            y_pred = np.full((n_samples, n_outputs), self.init_estimate)
-
+        y_pred = np.array([])
         # Make predictions
         for i, tree in enumerate(self.trees):
-            prediction = tree.predict(X)
-            prediction = np.array(prediction).reshape(np.shape(y_pred))
-            y_pred -= np.multiply(self.learning_rate, prediction)
+            update = tree.predict(X)
+            update = np.multiply(self.learning_rate, update)
+            # prediction = np.array(prediction).reshape(np.shape(y_pred))
+            y_pred = -update if not y_pred.any() else y_pred - update
 
         if not self.regression:
             # Turn into probability distribution
@@ -100,8 +90,8 @@ class GradientBoostingRegressor(GradientBoosting):
             debug=debug)
 
 class GradientBoostingClassifier(GradientBoosting):
-    def __init__(self, n_estimators=100, learning_rate=.5, min_samples_split=20,
-                 min_info_gain=1e-7, max_depth=20, debug=False):
+    def __init__(self, n_estimators=200, learning_rate=.5, min_samples_split=2,
+                 min_info_gain=1e-7, max_depth=2, debug=False):
         super(GradientBoostingClassifier, self).__init__(n_estimators=n_estimators, 
             learning_rate=learning_rate, 
             min_samples_split=min_samples_split, 
@@ -134,23 +124,23 @@ def main():
     pca = PCA()
     pca.plot_in_2d(X_test, y_pred)
 
-    print ("-- Gradient Boosting Regression --")
+    # print ("-- Gradient Boosting Regression --")
 
-    X, y = datasets.make_regression(n_features=1, n_samples=100, bias=0, noise=5)
+    # X, y = datasets.make_regression(n_features=1, n_samples=100, bias=0, noise=5)
 
-    X_train, X_test, y_train, y_test = train_test_split(standardize(X), y, test_size=0.5)
+    # X_train, X_test, y_train, y_test = train_test_split(standardize(X), y, test_size=0.5)
 
-    clf = GradientBoostingRegressor()
-    clf.fit(X_train, y_train)
-    y_pred = clf.predict(X_test)
+    # clf = GradientBoostingRegressor()
+    # clf.fit(X_train, y_train)
+    # y_pred = clf.predict(X_test)
 
 
-    print ("Mean Squared Error:", mean_squared_error(y_test, y_pred))
+    # print ("Mean Squared Error:", mean_squared_error(y_test, y_pred))
 
-    # Plot the results
-    plt.scatter(X_test[:, 0], y_test, color='black')
-    plt.scatter(X_test[:, 0], y_pred, color='green')
-    plt.show()
+    # # Plot the results
+    # plt.scatter(X_test[:, 0], y_test, color='black')
+    # plt.scatter(X_test[:, 0], y_pred, color='green')
+    # plt.show()
 
 
 if __name__ == "__main__":

@@ -4,11 +4,9 @@
 ###About
 Python implementations of some of the fundamental Machine Learning models and algorithms from scratch.
 
-While some of the matrix operations that are implemented by hand (such as calculation of covariance matrix) are 
-available in numpy I have decided to add these as well to make sure that I understand how the linear algebra is applied.
+The purpose of this project is not to produce as optimized and computationally efficient algorithms as possible 
+but rather to present the inner workings of them in a transparent way.
 The reason the project uses scikit-learn is to evaluate the implementations on sklearn.datasets.
-
-The purpose of this project is purely self-educational.
 
 Feel free to [reach out](mailto:eriklindernoren@gmail.com) if you can think of ways to expand this project.
 

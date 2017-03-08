@@ -9,8 +9,11 @@ class SquareLoss():
         return 0.5 * np.power((y_true - y_pred), 2)
 
     # W.r.t y_pred
-    def gradient(self, y_true, y_pred):
-        return -1 * (y_true - y_pred)
+    def gradient(self, y, y_pred):
+        return -1 * (y - y_pred)
+
+    def hess(self, y, y_pred):
+        return np.ones(np.shape(y))
 
 
 class LogisticLoss():
@@ -33,5 +36,5 @@ class LogisticLoss():
 
     def hess(self, y, y_pred):
         p = self.log_func(y_pred)
-        return p * (1 - p)
+        return -p * (1 - p)
 

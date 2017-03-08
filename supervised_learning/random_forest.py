@@ -15,7 +15,7 @@ from decision_tree import ClassificationTree
 
 
 class RandomForest():
-    def __init__(self, n_estimators=50, max_features=None, min_samples_split=2,
+    def __init__(self, n_estimators=100, max_features=None, min_samples_split=2,
                  min_gain=1e-7, max_depth=float("inf"), debug=False):
         self.n_estimators = n_estimators    # Number of trees
         self.max_features = max_features    # Maxmimum number of features per tree
@@ -69,6 +69,7 @@ class RandomForest():
             # Make a prediction based on those features
             prediction = tree.predict(X[:, idx])
             y_preds.append(prediction)
+            
         # Take the transpose of the matrix to transform it so
         # that rows are samples and columns are predictions by the
         # estimators
@@ -93,14 +94,11 @@ class RandomForest():
 
 
 def main():
-    data = datasets.load_digits()
+    data = datasets.load_iris()
     X = data.data
     y = data.target
 
-    pca = PCA()
-    X = pca.transform(X, n_components=5) # Reduce to 5 dimensions
-
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4, seed=1)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4, seed=2)
 
     clf = RandomForest(debug=True)
     clf.fit(X_train, y_train)
@@ -108,6 +106,7 @@ def main():
 
     print ("Accuracy:", accuracy_score(y_test, y_pred))
 
+    pca = PCA()
     pca.plot_in_2d(X_test, y_pred)
 
 
