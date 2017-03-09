@@ -75,13 +75,13 @@ adaboost = Adaboost(n_clf = 8)
 naive_bayes = NaiveBayes()
 knn = KNN(k=4)
 logistic_regression = LogisticRegression()
-mlp = MultilayerPerceptron(n_hidden=20)
+mlp = MultilayerPerceptron(n_hidden=20, n_iterations=20000, learning_rate=0.1)
 perceptron = Perceptron()
 decision_tree = ClassificationTree()
 random_forest = RandomForest(n_estimators=50)
 support_vector_machine = SupportVectorMachine()
 lda = LDA()
-gbc = GradientBoostingClassifier(n_estimators=50, learning_rate=.8, max_depth=2)
+gbc = GradientBoostingClassifier(n_estimators=50, learning_rate=.9, max_depth=2)
 xgboost = XGBoost(n_estimators=50, learning_rate=0.5, max_depth=2)
 
 # ........
@@ -99,7 +99,7 @@ lda.fit(X_train, y_train)
 print ("\tLogistic Regression")
 logistic_regression.fit(X_train, y_train)
 print ("\tMultilayer Perceptron")
-mlp.fit(X_train, y_train, n_iterations=20000, learning_rate=0.1)
+mlp.fit(X_train, y_train)
 print ("\tNaive Bayes")
 naive_bayes.fit(X_train, y_train)
 print ("\tPerceptron")
@@ -145,6 +145,8 @@ for clf in y_pred:
 #  PLOT
 # .......
 plt.scatter(X_test[:,0], X_test[:,1], c=y_test)
+plt.ylabel("Principal Component 2")
+plt.xlabel("Principal Component 1")
 plt.show()
 
 

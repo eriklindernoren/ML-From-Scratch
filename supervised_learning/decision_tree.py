@@ -166,17 +166,19 @@ class DecisionTree(object):
 
 
 class XGBoostRegressionTree(DecisionTree):
+    """
+    Regression tree for XGBoost
+    - Reference -
+    http://homes.cs.washington.edu/~tqchen/pdf/BoostedTree.pdf
+    """
 
     # y contains y in left half of the middle col
     # and y_pred in the right half. Split and return
     # the two matrices
     def _split(self, y):
         col = int(np.shape(y)[1]/2)
-        return y[:, :col], y[:, col:]
-
-    # Regression tree for XGBoost
-    # - Reference -
-    # http://homes.cs.washington.edu/~tqchen/pdf/BoostedTree.pdf
+        y, y_pred = y[:, :col], y[:, col:]
+        return y, y_pred
 
     def _gain(self, y, y_pred):
         nominator = np.power(self.loss.gradient(y, y_pred).sum(), 2)
@@ -184,7 +186,6 @@ class XGBoostRegressionTree(DecisionTree):
         return 0.5 * (nominator / denominator)
 
     def _gain_by_taylor(self, y, y1, y2):
-
         # Split
         y, y_pred = self._split(y)
         y1, y1_pred = self._split(y1)
@@ -212,7 +213,6 @@ class XGBoostRegressionTree(DecisionTree):
 
 class RegressionTree(DecisionTree):
     def _calculate_variance_reduction(self, y, y1, y2):
-
         var_tot = calculate_variance(y)
         var_1 = calculate_variance(y1)
         var_2 = calculate_variance(y2)
@@ -247,13 +247,12 @@ class ClassificationTree(DecisionTree):
     def _majority_vote(self, y):
         most_common = None
         max_count = 0
-        results = {}
         for label in np.unique(y):
+            # Count number of occurences of samples with label
             count = len(y[y == label])
             if count > max_count:
                 most_common = label
                 max_count = count
-
         return most_common
 
     def fit(self, X, y):

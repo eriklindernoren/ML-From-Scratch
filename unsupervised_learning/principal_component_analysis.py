@@ -40,6 +40,8 @@ class PCA():
         x1 = X_transformed[:, 0]
         x2 = X_transformed[:, 1]
         plt.scatter(x1, x2, c=y)
+        plt.ylabel('Principal Component 2')
+        plt.xlabel('Principal Component 1')
         plt.show()
 
     # Plot the dataset X and the corresponding labels y in 3D using PCA.

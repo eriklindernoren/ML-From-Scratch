@@ -50,7 +50,7 @@ class LogisticRegression():
             y_pred = sigmoid(X.dot(self.param))
             if self.gradient_descent:
                 # Move against the gradient of the loss function with 
-                # respect to the parameter to minimize the loss
+                # respect to the parameters to minimize the loss
                 self.param -= self.learning_rate * X.T.dot(y_pred - y)
             else:
                 # Make a diagonal matrix of the sigmoid gradient column vector

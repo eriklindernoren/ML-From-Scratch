@@ -20,21 +20,17 @@ class KNN():
         self.k = k
 
     # Do a majority vote among the neighbors
-    def _get_vote(self, neighbors, classes):
+    def _majority_vote(self, neighbors, classes):
         max_count = 0
-        label = None
+        most_common = None
         # Count class occurences among neighbors
-        for c in classes:
-            count = 0
-            for sample in neighbors:
-                sample_class = sample[1]
-                if sample_class == c:
-                    count += 1
-            # If vote is larger than highest previous => update label pred.
+        for c in np.unique(classes):
+            # Count number of neighbors with class c
+            count = len(neighbors[neighbors[:, 1] == c])
             if count > max_count:
                 max_count = count
-                label = c
-        return label
+                most_common = c
+        return most_common
 
     def predict(self, X_test, X_train, y_train):
         classes = np.unique(y_train)
@@ -55,7 +51,7 @@ class KNN():
             k_nearest_neighbors = neighbors[neighbors[:, 0].argsort()][:self.k]
             # Do a majority vote among the k neighbors and set prediction as the
             # class receing the most votes
-            label = self._get_vote(k_nearest_neighbors, classes)
+            label = self._majority_vote(k_nearest_neighbors, classes)
             y_pred.append(label)
         return np.array(y_pred)
 

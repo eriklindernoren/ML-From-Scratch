@@ -27,15 +27,17 @@ def sigmoid_gradient(x):
 
 
 class MultilayerPerceptron():
-    def __init__(self, n_hidden):
+    def __init__(self, n_hidden, n_iterations=3000, learning_rate=0.01, plot_errors=False):
         self.n_hidden = n_hidden    # Number of hidden neurons
         self.W = None               # Hidden layer weights
         self.V = None               # Output layer weights
         self.biasW = None           # Hidden layer bias
         self.biasV = None           # Output layer bias
+        self.n_iterations = 3000
+        self.learning_rate = learning_rate
+        self.plot_errors = plot_errors
 
-    def fit(self, X, y, n_iterations=3000,
-            learning_rate=0.01, plot_errors=False):
+    def fit(self, X, y):
         # Convert the nominal y values to binary
         y = categorical_to_binary(y)
 
@@ -51,7 +53,7 @@ class MultilayerPerceptron():
         self.biasV = (b - a) * np.random.random((1, n_outputs)) + a
 
         errors = []
-        for i in range(n_iterations):
+        for i in range(self.n_iterations):
             # Calculate hidden layer
             hidden_input = X.dot(self.W) + self.biasW
             # Calculate output of hidden neurons
@@ -77,14 +79,14 @@ class MultilayerPerceptron():
 
             # Update weights
             # Move against the gradient to minimize loss
-            self.V -= learning_rate * hidden_output.T.dot(v_gradient)
-            self.biasV -= learning_rate * np.ones((1, n_samples)).dot(biasV_gradient)
-            self.W -= learning_rate * X.T.dot(w_gradient)
-            self.biasW -= learning_rate * np.ones((1, n_samples)).dot(biasW_gradient)
+            self.V -= self.learning_rate * hidden_output.T.dot(v_gradient)
+            self.biasV -= self.learning_rate * np.ones((1, n_samples)).dot(biasV_gradient)
+            self.W -= self.learning_rate * X.T.dot(w_gradient)
+            self.biasW -= self.learning_rate * np.ones((1, n_samples)).dot(biasW_gradient)
 
         # Plot the training error
-        if plot_errors:
-            plt.plot(range(n_iterations), errors)
+        if self.plot_errors:
+            plt.plot(range(self.n_iterations), errors)
             plt.ylabel('Training Error')
             plt.xlabel('Iterations')
             plt.show()
@@ -106,13 +108,11 @@ def main():
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4, seed=1)
 
     # MLP
-    clf = MultilayerPerceptron(n_hidden=10)
-    clf.fit(
-        X_train,
-        y_train,
+    clf = MultilayerPerceptron(n_hidden=10,
         n_iterations=4000,
-        learning_rate=0.01,
+        learning_rate=0.01, 
         plot_errors=True)
+    clf.fit(X_train, y_train)
     y_pred = clf.predict(X_test)
 
     print ("Accuracy:", accuracy_score(y_test, y_pred))

@@ -51,13 +51,13 @@ class RandomForest():
             idx = np.random.choice(range(n_features), size=self.max_features, replace=True)
             # Save the indices of the features for prediction
             self.feature_indices.append(idx)
-            # Choose the features corresponding the the indices
+            # Choose the features corresponding to the indices
             X_subset = X_subset[:, idx]
             # Fit the tree to the data
             self.trees[i].fit(X_subset, y_subset)
 
-            progress = 100 * (i / self.n_estimators)
             if self.debug:
+                progress = 100 * (i / self.n_estimators)
                 print ("Progress: %.2f%%" % progress)
 
     def predict(self, X):

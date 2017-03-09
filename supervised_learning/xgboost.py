@@ -70,8 +70,8 @@ class XGBoost(object):
 
             y_pred += np.multiply(self.learning_rate, update_pred)
 
-            progress = 100 * (i / self.n_estimators)
             if self.debug:
+                progress = 100 * (i / self.n_estimators)
                 print ("Progress: %.2f%%" % progress)
 
     def predict(self, X):
