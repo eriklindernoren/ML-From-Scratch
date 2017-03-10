@@ -109,7 +109,7 @@ def main():
     print ("Accuracy:", accuracy)
 
     pca = PCA()
-    pca.plot_in_2d(X_test, y_pred, title="Random Forest", accuracy=accuracy)
+    pca.plot_in_2d(X_test, y_pred, title="Random Forest", accuracy=accuracy, legend=True, labels=data.target_names)
 
 
 if __name__ == "__main__":

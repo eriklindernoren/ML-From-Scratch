@@ -124,7 +124,7 @@ def main():
     print ("Accuracy:", accuracy)
 
     pca = PCA()
-    pca.plot_in_2d(X_test, y_pred, title="Gradient Boosting", accuracy=accuracy)
+    pca.plot_in_2d(X_test, y_pred, title="Gradient Boosting", accuracy=accuracy, legend=True, labels=data.target_names)
 
     print ("-- Gradient Boosting Regression --")
 

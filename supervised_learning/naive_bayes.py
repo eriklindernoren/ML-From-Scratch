@@ -115,7 +115,7 @@ def main():
 
     # Reduce dimension to two using PCA and plot the results
     pca = PCA()
-    pca.plot_in_2d(X_test, y_pred, title="Naive Bayes", accuracy=accuracy)
+    pca.plot_in_2d(X_test, y_pred, title="Naive Bayes", accuracy=accuracy, legend=True, labels=iris.target_names)
 
 if __name__ == "__main__":
     main()

@@ -280,7 +280,7 @@ def main():
     print ("Accuracy:", accuracy)
 
     pca = PCA()
-    pca.plot_in_2d(X_test, y_pred, title="Decision Tree", accuracy=accuracy)
+    pca.plot_in_2d(X_test, y_pred, title="Decision Tree", accuracy=accuracy, legend=True, labels=data.target_names)
 
     print ("-- Regression Tree --")
 

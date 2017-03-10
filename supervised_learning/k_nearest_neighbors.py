@@ -57,21 +57,21 @@ class KNN():
 
 
 def main():
-    iris = datasets.load_iris()
-    X = normalize(iris.data)
-    y = iris.target
+    data = datasets.load_iris()
+    X = normalize(data.data)
+    y = data.target
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33)
 
     clf = KNN(k=3)
     y_pred = clf.predict(X_test, X_train, y_train)
-
+    
     accuracy = accuracy_score(y_test, y_pred)
 
     print ("Accuracy:", accuracy)
 
     # Reduce dimensions to 2d using pca and plot the results
     pca = PCA()
-    pca.plot_in_2d(X_test, y_pred, title="K Nearest Neighbors", accuracy=accuracy)
+    pca.plot_in_2d(X_test, y_pred, title="K Nearest Neighbors", accuracy=accuracy, legend=True, labels=data.target_names)
 
 
 if __name__ == "__main__":

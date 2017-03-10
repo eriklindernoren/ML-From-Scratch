@@ -101,7 +101,7 @@ def main():
 
     # Reduce dimension to two using PCA and plot the results
     pca = PCA()
-    pca.plot_in_2d(X_test, y_pred, title="Perceptron", accuracy=accuracy)
+    pca.plot_in_2d(X_test, y_pred, title="Perceptron", accuracy=accuracy, legend=True)
 
 
 if __name__ == "__main__":

@@ -44,37 +44,45 @@ class PCA():
         return map_index_to_rgb_color
 
     # Plot the dataset X and the corresponding labels y in 2D using PCA.
-    def plot_in_2d(self, X, y=None, title=None, accuracy=None, legend=False):
+    def plot_in_2d(self, X, y=None, title=None, accuracy=None, legend=False, labels=None):
         X_transformed = self.transform(X, n_components=2)
         x1 = X_transformed[:, 0]
         x2 = X_transformed[:, 1]
         class_distr = []
 
+        y = np.array(y).astype(int)
+
         # Color map
         cmap = plt.get_cmap('viridis')
         colors = [cmap(i) for i in np.linspace(0, 1, len(np.unique(y)))]
 
-        labels = np.unique(y)
-
         # Plot the different class distributions
-        for i, l in enumerate(labels):
+        for i, l in enumerate(np.unique(y)):
             _x1 = x1[y == l]
             _x2 = x2[y == l]
             _y = y[y == l]
             class_distr.append(plt.scatter(_x1, _x2, color=colors[i]))
 
-        if legend: plt.legend(class_distr, labels, loc=1)
+        # Plot legend
+        if legend: 
+            if not labels is None:
+                plt.legend(class_distr, labels, loc=1)
+            else:
+                plt.legend(class_distr, np.unique(y), loc=1)
 
         # Plot title
         if title:
             if accuracy:
                 percent = 100 * accuracy
-                title = "%s (%.1f%%)" % (title, percent)
-            plt.title(title)
+                plt.suptitle(title)
+                plt.title("Accuracy: %.1f%%" % percent, fontsize=10)
+            else:
+                plt.title(title)
 
         # Axis labels
-        plt.ylabel('Principal Component 2')
         plt.xlabel('Principal Component 1')
+        plt.ylabel('Principal Component 2')
+
         plt.show()
 
     # Plot the dataset X and the corresponding labels y in 3D using PCA.
