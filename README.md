@@ -22,8 +22,8 @@ Feel free to [reach out](mailto:eriklindernoren@gmail.com) if you can think of w
 <p align="center">
     <img src="http://eriklindernoren.se/images/mlp.png">
 </p>
-<p align="center" style="color:rgb(220,220,220);">
-    Figure 1: The Digit Dataset using MLP
+<p align="center">
+    Figure 1: Classifying the digit dataset using MLP
 </p>
 
 

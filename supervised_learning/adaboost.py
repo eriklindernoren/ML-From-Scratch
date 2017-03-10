@@ -24,6 +24,15 @@ class DecisionStump():
         self.alpha = None
 
 class Adaboost():
+    """Boosting method that uses a number of weak classifiers in 
+    ensemble to make a strong classifier. This implementation uses decision
+    stumps, which is a one level Decision Tree. 
+
+    Parameters:
+    -----------
+    n_clf: int
+        The number of weak classifiers that will be used. 
+    """
     def __init__(self, n_clf=5):
         self.n_clf = n_clf
         # List of weak classifiers

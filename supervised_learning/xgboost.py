@@ -33,6 +33,26 @@ class LogisticLoss():
 
 
 class XGBoost(object):
+    """The XGBoost classifier.
+
+    Reference: http://xgboost.readthedocs.io/en/latest/model.html
+
+    Parameters:
+    -----------
+    n_estimators: int
+        The number of classification trees that are used.
+    learning_rate: float
+        The step length that will be taken when following the negative gradient during
+        training.
+    min_samples_split: int
+        The minimum number of samples needed to make a split when building a tree.
+    min_impurity: float
+        The minimum impurity required to split the tree further. 
+    max_depth: int
+        The maximum depth of a tree.
+    debug: boolean
+        True or false depending on if we wish to display the training progress.
+    """
     def __init__(self, n_estimators=200, learning_rate=0.001, min_samples_split=2,
                  min_impurity=1e-7, max_depth=2, debug=False):
         self.n_estimators = n_estimators            # Number of trees

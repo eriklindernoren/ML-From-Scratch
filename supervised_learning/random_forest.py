@@ -15,6 +15,25 @@ from decision_tree import ClassificationTree
 
 
 class RandomForest():
+    """Random Forest classifier. Uses a collection of classification trees that
+    trains on random subsets of the data using a random subsets of the features.
+
+    Parameters:
+    -----------
+    n_estimators: int
+        The number of classification trees that are used.
+    max_features: int
+        The maximum number of features that the classification trees are allowed to
+        use.
+    min_samples_split: int
+        The minimum number of samples needed to make a split when building a tree.
+    min_gain: float
+        The minimum impurity required to split the tree further. 
+    max_depth: int
+        The maximum depth of a tree.
+    debug: boolean
+        True or false depending on if we wish to display the training errors.
+    """
     def __init__(self, n_estimators=100, max_features=None, min_samples_split=2,
                  min_gain=1e-7, max_depth=float("inf"), debug=False):
         self.n_estimators = n_estimators    # Number of trees

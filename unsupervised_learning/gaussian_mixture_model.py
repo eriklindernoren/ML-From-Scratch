@@ -16,6 +16,20 @@ from principal_component_analysis import PCA
 
 
 class GaussianMixtureModel():
+    """A probabilistic clustering method for determining groupings among data samples.
+
+
+    Parameters:
+    -----------
+    k: int
+        The number of clusters the algorithm will form.
+    max_iterations: int
+        The number of iterations the algorithm will run for if it does
+        not converge before that. 
+    tolerance: float
+        If the difference of the results from one iteration to the next is
+        smaller than this value we will say that the algorithm has converged.
+    """
     def __init__(self, k=2, max_iterations=2000, tolerance=1e-8):
         self.k = k
         self.parameters = []

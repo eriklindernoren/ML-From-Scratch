@@ -13,12 +13,21 @@ class Rule():
 
 
 class Apriori():
+    """A method for determining frequent itemsets in a transactional database and
+    also for generating rules for those itemsets. 
+
+    Parameters:
+    -----------
+    min_sup: float
+        The minimum fraction of transactions an itemets needs to
+        occur in to be deemed frequent
+    min_conf: float:
+        The minimum fraction of times the antecedent needs to imply
+        the concequent to justify rule
+    """
     def __init__(self, min_sup=0.3, min_conf=0.81):
-        # The minimum fraction of transactions an itemets needs to
-        # occur in to be deemed frequent
+
         self.min_sup = min_sup
-        # The minimum fraction of times the antecedent needs to imply
-        # the concequent to justify rule
         self.min_conf = min_conf
         self.freq_itemsets = None       # List of freqeuent itemsets
         self.transactions = None        # List of transactions

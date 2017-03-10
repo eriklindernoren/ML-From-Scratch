@@ -15,6 +15,17 @@ from principal_component_analysis import PCA
 
 
 class PAM():
+    """A simple clustering method that forms k clusters by first assigning
+    samples to the closest medoids, and then swapping medoids with non-medoid
+    samples if the total distance (cost) between the cluster members and their medoid
+    is smaller than prevoisly.
+
+
+    Parameters:
+    -----------
+    k: int
+        The number of clusters the algorithm will form.
+    """
     def __init__(self, k=2):
         self.k = k
 

@@ -13,6 +13,18 @@ from data_manipulation import train_test_split
 
 
 class LinearRegression():
+    """Linear model for doing regression.
+
+    Parameters:
+    -----------
+    n_iterations: float
+        The number of training iterations the algorithm will tune the weights for.
+    learning_rate: float
+        The step length that will be used when updating the weights.
+    gradient_descent: boolean
+        True or false depending if gradient descent should be used when training. If 
+        false then we use batch optimization by least squares.
+    """
     def __init__(self, n_iterations=100, learning_rate=0.001, gradient_descent=True):
         self.w = None
         self.n_iterations = n_iterations

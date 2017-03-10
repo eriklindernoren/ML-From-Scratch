@@ -16,6 +16,16 @@ from data_manipulation import normalize, standardize
 
 
 class MultiClassLDA():
+    """Enables dimensionality reduction for multiple
+    class distributions. It maximizes the between class scatter
+    and minimizes the within class scatter.
+
+    Parameters:
+    -----------
+    solver: str
+        If 'svd' we use the pseudo-inverse to calculate the inverse of matrices
+        when doing the transformation.
+    """
     def __init__(self, solver="svd"):
         self.solver = solver
 

@@ -27,6 +27,21 @@ def sigmoid_gradient(x):
 
 
 class MultilayerPerceptron():
+    """Multilayer Perceptron classifier. A neural network with one hidden layer.
+    Uses the sigmoid functions as the activation function of the hidden and output
+    layer.
+
+    Parameters:
+    -----------
+    n_hidden: int:
+        The number of processing nodes (neurons) in the hidden layer. 
+    n_iterations: float
+        The number of training iterations the algorithm will tune the weights for.
+    learning_rate: float
+        The step length that will be used when updating the weights.
+    plot_errors: boolean
+        True or false depending if we wish to plot the training errors after training.
+    """
     def __init__(self, n_hidden, n_iterations=3000, learning_rate=0.01, plot_errors=False):
         self.n_hidden = n_hidden    # Number of hidden neurons
         self.W = None               # Hidden layer weights

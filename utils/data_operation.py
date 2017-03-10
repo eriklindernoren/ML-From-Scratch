@@ -61,10 +61,8 @@ def accuracy_score(y_true, y_pred):
 def calculate_covariance_matrix(X, Y=None):
     if not Y:
         Y = X
-    X_mean = np.ones(np.shape(X)) * X.mean(0)
-    Y_mean = np.ones(np.shape(Y)) * Y.mean(0)
     n_samples = np.shape(X)[0]
-    covariance_matrix = (1 / (n_samples - 1)) * (X - X_mean).T.dot(Y - Y_mean)
+    covariance_matrix = (1 / (n_samples - 1)) * (X - X.mean(0)).T.dot(Y - Y.mean(0))
 
     return np.array(covariance_matrix, dtype=float)
 

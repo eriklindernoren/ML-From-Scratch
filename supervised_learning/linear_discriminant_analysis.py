@@ -16,6 +16,9 @@ from principal_component_analysis import PCA
 
 
 class LDA():
+    """The Linear Discriminant Analysis classifier, also known as Fisher's linear discriminant. 
+    Can besides from classification also be used to reduce the dimensionaly of the dataset.
+    """
     def __init__(self):
         self.w = None
 

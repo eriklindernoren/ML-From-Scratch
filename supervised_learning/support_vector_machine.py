@@ -21,6 +21,23 @@ cvxopt.solvers.options['show_progress'] = False
 
 
 class SupportVectorMachine(object):
+    """The Support Vector Machine classifier.
+    Uses cvxopt to solve the quadratic optimization problem.
+
+    Parameters:
+    -----------
+    C: float
+        Penalty term.
+    kernel: function
+        Kernel function. Can be either polynomial, rbf or linear.
+    power: int
+        The degree of the polynomial kernel. Will be ignored by the other
+        kernel functions.
+    gamma: float
+        Used in the rbf kernel function.
+    coef: float
+        Bias term used in the polynomial kernel function.
+    """
     def __init__(self, C=1, kernel=rbf_kernel, power=4, gamma=None, coef=4):
         self.C = C
         self.kernel = kernel

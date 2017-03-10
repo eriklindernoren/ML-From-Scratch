@@ -14,6 +14,11 @@ from data_operation import calculate_correlation_matrix
 from data_manipulation import standardize
 
 class PCA():
+    """A method for doing dimensionality reduction by transforming the feature
+    space to a lower dimensionality, removing correlation between features and 
+    maximizing the variance along each feature axis. This class is also used throughout
+    the project to plot the data.
+    """
     def __init__(self): pass
 
     # Fit the dataset to the number of principal components

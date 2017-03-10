@@ -26,6 +26,17 @@ def sigmoid_gradient(x):
 
 
 class LogisticRegression():
+    """The Logistic Regression classifier. 
+
+    Parameters:
+    -----------
+    learning_rate: float
+        The step length that will be taken when following the negative gradient during
+        training.
+    gradient_descent: boolean
+        True or false depending if gradient descent should be used when training. If 
+        false then we use batch optimization by least squares.
+    """
     def __init__(self, learning_rate=.1, gradient_descent=True):
         self.param = None
         self.learning_rate = learning_rate

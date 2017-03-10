@@ -16,8 +16,25 @@ sys.path.insert(0, dir_path + "/../unsupervised_learning/")
 from principal_component_analysis import PCA
 
 
-# Class that represents a decision node or leaf in the decision tree
 class DecisionNode():
+    """Class that represents a decision node or leaf in the decision tree
+
+    Parameters:
+    -----------
+    feature_i: int
+        Feature index which we want to use as the threshold measure.
+    threshold: float
+        The value that we will compare feature values at feature_i against to 
+        determine the prediction.
+    value: float
+        The class prediction if classification tree, or float value if regression tree.
+    true_branch: DecisionNode
+        The 'left' subtree. Next 'test' if the threshold value was met 
+        for feature at index feature_i. 
+    false_branch: DecisionNode
+        The 'right' subtree. Next 'test' if the threshold value was not met 
+        for feature at index feature_i. 
+    """
     def __init__(self, feature_i=None, threshold=None,
                  value=None, true_branch=None, false_branch=None):
         self.feature_i = feature_i          # Index for the feature that is tested
@@ -29,6 +46,20 @@ class DecisionNode():
 
 # Super class of RegressionTree and ClassificationTree
 class DecisionTree(object):
+    """Super class of RegressionTree and ClassificationTree.
+
+    Parameters:
+    -----------
+    
+    min_samples_split: int
+        The minimum number of samples needed to make a split when building a tree.
+    min_impurity: float
+        The minimum impurity required to split the tree further. 
+    max_depth: int
+        The maximum depth of a tree.
+    loss: function
+        Loss function that is used for Gradient Boosting models to calculate impurity.
+    """
     def __init__(self, min_samples_split=2, min_impurity=1e-7,
                  max_depth=float("inf"), loss=None):
         self.root = None  # Root node in dec. tree
@@ -169,7 +200,7 @@ class XGBoostRegressionTree(DecisionTree):
     """
     Regression tree for XGBoost
     - Reference -
-    http://homes.cs.washington.edu/~tqchen/pdf/BoostedTree.pdf
+    http://xgboost.readthedocs.io/en/latest/model.html
     """
 
     # y contains y in left half of the middle col

@@ -16,9 +16,18 @@ class FPTreeNode():
 
 
 class FPGrowth():
+    """A method for determining frequent itemsets in a transactional database. 
+    This is done by building a so called FP Growth tree, which can then be mined
+    to collect the frequent itemsets. More effective than Apriori for large transactional
+    databases.
+
+    Parameters:
+    -----------
+    min_sup: float
+        The minimum fraction of transactions an itemets needs to
+        occur in to be deemed frequent
+    """
     def __init__(self, min_sup=0.3):
-        # The minimum fraction of transactions an itemets needs to
-        # occur in to be deemed frequent
         self.min_sup = min_sup
         # The root of the initial FP Growth Tree
         self.tree_root = None

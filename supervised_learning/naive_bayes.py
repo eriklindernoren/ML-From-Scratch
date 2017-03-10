@@ -16,6 +16,7 @@ from principal_component_analysis import PCA
 
 
 class NaiveBayes():
+    """The Gaussian Naive Bayes classifier. """
     def __init__(self):
         self.classes = None
         self.X = None
@@ -100,9 +101,10 @@ class NaiveBayes():
 
 
 def main():
-    iris = datasets.load_iris()
-    X = normalize(iris.data)
-    y = iris.target
+    data = datasets.load_iris()
+    X = normalize(data.data)
+    y = data.target
+
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5)
 
     clf = NaiveBayes()
@@ -115,7 +117,7 @@ def main():
 
     # Reduce dimension to two using PCA and plot the results
     pca = PCA()
-    pca.plot_in_2d(X_test, y_pred, title="Naive Bayes", accuracy=accuracy, legend_labels=iris.target_names)
+    pca.plot_in_2d(X_test, y_pred, title="Naive Bayes", accuracy=accuracy, legend_labels=data.target_names)
 
 if __name__ == "__main__":
     main()

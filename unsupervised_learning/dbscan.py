@@ -15,10 +15,19 @@ from principal_component_analysis import PCA
 
 
 class DBSCAN():
+    """A density based clustering method that expands clusters from 
+    samples that have more neighbors within a radius specified by eps
+    than the value min_samples.
+
+    Parameters:
+    -----------
+    eps: float
+        The radius within which samples are considered neighbors
+    min_samples: int
+        The number of neighbors required for the sample to be a core point. 
+    """
     def __init__(self, eps=1, min_samples=5):
-        # The radius within which samples are considered neighbors
         self.eps = eps
-        # The number of neighbors required for sample to be a core point
         self.min_samples = min_samples
         # List of arrays (clusters) containing sample indices
         self.clusters = []
@@ -102,10 +111,10 @@ class DBSCAN():
 
 def main():
     # Load the dataset
-    X, y = datasets.make_moons(noise=0.05)
+    X, y = datasets.make_moons(n_samples=200, noise=0.08)
 
     # Cluster the data using DBSCAN
-    clf = DBSCAN(eps=0.3, min_samples=5)
+    clf = DBSCAN(eps=0.25, min_samples=5)
     y_pred = clf.predict(X)
 
     # Project the data onto the 2 primary principal components

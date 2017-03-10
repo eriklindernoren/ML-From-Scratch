@@ -19,14 +19,36 @@ from principal_component_analysis import PCA
 
 # Super class to GradientBoostingRegressor and GradientBoostingClassifier
 class GradientBoosting(object):
+    """Super class of GradientBoostingClassifier and GradientBoostinRegressor. 
+    Uses a collection of regression trees that trains on predicting the gradient
+    of the loss function. 
+
+    Parameters:
+    -----------
+    n_estimators: int
+        The number of classification trees that are used.
+    learning_rate: float
+        The step length that will be taken when following the negative gradient during
+        training.
+    min_samples_split: int
+        The minimum number of samples needed to make a split when building a tree.
+    min_impurity: float
+        The minimum impurity required to split the tree further. 
+    max_depth: int
+        The maximum depth of a tree.
+    regression: boolean
+        True or false depending on if we're doing regression or classification.
+    debug: boolean
+        True or false depending on if we wish to display the training progress.
+    """
     def __init__(self, n_estimators, learning_rate, min_samples_split,
                  min_impurity, max_depth, regression, debug):
-        self.n_estimators = n_estimators            # Number of trees
+        self.n_estimators = n_estimators
         self.learning_rate = learning_rate
-        self.min_samples_split = min_samples_split  # The minimum n of sampels to justify split
-        self.min_impurity = min_impurity              # Minimum variance reduction to continue
-        self.max_depth = max_depth                  # Maximum depth for tree
-        self.init_estimate = None                   # The initial prediction of y
+        self.min_samples_split = min_samples_split
+        self.min_impurity = min_impurity
+        self.max_depth = max_depth
+        self.init_estimate = None
         self.regression = regression
         self.debug = debug
         self.multipliers = []

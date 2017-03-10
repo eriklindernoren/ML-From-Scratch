@@ -26,6 +26,18 @@ def sigmoid_gradient(x):
 
 
 class Perceptron():
+    """One layer neural network classifier that uses the sigmoid function
+    as its activation function to enable non-linear decision boundaries.
+
+    Parameters:
+    -----------
+    n_iterations: float
+        The number of training iterations the algorithm will tune the weights for.
+    learning_rate: float
+        The step length that will be used when updating the weights.
+    plot_errors: boolean
+        True or false depending if we wish to plot the training errors after training.
+    """
     def __init__(self, n_iterations=20000,
             learning_rate=0.01, plot_errors=False):
         self.W = None           # Output layer weights
