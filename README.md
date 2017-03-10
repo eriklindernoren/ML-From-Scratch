@@ -26,7 +26,7 @@ Feel free to [reach out](mailto:eriklindernoren@gmail.com) if you can think of w
     Figure 1: The Digit Dataset using MLP
 </p>
 
-<br>
+
 ##Current Implementations
 ####Supervised Learning:
 - [Adaboost](supervised_learning/adaboost.py)
