@@ -23,7 +23,7 @@ Feel free to [reach out](mailto:eriklindernoren@gmail.com) if you can think of w
     <img src="http://eriklindernoren.se/images/mlp.png">
 </p>
 <p align="center">
-    Figure 1: Classification of the digit dataset using MLP, projected 
+    Figure 1: Classification of the digit dataset using MLP. <br> Results have been projected 
     onto two dimensions with PCA.
 </p>
 
