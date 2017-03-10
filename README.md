@@ -18,9 +18,15 @@ Feel free to [reach out](mailto:eriklindernoren@gmail.com) if you can think of w
 ### Running Implementations
     python supervised_learning/multilayer_perceptron.py
    
-![alt tag](http://eriklindernoren.se/images/mlp.png)
 
+<p align="center">
+    <img src="http://eriklindernoren.se/images/mlp.png">
+</p>
+<p align="center" style="color:rgb(220,220,220);">
+    Figure 1: The Digit Dataset using MLP
+</p>
 
+<br>
 ##Current Implementations
 ####Supervised Learning:
 - [Adaboost](supervised_learning/adaboost.py)
