@@ -89,6 +89,7 @@ def main():
     # Plot the results
     plt.scatter(X_test[:, 0], y_test, color='black')
     plt.plot(X_test[:, 0], y_pred, color='blue', linewidth=3)
+    plt.title("Ridge Regression (%.2f MSE)" % mse)
     plt.show()
 
 if __name__ == "__main__":

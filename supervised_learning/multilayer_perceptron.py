@@ -87,6 +87,7 @@ class MultilayerPerceptron():
         # Plot the training error
         if self.plot_errors:
             plt.plot(range(self.n_iterations), errors)
+            plt.title("Training Error Plot")
             plt.ylabel('Training Error')
             plt.xlabel('Iterations')
             plt.show()
@@ -115,11 +116,13 @@ def main():
     clf.fit(X_train, y_train)
     y_pred = clf.predict(X_test)
 
-    print ("Accuracy:", accuracy_score(y_test, y_pred))
+    accuracy = accuracy_score(y_test, y_pred)
+
+    print ("Accuracy:", accuracy)
 
     # Reduce dimension to two using PCA and plot the results
     pca = PCA()
-    pca.plot_in_2d(X_test, y_pred)
+    pca.plot_in_2d(X_test, y_pred, title="Multilayer Perceptron", accuracy=accuracy)
 
 
 if __name__ == "__main__":

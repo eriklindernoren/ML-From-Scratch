@@ -56,12 +56,15 @@ def main():
     clf.fit(X_train, y_train)
     y_pred = clf.predict(X_test)
 
+    mse = mean_squared_error(y_test, y_pred)
+
     # Print the mean squared error
-    print ("Mean Squared Error:", mean_squared_error(y_test, y_pred))
+    print ("Mean Squared Error:", mse)
 
     # Plot the results
     plt.scatter(X_test[:, 0], y_test, color='black')
     plt.plot(X_test[:, 0], y_pred, color='blue', linewidth=3)
+    plt.title("Linear Regression (%.2f MSE)" % mse)
     plt.show()
 
 if __name__ == "__main__":

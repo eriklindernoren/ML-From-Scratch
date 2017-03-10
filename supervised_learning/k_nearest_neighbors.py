@@ -64,11 +64,14 @@ def main():
 
     clf = KNN(k=3)
     y_pred = clf.predict(X_test, X_train, y_train)
-    print ("Accuracy score:", accuracy_score(y_test, y_pred))
+
+    accuracy = accuracy_score(y_test, y_pred)
+
+    print ("Accuracy:", accuracy)
 
     # Reduce dimensions to 2d using pca and plot the results
     pca = PCA()
-    pca.plot_in_2d(X_test, y_pred)
+    pca.plot_in_2d(X_test, y_pred, title="K Nearest Neighbors", accuracy=accuracy)
 
 
 if __name__ == "__main__":

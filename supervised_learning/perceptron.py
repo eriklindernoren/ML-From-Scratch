@@ -26,12 +26,15 @@ def sigmoid_gradient(x):
 
 
 class Perceptron():
-    def __init__(self):
+    def __init__(self, n_iterations=20000,
+            learning_rate=0.01, plot_errors=False):
         self.W = None           # Output layer weights
         self.biasW = None       # Bias weights
+        self.learning_rate = learning_rate
+        self.n_iterations = n_iterations
+        self.plot_errors = plot_errors
 
-    def fit(self, X, y, n_iterations=40000,
-            learning_rate=0.01, plot_errors=False):
+    def fit(self, X, y):
         y = categorical_to_binary(y)
 
         n_samples, n_features = np.shape(X)
@@ -44,7 +47,7 @@ class Perceptron():
         self.biasW = (b - a) * np.random.random((1, n_outputs)) + a
 
         errors = []
-        for i in range(n_iterations):
+        for i in range(self.n_iterations):
             # Calculate outputs
             neuron_input = np.dot(X, self.W) + self.biasW
             neuron_output = sigmoid(neuron_input)
@@ -60,15 +63,16 @@ class Perceptron():
             bias_gradient = w_gradient
 
             # Update weights
-            self.W -= learning_rate * X.T.dot(w_gradient)
-            self.biasW -= learning_rate * \
+            self.W -= self.learning_rate * X.T.dot(w_gradient)
+            self.biasW -= self.learning_rate * \
                 np.ones((1, n_samples)).dot(bias_gradient)
 
         # Plot the training error
-        if plot_errors:
-            plt.plot(range(n_iterations), errors)
+        if self.plot_errors:
+            plt.plot(range(self.n_iterations), errors)
             plt.ylabel('Training Error')
             plt.xlabel('Iterations')
+            plt.title("Training Error Plot")
             plt.show()
 
     # Use the trained model to predict labels of X
@@ -79,21 +83,25 @@ class Perceptron():
 
 
 def main():
-    data = datasets.load_iris()
+    data = datasets.load_digits()
     X = normalize(data.data)
     y = data.target
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, seed=1)
 
     # Perceptron
-    clf = Perceptron()
-    clf.fit(X_train, y_train, plot_errors=True)
+    clf = Perceptron(n_iterations=4000,
+        learning_rate=0.01, 
+        plot_errors=True)
+    clf.fit(X_train, y_train)
     y_pred = clf.predict(X_test)
 
-    print ("Accuracy:", accuracy_score(y_test, y_pred))
+    accuracy = accuracy_score(y_test, y_pred)
+
+    print ("Accuracy:", accuracy)
 
     # Reduce dimension to two using PCA and plot the results
     pca = PCA()
-    pca.plot_in_2d(X_test, y_pred)
+    pca.plot_in_2d(X_test, y_pred, title="Perceptron", accuracy=accuracy)
 
 
 if __name__ == "__main__":

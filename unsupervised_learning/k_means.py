@@ -98,8 +98,8 @@ def main():
 
     # Project the data onto the 2 primary principal components
     pca = PCA()
-    pca.plot_in_2d(X, y_pred)
-    pca.plot_in_2d(X, y)
+    pca.plot_in_2d(X, y_pred, title="K-Means Clustering")
+    pca.plot_in_2d(X, y, title="Actual Clustering")
 
 
 if __name__ == "__main__":

@@ -104,10 +104,12 @@ def main():
     clf.fit(X_train, y_train)
     y_pred = clf.predict(X_test)
 
-    print ("Accuracy:", accuracy_score(y_test, y_pred))
+    accuracy = accuracy_score(y_test, y_pred)
+
+    print ("Accuracy:", accuracy)
 
     pca = PCA()
-    pca.plot_in_2d(X_test, y_pred)
+    pca.plot_in_2d(X_test, y_pred, title="Random Forest", accuracy=accuracy)
 
 
 if __name__ == "__main__":

@@ -275,10 +275,12 @@ def main():
     clf.fit(X_train, y_train)
     y_pred = clf.predict(X_test)
 
-    print ("Accuracy:", accuracy_score(y_test, y_pred))
+    accuracy = accuracy_score(y_test, y_pred)
+
+    print ("Accuracy:", accuracy)
 
     pca = PCA()
-    pca.plot_in_2d(X_test, y_pred)
+    pca.plot_in_2d(X_test, y_pred, title="Decision Tree", accuracy=accuracy)
 
     print ("-- Regression Tree --")
 
@@ -291,11 +293,14 @@ def main():
     y_pred = clf.predict(X_test)
 
 
-    print ("Mean Squared Error:", mean_squared_error(y_test, y_pred))
+    mse = mean_squared_error(y_test, y_pred)
+
+    print ("Mean Squared Error:", mse)
 
     # Plot the results
     plt.scatter(X_test[:, 0], y_test, color='black')
     plt.scatter(X_test[:, 0], y_pred, color='green')
+    plt.title("Regression Tree (%.2f MSE)" % mse)
     plt.show()
 
 

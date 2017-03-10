@@ -73,11 +73,12 @@ class MultiClassLDA():
 
     # Plot the dataset X and the corresponding labels y in 2D using the LDA
     # transformation.
-    def plot_in_2d(self, X, y):
+    def plot_in_2d(self, X, y, title=None):
         X_transformed = self.transform(X, y, n_components=2)
         x1 = X_transformed[:, 0]
         x2 = X_transformed[:, 1]
         plt.scatter(x1, x2, c=y)
+        if titel: plt.titel(title)
         plt.show()
 
 
@@ -89,7 +90,7 @@ def main():
 
     # Project the data onto the 2 primary components
     multi_class_lda = MultiClassLDA()
-    multi_class_lda.plot_in_2d(X, y)
+    multi_class_lda.plot_in_2d(X, y, title="LDA")
 
 if __name__ == "__main__":
     main()

@@ -147,6 +147,7 @@ for clf in y_pred:
 plt.scatter(X_test[:,0], X_test[:,1], c=y_test)
 plt.ylabel("Principal Component 2")
 plt.xlabel("Principal Component 1")
+plt.title("The Digit Dataset (digits %s and %s)" % (digit1, digit2))
 plt.show()
 
 

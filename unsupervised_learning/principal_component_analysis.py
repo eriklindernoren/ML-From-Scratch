@@ -35,11 +35,16 @@ class PCA():
         return X_transformed
 
     # Plot the dataset X and the corresponding labels y in 2D using PCA.
-    def plot_in_2d(self, X, y=None):
+    def plot_in_2d(self, X, y=None, title=None, accuracy=None):
         X_transformed = self.transform(X, n_components=2)
         x1 = X_transformed[:, 0]
         x2 = X_transformed[:, 1]
         plt.scatter(x1, x2, c=y)
+        if title:
+            if accuracy:
+                percent = 100 * accuracy
+                title = "%s (%.2f%%)" % (title, percent) 
+            plt.title(title)
         plt.ylabel('Principal Component 2')
         plt.xlabel('Principal Component 1')
         plt.show()

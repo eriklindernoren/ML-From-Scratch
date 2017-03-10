@@ -125,8 +125,8 @@ def main():
     y_pred = clf.predict(X)
 
     pca = PCA()
-    pca.plot_in_2d(X, y_pred)
-    pca.plot_in_2d(X, y)
+    pca.plot_in_2d(X, y_pred, title="GMM Clustering")
+    pca.plot_in_2d(X, y, title="Actual Clustering")
 
 
 if __name__ == "__main__":
