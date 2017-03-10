@@ -113,6 +113,7 @@ def main():
         n_iterations=4000,
         learning_rate=0.01, 
         plot_errors=True)
+
     clf.fit(X_train, y_train)
     y_pred = clf.predict(X_test)
 
@@ -122,8 +123,7 @@ def main():
 
     # Reduce dimension to two using PCA and plot the results
     pca = PCA()
-    pca.plot_in_2d(X_test, y_pred, title="Multilayer Perceptron", accuracy=accuracy)
-
+    pca.plot_in_2d(X_test, y_pred, title="Multilayer Perceptron", accuracy=accuracy, legend=True)
 
 if __name__ == "__main__":
     main()

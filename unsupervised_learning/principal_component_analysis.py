@@ -1,15 +1,17 @@
+from __future__ import print_function
 import sys
 import os
 from sklearn import datasets
 from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.pyplot as plt
+import matplotlib.cm as cmx
+import matplotlib.colors as colors
 import numpy as np
 dir_path = os.path.dirname(os.path.realpath(__file__))
 sys.path.insert(0, dir_path + "/../utils")
 from data_operation import calculate_covariance_matrix
 from data_operation import calculate_correlation_matrix
 from data_manipulation import standardize
-
 
 class PCA():
     def __init__(self): pass
@@ -34,17 +36,43 @@ class PCA():
 
         return X_transformed
 
+    def get_color_map(self, N):
+        color_norm  = colors.Normalize(vmin=0, vmax=N-1)
+        scalar_map = cmx.ScalarMappable(norm=color_norm, cmap='hsv') 
+        def map_index_to_rgb_color(index):
+            return scalar_map.to_rgba(index)
+        return map_index_to_rgb_color
+
     # Plot the dataset X and the corresponding labels y in 2D using PCA.
-    def plot_in_2d(self, X, y=None, title=None, accuracy=None):
+    def plot_in_2d(self, X, y=None, title=None, accuracy=None, legend=False):
         X_transformed = self.transform(X, n_components=2)
         x1 = X_transformed[:, 0]
         x2 = X_transformed[:, 1]
-        plt.scatter(x1, x2, c=y)
+        class_distr = []
+
+        # Color map
+        cmap = plt.get_cmap('viridis')
+        colors = [cmap(i) for i in np.linspace(0, 1, len(np.unique(y)))]
+
+        labels = np.unique(y)
+
+        # Plot the different class distributions
+        for i, l in enumerate(labels):
+            _x1 = x1[y == l]
+            _x2 = x2[y == l]
+            _y = y[y == l]
+            class_distr.append(plt.scatter(_x1, _x2, color=colors[i]))
+
+        if legend: plt.legend(class_distr, labels, loc=1)
+
+        # Plot title
         if title:
             if accuracy:
                 percent = 100 * accuracy
-                title = "%s (%.2f%%)" % (title, percent) 
+                title = "%s (%.1f%%)" % (title, percent)
             plt.title(title)
+
+        # Axis labels
         plt.ylabel('Principal Component 2')
         plt.xlabel('Principal Component 1')
         plt.show()
