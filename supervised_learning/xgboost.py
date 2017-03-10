@@ -33,7 +33,7 @@ class LogisticLoss():
 
 
 class XGBoost(object):
-    def __init__(self, n_estimators=200, learning_rate=0.01, min_samples_split=2,
+    def __init__(self, n_estimators=200, learning_rate=0.001, min_samples_split=2,
                  min_impurity=1e-7, max_depth=2, debug=False):
         self.n_estimators = n_estimators            # Number of trees
         self.learning_rate = learning_rate
@@ -110,7 +110,10 @@ def main():
     print ("Accuracy:", accuracy)
 
     pca = PCA()
-    pca.plot_in_2d(X_test, y_pred, title="XGBoost", accuracy=accuracy)
+    pca.plot_in_2d(X_test, y_pred, 
+        title="XGBoost", 
+    accuracy=accuracy, 
+    legend_labels=data.target_names)
 
 
 if __name__ == "__main__":

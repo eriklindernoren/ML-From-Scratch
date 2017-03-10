@@ -71,7 +71,7 @@ def main():
 
     # Reduce dimensions to 2d using pca and plot the results
     pca = PCA()
-    pca.plot_in_2d(X_test, y_pred, title="K Nearest Neighbors", accuracy=accuracy, legend=True, labels=data.target_names)
+    pca.plot_in_2d(X_test, y_pred, title="K Nearest Neighbors", accuracy=accuracy, legend_labels=data.target_names)
 
 
 if __name__ == "__main__":

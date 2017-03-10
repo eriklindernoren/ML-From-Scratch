@@ -113,7 +113,7 @@ def main():
     X = data.data
     y = data.target
 
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4, seed=2)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4)
 
     clf = GradientBoostingClassifier(debug=True)
     clf.fit(X_train, y_train)
@@ -124,7 +124,10 @@ def main():
     print ("Accuracy:", accuracy)
 
     pca = PCA()
-    pca.plot_in_2d(X_test, y_pred, title="Gradient Boosting", accuracy=accuracy, legend=True, labels=data.target_names)
+    pca.plot_in_2d(X_test, y_pred, 
+        title="Gradient Boosting", 
+        accuracy=accuracy, 
+        legend_labels=data.target_names)
 
     print ("-- Gradient Boosting Regression --")
 

@@ -44,7 +44,7 @@ class PCA():
         return map_index_to_rgb_color
 
     # Plot the dataset X and the corresponding labels y in 2D using PCA.
-    def plot_in_2d(self, X, y=None, title=None, accuracy=None, legend=False, labels=None):
+    def plot_in_2d(self, X, y=None, title=None, accuracy=None, legend_labels=None):
         X_transformed = self.transform(X, n_components=2)
         x1 = X_transformed[:, 0]
         x2 = X_transformed[:, 1]
@@ -64,11 +64,8 @@ class PCA():
             class_distr.append(plt.scatter(_x1, _x2, color=colors[i]))
 
         # Plot legend
-        if legend: 
-            if not labels is None:
-                plt.legend(class_distr, labels, loc=1)
-            else:
-                plt.legend(class_distr, np.unique(y), loc=1)
+        if not legend_labels is None: 
+            plt.legend(class_distr, legend_labels, loc=1)
 
         # Plot title
         if title:

@@ -82,7 +82,7 @@ random_forest = RandomForest(n_estimators=50)
 support_vector_machine = SupportVectorMachine()
 lda = LDA()
 gbc = GradientBoostingClassifier(n_estimators=50, learning_rate=.9, max_depth=2)
-xgboost = XGBoost(n_estimators=50, learning_rate=0.5, max_depth=2)
+xgboost = XGBoost(n_estimators=50, learning_rate=0.5)
 
 # ........
 #  TRAIN
