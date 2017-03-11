@@ -35,22 +35,35 @@ class Perceptron():
         The number of training iterations the algorithm will tune the weights for.
     learning_rate: float
         The step length that will be used when updating the weights.
+    early_stopping: boolean
+        Whether to stop the training when the validation error has increased for a
+        certain amounts of training iterations. Combats overfitting.
     plot_errors: boolean
         True or false depending if we wish to plot the training errors after training.
     """
     def __init__(self, n_iterations=20000,
-            learning_rate=0.01, plot_errors=False):
+            learning_rate=0.01, early_stopping=False, plot_errors=False):
         self.W = None           # Output layer weights
         self.biasW = None       # Bias weights
         self.learning_rate = learning_rate
         self.n_iterations = n_iterations
         self.plot_errors = plot_errors
+        self.early_stopping = early_stopping
 
     def fit(self, X, y):
-        y = categorical_to_binary(y)
+        X_train = X
+        y_train = y
 
-        n_samples, n_features = np.shape(X)
-        n_outputs = np.shape(y)[1]
+        if self.early_stopping:
+            # Split the data into training and validation sets
+            X_train, X_validate, y_train, y_validate = train_test_split(X, y, test_size=0.1)
+            y_validate = categorical_to_binary(y_validate)
+
+        # Convert the nominal y values to binary
+        y_train = categorical_to_binary(y_train)
+
+        n_samples, n_features = np.shape(X_train)
+        n_outputs = np.shape(y_train)[1]
 
         # Initial weights between [-1/sqrt(N), 1/sqrt(N)]
         a = -1 / math.sqrt(n_features)
@@ -58,39 +71,72 @@ class Perceptron():
         self.W = (b - a) * np.random.random((n_features, n_outputs)) + a
         self.biasW = (b - a) * np.random.random((1, n_outputs)) + a
 
-        errors = []
+        training_errors = []
+        validation_errors = []
+        iter_with_rising_val_error = 0
         for i in range(self.n_iterations):
             # Calculate outputs
-            neuron_input = np.dot(X, self.W) + self.biasW
+            neuron_input = np.dot(X_train, self.W) + self.biasW
             neuron_output = sigmoid(neuron_input)
 
             # Training error
-            error = y - neuron_output
+            error = y_train - neuron_output
             mse = np.mean(np.power(error, 2))
-            errors.append(mse)
+            training_errors.append(mse)
 
             # Calculate the loss gradient
-            w_gradient = -2 * (y - neuron_output) * \
+            w_gradient = -2 * (y_train - neuron_output) * \
                 sigmoid_gradient(neuron_input)
             bias_gradient = w_gradient
 
             # Update weights
-            self.W -= self.learning_rate * X.T.dot(w_gradient)
+            self.W -= self.learning_rate * X_train.T.dot(w_gradient)
             self.biasW -= self.learning_rate * \
                 np.ones((1, n_samples)).dot(bias_gradient)
 
+            if self.early_stopping:
+                # Calculate the validation error
+                error = y_validate - self._calculate_output(X_validate)
+                mse = np.mean(np.power(error, 2))
+                validation_errors.append(mse)
+
+                # If the validation error is larger than the previous iteration increase
+                # the counter
+                if len(validation_errors) > 1 and validation_errors[-1] > validation_errors[-2]:
+                    iter_with_rising_val_error += 1
+                    # If the validation error has been for more than 50 iterations
+                    # stop training to avoid overfitting
+                    if iter_with_rising_val_error > 50:
+                        break
+                else:
+                    iter_with_rising_val_error = 0
+
         # Plot the training error
         if self.plot_errors:
-            plt.plot(range(self.n_iterations), errors)
-            plt.ylabel('Training Error')
+            if self.early_stopping:
+                # Training and validation error plot
+                training, = plt.plot(range(i+1), training_errors, label="Training Error")
+                validation, = plt.plot(range(i+1), validation_errors, label="Validation Error")
+                plt.legend(handles=[training, validation])
+            else:
+                training, = plt.plot(range(i+1), training_errors, label="Training Error")
+                plt.legend(handles=[training])
+            plt.title("Error Plot")
+            plt.ylabel('Error')
             plt.xlabel('Iterations')
-            plt.title("Training Error Plot")
             plt.show()
+
+    def _calculate_output(self, X):
+        # Calculate the output layer values
+        output = sigmoid(np.dot(X, self.W) + self.biasW)
+
+        return output
 
     # Use the trained model to predict labels of X
     def predict(self, X):
-        # Set the class labels to the highest valued outputs
-        y_pred = np.argmax(sigmoid(np.dot(X, self.W) + self.biasW), axis=1)
+        output = self._calculate_output(X)
+        # Predict as the indices of the largest outputs
+        y_pred = np.argmax(output, axis=1)
         return y_pred
 
 
@@ -101,8 +147,9 @@ def main():
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, seed=1)
 
     # Perceptron
-    clf = Perceptron(n_iterations=4000,
+    clf = Perceptron(n_iterations=5000,
         learning_rate=0.01, 
+        early_stopping=True,
         plot_errors=True)
     clf.fit(X_train, y_train)
     y_pred = clf.predict(X_test)

@@ -29,11 +29,9 @@ class DecisionNode():
     value: float
         The class prediction if classification tree, or float value if regression tree.
     true_branch: DecisionNode
-        The 'left' subtree. Next 'test' if the threshold value was met 
-        for feature at index feature_i. 
+        Next decision node for samples where features value met the threshold.
     false_branch: DecisionNode
-        The 'right' subtree. Next 'test' if the threshold value was not met 
-        for feature at index feature_i. 
+        Next decision node for samples where features value did not meet the threshold.
     """
     def __init__(self, feature_i=None, threshold=None,
                  value=None, true_branch=None, false_branch=None):

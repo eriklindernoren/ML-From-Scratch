@@ -17,8 +17,9 @@ from data_manipulation import normalize, standardize
 
 class MultiClassLDA():
     """Enables dimensionality reduction for multiple
-    class distributions. It maximizes the between class scatter
-    and minimizes the within class scatter.
+    class distributions. It transforms the features space into a space where 
+    the between class scatter is maximized and the within class scatter is 
+    minimized.
 
     Parameters:
     -----------
