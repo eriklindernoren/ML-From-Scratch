@@ -1,7 +1,7 @@
 # Machine Learning From Scratch
 
 
-###About
+##About
 Python implementations of some of the fundamental Machine Learning models and algorithms from scratch.
 
 The purpose of this project is not to produce as optimized and computationally efficient algorithms as possible 
@@ -10,14 +10,14 @@ The reason the project uses scikit-learn is to evaluate the implementations on s
 
 Feel free to [reach out](mailto:eriklindernoren@gmail.com) if you can think of ways to expand this project.
 
+##Usage
 
-### Installation
-    pip install -r requirements.txt
+#### Installation
+    $ pip install -r requirements.txt
 
 
-### Running Implementations
-    python supervised_learning/multilayer_perceptron.py
-   
+#### Classification
+    $ python supervised_learning/multilayer_perceptron.py
 
 <p align="center">
     <img src="http://eriklindernoren.se/images/mlp.png">
@@ -25,6 +25,37 @@ Feel free to [reach out](mailto:eriklindernoren@gmail.com) if you can think of w
 <p align="center">
     Figure: Classification of the digit dataset using MLP.
 </p>
+
+
+#### Clustering
+    $ python unsupervised_learning/dbscan.py
+   
+<p align="center">
+    <img src="http://eriklindernoren.se/images/dbs.png">
+</p>
+<p align="center">
+    Figure: Clustering of the moons dataset using DBSCAN.
+</p>
+
+### Association Analysis
+    $ python unsupervised_learning/apriori.py 
+    - Apriori -
+    Minimum - support: 0.25, confidence: 0.8
+    Transactions:
+        [1, 2, 3, 4]
+        [1, 2, 4]
+        [1, 2]
+        [2, 3, 4]
+        [2, 3]
+        [3, 4]
+        [2, 4]
+    Frequent Itemsets:
+        [1, 2, 3, 4, [1, 2], [1, 4], [2, 3], [2, 4], [3, 4], [1, 2, 4], [2, 3, 4]]
+    Rules:
+        1 -> 2 (support: 0.43, confidence: 1.0)
+        4 -> 2 (support: 0.57, confidence: 0.8)
+        [1, 4] -> 2 (support: 0.29, confidence: 1.0)
+
 
 
 ##Current Implementations
