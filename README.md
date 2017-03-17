@@ -11,10 +11,10 @@ Feel free to [reach out](mailto:eriklindernoren@gmail.com) if you can think of w
 
 
 ## Usage
-#### Installation
+### Installation
     $ pip install -r requirements.txt
 
-#### Classification
+### Classification
     $ python supervised_learning/multilayer_perceptron.py
 
 <p align="center">
@@ -24,7 +24,7 @@ Feel free to [reach out](mailto:eriklindernoren@gmail.com) if you can think of w
     Figure: Classification of the digit dataset using MLP.
 </p>
 
-#### Clustering
+### Clustering
     $ python unsupervised_learning/dbscan.py
    
 <p align="center">
@@ -55,7 +55,7 @@ Feel free to [reach out](mailto:eriklindernoren@gmail.com) if you can think of w
 
 
 ## Current Implementations
-#### Supervised Learning:
+### Supervised Learning:
 - [Adaboost](supervised_learning/adaboost.py)
 - [Decision Tree](supervised_learning/decision_tree.py)
 - [Gradient Boosting](supervised_learning/gradient_boosting.py)
@@ -72,7 +72,7 @@ Feel free to [reach out](mailto:eriklindernoren@gmail.com) if you can think of w
 - [Support Vector Machine](supervised_learning/support_vector_machine.py)
 - [XGBoost](supervised_learning/xgboost.py)
 
-#### Unsupervised Learning:
+### Unsupervised Learning:
 - [Apriori](unsupervised_learning/apriori.py)
 - [DBSCAN](unsupervised_learning/dbscan.py)
 - [FP-Growth](unsupervised_learning/fp_growth.py)
