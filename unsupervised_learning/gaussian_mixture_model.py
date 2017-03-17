@@ -18,7 +18,6 @@ from principal_component_analysis import PCA
 class GaussianMixtureModel():
     """A probabilistic clustering method for determining groupings among data samples.
 
-
     Parameters:
     -----------
     k: int
@@ -60,8 +59,7 @@ class GaussianMixtureModel():
             d = n_features  # dimension
             coeff = (1.0 / (math.pow((2.0 * math.pi), d / 2)
                             * math.sqrt(determinant)))
-            exponent = math.exp(-0.5 * (sample - mean).reshape((1,
-                                                                n_features)).dot(np.linalg.inv(covar)).dot((sample - mean)))
+            exponent = math.exp(-0.5 * (sample - mean).T.dot(np.linalg.pinv(covar)).dot((sample - mean)))
             likelihoods[i] = coeff * exponent
 
         return likelihoods
@@ -109,7 +107,7 @@ class GaussianMixtureModel():
             return False
         diff = np.linalg.norm(
             self.responsibilities[-1] - self.responsibilities[-2])
-        print ("Likelihood update: %s (tol: %s)" % (diff, self.tolerance))
+        # print ("Likelihood update: %s (tol: %s)" % (diff, self.tolerance))
         return diff <= self.tolerance
 
     # Run GMM and return the cluster indices

@@ -93,15 +93,14 @@ class PAM():
         # Assign samples to closest medoids
         clusters = self._create_clusters(X, medoids)
 
-        cost = float("inf")
         # Calculate the initial cost (total distance between samples and
         # corresponding medoids)
-        new_cost = self._calculate_cost(X, clusters, medoids)
+        cost = self._calculate_cost(X, clusters, medoids)
 
-        swap = False
         # Iterate until we no longer have a cheaper cost
-        while new_cost < cost:
-            cost = new_cost
+        while True:
+            best_medoids = medoids
+            lowest_cost = cost
             for medoid in medoids:
                 # Get all non-medoid samples
                 non_medoids = self._get_non_medoids(X, medoids)
@@ -115,20 +114,21 @@ class PAM():
                     # Calculate the cost with the new set of medoids
                     _new_cost = self._calculate_cost(
                         X, new_clusters, new_medoids)
-                    # If the swap gives us a lower cost start over with new
-                    # medoid configuration
-                    if _new_cost < new_cost:
-                        new_cost = _new_cost
-                        medoids = new_medoids
-                        swap = True
-                        break
-                # If there was a swap start over
-                if swap:
-                    swap = False
-                    break
+                    # If the swap gives us a lower cost we save the medoids and cost
+                    if _new_cost < lowest_cost:
+                        lowest_cost = _new_cost
+                        best_medoids = new_medoids
+            # If the the cost after swap is lower restart with new medoids
+            if lowest_cost < cost:
+                cost = lowest_cost
+                medoids = best_medoids 
+            # Else finished
+            else:
+                break
 
+        final_clusters = self._create_clusters(X, medoids)
         # Return the samples cluster indices as labels
-        return self._get_cluster_labels(clusters, X)
+        return self._get_cluster_labels(final_clusters, X)
 
 
 def main():

@@ -65,9 +65,10 @@ class Adaboost():
                     prediction[X[:, feature_i] < threshold] = -1
                     # Error = sum of weights of missclassified samples
                     error = sum(w[y != prediction])
-                    # E.g error = 0.8 => (1 - error) = 0.2
-                    # We flip the error and polarity
+                    
                     if error > 0.5:
+                        # E.g error = 0.8 => (1 - error) = 0.2
+                        # We flip the error and polarity
                         error = 1 - error
                         p = -1
 

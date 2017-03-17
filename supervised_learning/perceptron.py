@@ -27,7 +27,7 @@ def sigmoid_gradient(x):
 
 class Perceptron():
     """One layer neural network classifier that uses the sigmoid function
-    as its activation function to enable non-linear decision boundaries.
+    as activation function.
 
     Parameters:
     -----------

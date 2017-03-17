@@ -94,9 +94,10 @@ class DBSCAN():
         for sample_i in range(n_samples):
             if sample_i in self.visited_samples:
                 continue
-            self.visited_samples.append(sample_i)
             self.neighbors[sample_i] = self._get_neighbors(sample_i)
             if len(self.neighbors[sample_i]) >= self.min_samples:
+                # If core point => mark as visited
+                self.visited_samples.append(sample_i)
                 # Sample has more neighbors than self.min_samples => expand
                 # cluster from sample
                 new_cluster = self._expand_cluster(
@@ -111,10 +112,10 @@ class DBSCAN():
 
 def main():
     # Load the dataset
-    X, y = datasets.make_moons(n_samples=200, noise=0.08)
+    X, y = datasets.make_moons(n_samples=300, noise=0.1)
 
     # Cluster the data using DBSCAN
-    clf = DBSCAN(eps=0.25, min_samples=5)
+    clf = DBSCAN(eps=0.17, min_samples=5)
     y_pred = clf.predict(X)
 
     # Project the data onto the 2 primary principal components

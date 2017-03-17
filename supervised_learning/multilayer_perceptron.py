@@ -122,8 +122,8 @@ class MultilayerPerceptron():
                 # the counter
                 if len(validation_errors) > 1 and validation_errors[-1] > validation_errors[-2]:
                     iter_with_rising_val_error += 1
-                    # If the validation error has been for more than 50 iterations
-                    # stop training to avoid overfitting
+                    # # If the validation error has been for more than 50 iterations
+                    # # stop training to avoid overfitting
                     if iter_with_rising_val_error > 50:
                         break
                 else:
@@ -170,7 +170,7 @@ def main():
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, seed=1)
 
     # MLP
-    clf = MultilayerPerceptron(n_hidden=10,
+    clf = MultilayerPerceptron(n_hidden=12,
         n_iterations=5000,
         learning_rate=0.01, 
         early_stopping=True,
