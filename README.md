@@ -1,7 +1,6 @@
 # Machine Learning From Scratch
 
-
-##About
+## About
 Python implementations of some of the fundamental Machine Learning models and algorithms from scratch.
 
 The purpose of this project is not to produce as optimized and computationally efficient algorithms as possible 
@@ -10,11 +9,10 @@ The reason the project uses scikit-learn is to evaluate the implementations on s
 
 Feel free to [reach out](mailto:eriklindernoren@gmail.com) if you can think of ways to expand this project.
 
-##Usage
 
+## Usage
 #### Installation
     $ pip install -r requirements.txt
-
 
 #### Classification
     $ python supervised_learning/multilayer_perceptron.py
@@ -25,7 +23,6 @@ Feel free to [reach out](mailto:eriklindernoren@gmail.com) if you can think of w
 <p align="center">
     Figure: Classification of the digit dataset using MLP.
 </p>
-
 
 #### Clustering
     $ python unsupervised_learning/dbscan.py
@@ -57,9 +54,8 @@ Feel free to [reach out](mailto:eriklindernoren@gmail.com) if you can think of w
         [1, 4] -> 2 (support: 0.29, confidence: 1.0)
 
 
-
-##Current Implementations
-####Supervised Learning:
+## Current Implementations
+#### Supervised Learning:
 - [Adaboost](supervised_learning/adaboost.py)
 - [Decision Tree](supervised_learning/decision_tree.py)
 - [Gradient Boosting](supervised_learning/gradient_boosting.py)
@@ -76,7 +72,7 @@ Feel free to [reach out](mailto:eriklindernoren@gmail.com) if you can think of w
 - [Support Vector Machine](supervised_learning/support_vector_machine.py)
 - [XGBoost](supervised_learning/xgboost.py)
 
-####Unsupervised Learning:
+#### Unsupervised Learning:
 - [Apriori](unsupervised_learning/apriori.py)
 - [DBSCAN](unsupervised_learning/dbscan.py)
 - [FP-Growth](unsupervised_learning/fp_growth.py)
