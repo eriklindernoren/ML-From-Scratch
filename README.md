@@ -9,6 +9,19 @@ The reason the project uses scikit-learn is to evaluate the implementations on s
 
 Feel free to [reach out](mailto:eriklindernoren@gmail.com) if you can think of ways to expand this project.
 
+## Table of Contents
+- [Machine Learning From Scratch](#machine-learning-from-scratch)
+  * [About](#about)
+    + [Table of Contents](#table-of-contents)
+  * [Usage](#usage)
+    + [Installation](#installation)
+    + [Classification](#classification)
+    + [Clustering](#clustering)
+    + [Association Analysis](#association-analysis)
+  * [Current Implementations](#current-implementations)
+    + [Supervised Learning](#supervised-learning)
+    + [Unsupervised Learning](#unsupervised-learning)
+
 
 ## Usage
 ### Installation
@@ -55,7 +68,7 @@ Feel free to [reach out](mailto:eriklindernoren@gmail.com) if you can think of w
 
 
 ## Current Implementations
-### Supervised Learning:
+### Supervised Learning
 - [Adaboost](supervised_learning/adaboost.py)
 - [Decision Tree](supervised_learning/decision_tree.py)
 - [Gradient Boosting](supervised_learning/gradient_boosting.py)
@@ -72,7 +85,7 @@ Feel free to [reach out](mailto:eriklindernoren@gmail.com) if you can think of w
 - [Support Vector Machine](supervised_learning/support_vector_machine.py)
 - [XGBoost](supervised_learning/xgboost.py)
 
-### Unsupervised Learning:
+### Unsupervised Learning
 - [Apriori](unsupervised_learning/apriori.py)
 - [DBSCAN](unsupervised_learning/dbscan.py)
 - [FP-Growth](unsupervised_learning/fp_growth.py)
