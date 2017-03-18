@@ -12,7 +12,7 @@ Feel free to [reach out](mailto:eriklindernoren@gmail.com) if you can think of w
 ## Table of Contents
 - [Machine Learning From Scratch](#machine-learning-from-scratch)
   * [About](#about)
-    + [Table of Contents](#table-of-contents)
+  * [Table of Contents](#table-of-contents)
   * [Usage](#usage)
     + [Installation](#installation)
     + [Classification](#classification)
@@ -21,8 +21,7 @@ Feel free to [reach out](mailto:eriklindernoren@gmail.com) if you can think of w
   * [Current Implementations](#current-implementations)
     + [Supervised Learning](#supervised-learning)
     + [Unsupervised Learning](#unsupervised-learning)
-
-
+    
 ## Usage
 ### Installation
     $ pip install -r requirements.txt
