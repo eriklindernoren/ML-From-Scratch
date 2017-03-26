@@ -56,24 +56,23 @@ def accuracy_score(y_true, y_pred):
             correct += 1
     return correct / len(y_true)
 
-
 # Calculate the covariance matrix for the dataset X
-def calculate_covariance_matrix(X, Y=None):
-    if not Y:
+def calculate_covariance_matrix(X, Y=np.empty((0,0))):
+    if not Y.any():
         Y = X
     n_samples = np.shape(X)[0]
-    covariance_matrix = (1 / (n_samples - 1)) * (X - X.mean(0)).T.dot(Y - Y.mean(0))
+    covariance_matrix = (1 / (n_samples-1)) * (X - X.mean(0)).T.dot(Y - Y.mean(0))
 
     return np.array(covariance_matrix, dtype=float)
 
-
 # Calculate the correlation matrix for the dataset X
-def calculate_correlation_matrix(X, Y=None):
-    if not Y:
+def calculate_correlation_matrix(X, Y=np.empty((0,0))):
+    if not Y.any():
         Y = X
-    covariance = calculate_covariance_matrix(X, Y)
+    n_samples = np.shape(X)[0]
+    covariance = (1 / n_samples) * (X - X.mean(0)).T.dot(Y - Y.mean(0))
     std_dev_X = np.expand_dims(calculate_std_dev(X), 1)
-    std_dev_Y = np.expand_dims(calculate_std_dev(Y), 1)
+    std_dev_y = np.expand_dims(calculate_std_dev(Y), 1)
     correlation_matrix = np.divide(covariance, std_dev_X.dot(std_dev_y.T))
 
     return np.array(correlation_matrix, dtype=float)

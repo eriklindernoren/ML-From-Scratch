@@ -209,7 +209,7 @@ def main():
 
     print ("- FP-Growth -")
     min_sup = 3
-    print ("Minimum - support: %s" % min_sup)
+    print ("Minimum Support: %s" % min_sup)
     print ("Transactions:")
     for transaction in transactions:
         print ("\t%s" % transaction)

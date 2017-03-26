@@ -193,7 +193,7 @@ def main():
     print ("- Apriori -")
     min_sup = 0.25
     min_conf = 0.8
-    print ("Minimum - support: %.2f, confidence: %s" % (min_sup, min_conf))
+    print ("Minimum Support: %.2f, Minimum Confidence: %s" % (min_sup, min_conf))
     print ("Transactions:")
     for transaction in transactions:
         print ("\t%s" % transaction)

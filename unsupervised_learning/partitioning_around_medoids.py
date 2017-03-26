@@ -112,13 +112,14 @@ class PAM():
                     # Assign samples to new medoids
                     new_clusters = self._create_clusters(X, new_medoids)
                     # Calculate the cost with the new set of medoids
-                    _new_cost = self._calculate_cost(
+                    new_cost = self._calculate_cost(
                         X, new_clusters, new_medoids)
                     # If the swap gives us a lower cost we save the medoids and cost
-                    if _new_cost < lowest_cost:
-                        lowest_cost = _new_cost
+                    if new_cost < lowest_cost:
+                        lowest_cost = new_cost
                         best_medoids = new_medoids
-            # If the the cost after swap is lower restart with new medoids
+            # If there was a swap that resultet in a lower cost we save the
+            # resulting medoids from the best swap and the new cost 
             if lowest_cost < cost:
                 cost = lowest_cost
                 medoids = best_medoids 
