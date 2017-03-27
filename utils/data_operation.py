@@ -64,7 +64,7 @@ def calculate_covariance_matrix(X, Y=np.empty((0,0))):
     covariance_matrix = (1 / (n_samples-1)) * (X - X.mean(0)).T.dot(Y - Y.mean(0))
 
     return np.array(covariance_matrix, dtype=float)
-
+ 
 # Calculate the correlation matrix for the dataset X
 def calculate_correlation_matrix(X, Y=np.empty((0,0))):
     if not Y.any():
