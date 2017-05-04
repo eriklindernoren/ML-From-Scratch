@@ -27,7 +27,7 @@ class LogisticLoss():
 
     def loss(self, y, y_pred):
         l = -y * self.log_func(y_pred)
-        r = -(1 - y) * self.log_func(y_pred)
+        r = -(1 - y) * self.log_func(1 - y_pred)
         loss = (1/len(y)) * (l + r)
         return loss
 
