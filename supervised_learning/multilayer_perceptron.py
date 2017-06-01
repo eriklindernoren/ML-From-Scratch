@@ -12,7 +12,7 @@ dir_path = os.path.dirname(os.path.realpath(__file__))
 sys.path.insert(0, dir_path + "/../utils")
 from data_manipulation import train_test_split, categorical_to_binary, normalize, binary_to_categorical
 from data_operation import accuracy_score
-from activation_functions import Sigmoid, ReLU, SoftPlus, LeakyReLU, TanH
+from activation_functions import Sigmoid, ReLU, SoftPlus, LeakyReLU, TanH, ExpLU
 sys.path.insert(0, dir_path + "/../unsupervised_learning/")
 from principal_component_analysis import PCA
 
@@ -165,8 +165,8 @@ def main():
     # MLP
     clf = MultilayerPerceptron(n_hidden=12,
         n_iterations=7000,
-        learning_rate=0.001, 
-        activation_function=LeakyReLU,
+        learning_rate=0.0001, 
+        activation_function=ExpLU,
         early_stopping=True,
         plot_errors=True)
 

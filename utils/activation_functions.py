@@ -51,6 +51,22 @@ class LeakyReLU():
         dx[x < 0] = 0.01
         return dx
 
+class ExpLU():
+    def __init__(self, alpha=0.1):
+        self.alpha = alpha 
+
+    def activation(self, x):
+        # If x < 0: output = alpha*(exp(x)-1) else: output = x
+        h = x
+        h[h < 0] = self.alpha * (np.exp(h[h < 0]) - 1)
+        return h
+
+    def gradient(self, x):
+        # If x < 0: output = f(alpha, x) + alpha else: output = 1
+        dx = self.activation(x) + self.alpha
+        dx[x >= 0] = 1
+        return dx
+
 class SoftPlus():
     def __init__(self): pass 
 
