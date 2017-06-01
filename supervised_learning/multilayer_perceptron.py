@@ -25,7 +25,7 @@ class MultilayerPerceptron():
     n_hidden: int:
         The number of processing nodes (neurons) in the hidden layer. 
     activation_function: class:
-        The activation that shall be used for each neuron. 
+        The activation function that will be used for each neuron. 
         Possible choices: Sigmoid, ReLU, LeakyReLU, SoftPlus, TanH
     n_iterations: float
         The number of training iterations the algorithm will tune the weights for.
