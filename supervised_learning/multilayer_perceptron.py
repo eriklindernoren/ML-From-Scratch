@@ -12,29 +12,21 @@ dir_path = os.path.dirname(os.path.realpath(__file__))
 sys.path.insert(0, dir_path + "/../utils")
 from data_manipulation import train_test_split, categorical_to_binary, normalize, binary_to_categorical
 from data_operation import accuracy_score
+from activation_functions import Sigmoid, ReLU, SoftPlus, LeakyReLU, TanH
 sys.path.insert(0, dir_path + "/../unsupervised_learning/")
 from principal_component_analysis import PCA
 
 
-# Activation function
-def sigmoid(x):
-    return 1 / (1 + np.exp(-x))
-
-
-# Gradient of activation function
-def sigmoid_gradient(x):
-    return sigmoid(x) * (1 - sigmoid(x))
-
-
 class MultilayerPerceptron():
     """Multilayer Perceptron classifier. A neural network with one hidden layer.
-    Uses the sigmoid functions as the activation function of the hidden and output
-    layer.
 
     Parameters:
     -----------
     n_hidden: int:
         The number of processing nodes (neurons) in the hidden layer. 
+    activation_function: class:
+        The activation that shall be used for each neuron. 
+        Possible choices: Sigmoid, ReLU, LeakyReLU, SoftPlus, TanH
     n_iterations: float
         The number of training iterations the algorithm will tune the weights for.
     learning_rate: float
@@ -45,7 +37,7 @@ class MultilayerPerceptron():
     plot_errors: boolean
         True or false depending if we wish to plot the training errors after training.
     """
-    def __init__(self, n_hidden, n_iterations=3000, learning_rate=0.01, early_stopping=False, plot_errors=False):
+    def __init__(self, n_hidden, activation_function = Sigmoid, n_iterations=3000, learning_rate=0.01, early_stopping=False, plot_errors=False):
         self.n_hidden = n_hidden    # Number of hidden neurons
         self.W = None               # Hidden layer weights
         self.V = None               # Output layer weights
@@ -55,6 +47,7 @@ class MultilayerPerceptron():
         self.learning_rate = learning_rate
         self.plot_errors = plot_errors
         self.early_stopping = early_stopping
+        self.activation = activation_function()
 
     def fit(self, X, y):
         X_train = X
@@ -86,23 +79,23 @@ class MultilayerPerceptron():
 
             # Calculate hidden layer
             hidden_input = X_train.dot(self.W) + self.biasW
-            hidden_output = sigmoid(hidden_input)
+            # hidden_output = sigmoid(hidden_input)
+            hidden_output = self.activation.activation(hidden_input)
             # Calculate output layer
             output_layer_input = hidden_output.dot(self.V) + self.biasV
-            output = sigmoid(output_layer_input)
+            # output = sigmoid(output_layer_input)
+            output = self.activation.activation(output_layer_input)
 
             # Calculate the error
             error = y_train - output
             mse = np.mean(np.power(error, 2))
             training_errors.append(mse)
 
-            # Calculate loss gradients:
-            # Gradient of squared loss w.r.t each parameter
             v_gradient = -2 * (y_train - output) * \
-                sigmoid_gradient(output_layer_input)
+                self.activation.gradient(output_layer_input)
             biasV_gradient = v_gradient
             w_gradient = v_gradient.dot(
-                self.V.T) * sigmoid_gradient(hidden_input)
+                self.V.T) * self.activation.gradient(hidden_input)
             biasW_gradient = w_gradient
 
             # Update weights
@@ -148,10 +141,10 @@ class MultilayerPerceptron():
     def _calculate_output(self, X):
         # Calculate hidden layer
         hidden_input = X.dot(self.W) + self.biasW
-        hidden_output = sigmoid(hidden_input)
+        hidden_output = self.activation.activation(hidden_input)
         # Calculate output layer
         output_layer_input = hidden_output.dot(self.V) + self.biasV
-        output = sigmoid(output_layer_input)
+        output = self.activation.activation(output_layer_input)
 
         return output
 
@@ -171,8 +164,9 @@ def main():
 
     # MLP
     clf = MultilayerPerceptron(n_hidden=12,
-        n_iterations=5000,
-        learning_rate=0.01, 
+        n_iterations=7000,
+        learning_rate=0.001, 
+        activation_function=LeakyReLU,
         early_stopping=True,
         plot_errors=True)
 

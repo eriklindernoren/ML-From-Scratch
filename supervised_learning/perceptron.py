@@ -11,28 +11,21 @@ dir_path = os.path.dirname(os.path.realpath(__file__))
 sys.path.insert(0, dir_path + "/../utils")
 from data_manipulation import train_test_split, categorical_to_binary, normalize, binary_to_categorical
 from data_operation import accuracy_score
+from activation_functions import Sigmoid, ReLU, SoftPlus, LeakyReLU, TanH
 sys.path.insert(0, dir_path + "/../unsupervised_learning/")
 from principal_component_analysis import PCA
 
 
-# Activation function
-def sigmoid(x):
-    return 1 / (1 + np.exp(-x))
-
-
-# Gradient of activation function
-def sigmoid_gradient(x):
-    return sigmoid(x) * (1 - sigmoid(x))
-
-
 class Perceptron():
-    """One layer neural network classifier that uses the sigmoid function
-    as activation function.
+    """The Perceptron. One layer neural network classifier.
 
     Parameters:
     -----------
     n_iterations: float
         The number of training iterations the algorithm will tune the weights for.
+    activation_function: class:
+        The activation that shall be used for each neuron. 
+        Possible choices: Sigmoid, ReLU, LeakyReLU, SoftPlus, TanH
     learning_rate: float
         The step length that will be used when updating the weights.
     early_stopping: boolean
@@ -41,7 +34,7 @@ class Perceptron():
     plot_errors: boolean
         True or false depending if we wish to plot the training errors after training.
     """
-    def __init__(self, n_iterations=20000,
+    def __init__(self, n_iterations=20000, activation_function=Sigmoid,
             learning_rate=0.01, early_stopping=False, plot_errors=False):
         self.W = None           # Output layer weights
         self.biasW = None       # Bias weights
@@ -49,6 +42,7 @@ class Perceptron():
         self.n_iterations = n_iterations
         self.plot_errors = plot_errors
         self.early_stopping = early_stopping
+        self.activation = activation_function()
 
     def fit(self, X, y):
         X_train = X
@@ -77,7 +71,7 @@ class Perceptron():
         for i in range(self.n_iterations):
             # Calculate outputs
             neuron_input = np.dot(X_train, self.W) + self.biasW
-            neuron_output = sigmoid(neuron_input)
+            neuron_output = self.activation.activation(neuron_input)
 
             # Training error
             error = y_train - neuron_output
@@ -86,7 +80,7 @@ class Perceptron():
 
             # Calculate the loss gradient
             w_gradient = -2 * (y_train - neuron_output) * \
-                sigmoid_gradient(neuron_input)
+                self.activation.gradient(neuron_input)
             bias_gradient = w_gradient
 
             # Update weights
@@ -128,7 +122,7 @@ class Perceptron():
 
     def _calculate_output(self, X):
         # Calculate the output layer values
-        output = sigmoid(np.dot(X, self.W) + self.biasW)
+        output = self.activation.activation(np.dot(X, self.W) + self.biasW)
 
         return output
 
@@ -148,7 +142,8 @@ def main():
 
     # Perceptron
     clf = Perceptron(n_iterations=5000,
-        learning_rate=0.01, 
+        learning_rate=0.001, 
+        activation_function=SoftPlus,
         early_stopping=True,
         plot_errors=True)
     clf.fit(X_train, y_train)
