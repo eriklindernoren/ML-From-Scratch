@@ -12,17 +12,9 @@ dir_path = os.path.dirname(os.path.realpath(__file__))
 sys.path.insert(0, dir_path + "/../utils")
 from data_manipulation import make_diagonal, normalize, train_test_split
 from data_operation import accuracy_score
+from activation_functions import Sigmoid
 sys.path.insert(0, dir_path + "/../unsupervised_learning/")
 from principal_component_analysis import PCA
-
-
-# The sigmoid function
-def sigmoid(x):
-    return 1 / (1 + np.exp(-x))
-
-# Gradient of the sigmoid func.
-def sigmoid_gradient(x):
-    return sigmoid(x) * (1 - sigmoid(x))
 
 
 class LogisticRegression():
@@ -41,6 +33,7 @@ class LogisticRegression():
         self.param = None
         self.learning_rate = learning_rate
         self.gradient_descent = gradient_descent
+        self.sigmoid = Sigmoid()
 
 
     def fit(self, X, y, n_iterations=4000):
@@ -58,14 +51,14 @@ class LogisticRegression():
         # Tune parameters for n iterations
         for i in range(n_iterations):
             # Make a new prediction
-            y_pred = sigmoid(X.dot(self.param))
+            y_pred = self.sigmoid.function(X.dot(self.param))
             if self.gradient_descent:
                 # Move against the gradient of the loss function with 
                 # respect to the parameters to minimize the loss
                 self.param -= self.learning_rate * X.T.dot(y_pred - y)
             else:
                 # Make a diagonal matrix of the sigmoid gradient column vector
-                diag_gradient = make_diagonal(sigmoid_gradient(X.dot(self.param)))
+                diag_gradient = make_diagonal(self.sigmoid.gradient(X.dot(self.param)))
                 # Batch opt:
                 self.param = np.linalg.pinv(X.T.dot(diag_gradient).dot(X)).dot(X.T).dot(diag_gradient.dot(X).dot(self.param) + y - y_pred)
 
@@ -74,7 +67,7 @@ class LogisticRegression():
         X = np.insert(X, 0, 1, axis=1)
         # Print a final prediction
         dot = X.dot(self.param)
-        y_pred = np.round(sigmoid(dot)).astype(int)
+        y_pred = np.round(self.sigmoid.function(dot)).astype(int)
         return y_pred
 
 

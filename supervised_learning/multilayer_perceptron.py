@@ -80,11 +80,11 @@ class MultilayerPerceptron():
             # Calculate hidden layer
             hidden_input = X_train.dot(self.W) + self.biasW
             # hidden_output = sigmoid(hidden_input)
-            hidden_output = self.activation.activation(hidden_input)
+            hidden_output = self.activation.function(hidden_input)
             # Calculate output layer
             output_layer_input = hidden_output.dot(self.V) + self.biasV
             # output = sigmoid(output_layer_input)
-            output = self.activation.activation(output_layer_input)
+            output = self.activation.function(output_layer_input)
 
             # Calculate the error
             error = y_train - output
@@ -141,10 +141,10 @@ class MultilayerPerceptron():
     def _calculate_output(self, X):
         # Calculate hidden layer
         hidden_input = X.dot(self.W) + self.biasW
-        hidden_output = self.activation.activation(hidden_input)
+        hidden_output = self.activation.function(hidden_input)
         # Calculate output layer
         output_layer_input = hidden_output.dot(self.V) + self.biasV
-        output = self.activation.activation(output_layer_input)
+        output = self.activation.function(output_layer_input)
 
         return output
 

@@ -71,7 +71,7 @@ class Perceptron():
         for i in range(self.n_iterations):
             # Calculate outputs
             neuron_input = np.dot(X_train, self.W) + self.biasW
-            neuron_output = self.activation.activation(neuron_input)
+            neuron_output = self.activation.function(neuron_input)
 
             # Training error
             error = y_train - neuron_output
@@ -122,7 +122,7 @@ class Perceptron():
 
     def _calculate_output(self, X):
         # Calculate the output layer values
-        output = self.activation.activation(np.dot(X, self.W) + self.biasW)
+        output = self.activation.function(np.dot(X, self.W) + self.biasW)
 
         return output
 

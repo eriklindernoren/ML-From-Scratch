@@ -1,30 +1,30 @@
 import numpy as np
 
-# Collection of activation functions
+# Collection of function functions
 # Reference: https://en.wikipedia.org/wiki/Activation_function
 
 class Sigmoid():
     def __init__(self): pass 
 
-    def activation(self, x):
+    def function(self, x):
         return 1 / (1 + np.exp(-x))
 
     def gradient(self, x):
-        return self.activation(x) * (1 - self.activation(x))
+        return self.function(x) * (1 - self.function(x))
 
 class TanH():
     def __init__(self): pass 
 
-    def activation(self, x):
+    def function(self, x):
         return 2 / (1 + np.exp(-2*x)) - 1
 
     def gradient(self, x):
-        return 1 - np.power(self.activation(x), 2)
+        return 1 - np.power(self.function(x), 2)
 
 class ReLU():
     def __init__(self): pass 
 
-    def activation(self, x):
+    def function(self, x):
         # If x < 0: output = 0 else: output = x
         h = x
         h[x < 0] = 0
@@ -39,7 +39,7 @@ class ReLU():
 class LeakyReLU():
     def __init__(self): pass 
 
-    def activation(self, x):
+    def function(self, x):
         # If x < 0: output = 0.01*x else: output = x
         h = x
         h[h < 0] = 0.01 * h[h < 0]
@@ -55,7 +55,7 @@ class ExpLU():
     def __init__(self, alpha=0.1):
         self.alpha = alpha 
 
-    def activation(self, x):
+    def function(self, x):
         # If x < 0: output = alpha*(exp(x)-1) else: output = x
         h = x
         h[h < 0] = self.alpha * (np.exp(h[h < 0]) - 1)
@@ -63,15 +63,15 @@ class ExpLU():
 
     def gradient(self, x):
         # If x < 0: output = f(alpha, x) + alpha else: output = 1
-        dx = self.activation(x) + self.alpha
+        dx = self.function(x) + self.alpha
         dx[x >= 0] = 1
         return dx
 
 class SoftPlus():
     def __init__(self): pass 
 
-    def activation(self, x):
+    def function(self, x):
         return np.log(1 + np.exp(x))
 
     def gradient(self, x):
-        return Sigmoid().activation(x)
+        return Sigmoid().function(x)
