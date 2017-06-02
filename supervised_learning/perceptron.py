@@ -28,17 +28,21 @@ class Perceptron():
         Possible choices: Sigmoid, ExpLU, ReLU, LeakyReLU, SoftPlus, TanH
     learning_rate: float
         The step length that will be used when updating the weights.
+    momentum: float
+        A momentum term that helps accelerate SGD by adding a fraction of the previous
+        weight update to the current update.
     early_stopping: boolean
         Whether to stop the training when the validation error has increased for a
         certain amounts of training iterations. Combats overfitting.
     plot_errors: boolean
         True or false depending if we wish to plot the training errors after training.
     """
-    def __init__(self, n_iterations=20000, activation_function=Sigmoid,
+    def __init__(self, n_iterations=20000, momentum=0.3, activation_function=Sigmoid,
             learning_rate=0.01, early_stopping=False, plot_errors=False):
         self.W = None           # Output layer weights
         self.biasW = None       # Bias weights
         self.learning_rate = learning_rate
+        self.momentum = momentum
         self.n_iterations = n_iterations
         self.plot_errors = plot_errors
         self.early_stopping = early_stopping
@@ -68,6 +72,8 @@ class Perceptron():
         training_errors = []
         validation_errors = []
         iter_with_rising_val_error = 0
+        w_updt = np.zeros(np.shape(self.W))
+        b_updt = np.zeros(np.shape(self.biasW))
         for i in range(self.n_iterations):
             # Calculate outputs
             neuron_input = np.dot(X_train, self.W) + self.biasW
@@ -83,10 +89,13 @@ class Perceptron():
                 self.activation.gradient(neuron_input)
             bias_gradient = w_gradient
 
+            # Calculate the weight updates
+            w_updt = self.momentum*w_updt + X_train.T.dot(w_gradient)
+            b_updt = self.momentum*b_updt + np.ones((1, n_samples)).dot(bias_gradient)
+
             # Update weights
-            self.W -= self.learning_rate * X_train.T.dot(w_gradient)
-            self.biasW -= self.learning_rate * \
-                np.ones((1, n_samples)).dot(bias_gradient)
+            self.W -= self.learning_rate * w_updt
+            self.biasW -= self.learning_rate * b_updt
 
             if self.early_stopping:
                 # Calculate the validation error

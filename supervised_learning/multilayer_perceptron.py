@@ -31,13 +31,17 @@ class MultilayerPerceptron():
         The number of training iterations the algorithm will tune the weights for.
     learning_rate: float
         The step length that will be used when updating the weights.
+    momentum: float
+        A momentum term that helps accelerate SGD by adding a fraction of the previous
+        weight update to the current update.
     early_stopping: boolean
         Whether to stop the training when the validation error has increased for a
         certain amounts of training iterations. Combats overfitting.
     plot_errors: boolean
         True or false depending if we wish to plot the training errors after training.
     """
-    def __init__(self, n_hidden, activation_function = Sigmoid, n_iterations=3000, learning_rate=0.01, early_stopping=False, plot_errors=False):
+    def __init__(self, n_hidden, activation_function = Sigmoid, n_iterations=3000, learning_rate=0.01, momentum=0.3, \
+     early_stopping=False, plot_errors=False):
         self.n_hidden = n_hidden    # Number of hidden neurons
         self.W = None               # Hidden layer weights
         self.V = None               # Output layer weights
@@ -45,6 +49,7 @@ class MultilayerPerceptron():
         self.biasV = None           # Output layer bias
         self.n_iterations = n_iterations
         self.learning_rate = learning_rate
+        self.momentum = momentum
         self.plot_errors = plot_errors
         self.early_stopping = early_stopping
         self.activation = activation_function()
@@ -75,6 +80,10 @@ class MultilayerPerceptron():
         training_errors = []
         validation_errors = []
         iter_with_rising_val_error = 0
+        v_updt = np.zeros(np.shape(self.V))
+        vb_updt = np.zeros(np.shape(self.biasV))
+        w_updt = np.zeros(np.shape(self.W))
+        wb_updt = np.zeros(np.shape(self.biasW))
         for i in range(self.n_iterations):
 
             # Calculate hidden layer
@@ -98,12 +107,18 @@ class MultilayerPerceptron():
                 self.V.T) * self.activation.gradient(hidden_input)
             biasW_gradient = w_gradient
 
+            # Calculate weight updates
+            v_updt = self.momentum*v_updt + hidden_output.T.dot(v_gradient)
+            vb_updt = self.momentum*vb_updt + np.ones((1, n_samples)).dot(biasV_gradient)
+            w_updt = self.momentum*w_updt + X_train.T.dot(w_gradient)
+            wb_updt = self.momentum*wb_updt + np.ones((1, n_samples)).dot(biasW_gradient)
+
             # Update weights
             # Move against the gradient to minimize loss
-            self.V -= self.learning_rate * hidden_output.T.dot(v_gradient)
-            self.biasV -= self.learning_rate * np.ones((1, n_samples)).dot(biasV_gradient)
-            self.W -= self.learning_rate * X_train.T.dot(w_gradient)
-            self.biasW -= self.learning_rate * np.ones((1, n_samples)).dot(biasW_gradient)
+            self.V -= self.learning_rate * v_updt
+            self.biasV -= self.learning_rate * vb_updt
+            self.W -= self.learning_rate * w_updt
+            self.biasW -= self.learning_rate * wb_updt
 
             if self.early_stopping:
                 # Calculate the validation error
@@ -164,8 +179,9 @@ def main():
 
     # MLP
     clf = MultilayerPerceptron(n_hidden=12,
-        n_iterations=7000,
+        n_iterations=1000,
         learning_rate=0.0001, 
+        momentum=0.8,
         activation_function=ExpLU,
         early_stopping=True,
         plot_errors=True)

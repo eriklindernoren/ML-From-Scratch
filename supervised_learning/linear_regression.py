@@ -22,20 +22,25 @@ class LinearRegression():
         The number of training iterations the algorithm will tune the weights for.
     learning_rate: float
         The step length that will be used when updating the weights.
+    momentum: float
+        A momentum term that helps accelerate SGD by adding a fraction of the previous
+        weight update to the current update.
     gradient_descent: boolean
         True or false depending if gradient descent should be used when training. If 
         false then we use batch optimization by least squares.
     """
-    def __init__(self, n_iterations=100, learning_rate=0.001, gradient_descent=True):
+    def __init__(self, n_iterations=100, learning_rate=0.001, momentum=0.3, gradient_descent=True):
         self.w = None
         self.n_iterations = n_iterations
         self.learning_rate = learning_rate
+        self.momentum = momentum
         self.gradient_descent = gradient_descent    # Opt. method. If False => Least squares
         self.square_loss = SquareLoss()
 
     def fit(self, X, y):
         # Insert constant ones as first column (for bias weights)
         X = np.insert(X, 0, 1, axis=1)
+        w_gradient = np.zeros(np.shape(self.w))
         # Get weights by gradient descent opt.
         if self.gradient_descent:
             n_features = np.shape(X)[1]
@@ -44,7 +49,7 @@ class LinearRegression():
             # Do gradient descent for n_iterations
             for _ in range(self.n_iterations):
                 # Gradient of squared loss w.r.t the weights
-                w_gradient = self.square_loss.gradient(y, X, self.w)
+                w_gradient = self.momentum*w_gradient + self.square_loss.gradient(y, X, self.w)
                 # Move against the gradient to minimize loss
                 self.w -= self.learning_rate * w_gradient
         # Get weights by least squares (by pseudoinverse)
