@@ -55,9 +55,9 @@ class GradientBoosting(object):
         
         # Square loss for regression
         # Log loss for classification
-        self.loss = SquareLoss()
+        self.loss = SquareLoss(grad_wrt_theta=False)
         if not self.regression:
-            self.loss = LogisticLoss()
+            self.loss = LogisticLoss(grad_wrt_theta=False)
 
         # Initialize regression trees
         self.trees = []

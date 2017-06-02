@@ -201,7 +201,7 @@ class XGBoostRegressionTree(DecisionTree):
     http://xgboost.readthedocs.io/en/latest/model.html
     """
 
-    # y contains y in left half of the middle col
+    # y contains y_true in left half of the middle col
     # and y_pred in the right half. Split and return
     # the two matrices
     def _split(self, y):
@@ -210,7 +210,7 @@ class XGBoostRegressionTree(DecisionTree):
         return y, y_pred
 
     def _gain(self, y, y_pred):
-        nominator = np.power(self.loss.gradient(y, y_pred).sum(), 2)
+        nominator = np.power((y * self.loss.gradient(y, y_pred)).sum(), 2)
         denominator = self.loss.hess(y, y_pred).sum()
         return 0.5 * (nominator / denominator)
 
@@ -229,9 +229,10 @@ class XGBoostRegressionTree(DecisionTree):
         # y split into y, y_pred
         y, y_pred = self._split(y)
         # Newton's Method
-        nominator = np.sum(self.loss.gradient(y, y_pred), axis=0)
-        denominator = np.sum(self.loss.hess(y, y_pred), axis=0)
-        update_approximation =  nominator / denominator 
+        gradient = np.sum(y * self.loss.gradient(y, y_pred), axis=0)
+        hessian = np.sum(self.loss.hess(y, y_pred), axis=0)
+        update_approximation =  gradient / hessian 
+
         return update_approximation
 
     def fit(self, X, y):

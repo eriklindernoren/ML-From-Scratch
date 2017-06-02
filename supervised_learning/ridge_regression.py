@@ -11,6 +11,7 @@ sys.path.insert(0, dir_path + "/../utils")
 from data_manipulation import k_fold_cross_validation_sets
 from data_manipulation import train_test_split
 from data_operation import mean_squared_error
+from loss_functions import SquareLoss
 
 
 class RidgeRegression():
@@ -35,6 +36,7 @@ class RidgeRegression():
         self.learning_rate = learning_rate
         self.gradient_descent = gradient_descent
         self.regularization_factor = reg_factor
+        self.square_loss = SquareLoss()
 
     def fit(self, X, y):
         # Insert dummy ones for bias weights
@@ -47,7 +49,7 @@ class RidgeRegression():
             self.w = np.random.random((n_features, ))
             # Do gradient descent for n_iterations
             for _ in range(self.n_iterations):
-                w_gradient = X.T.dot(X.dot(self.w) - y) + self.regularization_factor * self.w
+                w_gradient = self.square_loss.gradient(y, X, self.w) + self.regularization_factor * self.w
                 self.w -= self.learning_rate * w_gradient
         # Get weights by least squares (by pseudoinverse)
         else:
@@ -80,7 +82,7 @@ def main():
             X_train, y_train, k=k)
         mse = 0
         for _X_train, _X_test, _y_train, _y_test in cross_validation_sets:
-            clf = RidgeRegression(delta=regularization_factor)
+            clf = RidgeRegression(reg_factor=regularization_factor)
             clf.fit(_X_train, _y_train)
             y_pred = clf.predict(_X_test)
             _mse = mean_squared_error(_y_test, y_pred)
@@ -96,7 +98,7 @@ def main():
             lowest_error = mse
 
     # Make final prediction
-    clf = RidgeRegression(delta=best_reg_factor)
+    clf = RidgeRegression(reg_factor=best_reg_factor)
     clf.fit(X_train, y_train)
     y_pred = clf.predict(X_test)
     mse = mean_squared_error(y_test, y_pred)

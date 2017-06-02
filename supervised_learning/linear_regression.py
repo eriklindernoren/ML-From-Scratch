@@ -10,6 +10,7 @@ dir_path = os.path.dirname(os.path.realpath(__file__))
 sys.path.insert(0, dir_path + "/../utils")
 from data_operation import mean_squared_error
 from data_manipulation import train_test_split
+from loss_functions import SquareLoss
 
 
 class LinearRegression():
@@ -30,6 +31,7 @@ class LinearRegression():
         self.n_iterations = n_iterations
         self.learning_rate = learning_rate
         self.gradient_descent = gradient_descent    # Opt. method. If False => Least squares
+        self.square_loss = SquareLoss()
 
     def fit(self, X, y):
         # Insert constant ones as first column (for bias weights)
@@ -42,7 +44,7 @@ class LinearRegression():
             # Do gradient descent for n_iterations
             for _ in range(self.n_iterations):
                 # Gradient of squared loss w.r.t the weights
-                w_gradient = X.T.dot(X.dot(self.w) - y)
+                w_gradient = self.square_loss.gradient(y, X, self.w)
                 # Move against the gradient to minimize loss
                 self.w -= self.learning_rate * w_gradient
         # Get weights by least squares (by pseudoinverse)

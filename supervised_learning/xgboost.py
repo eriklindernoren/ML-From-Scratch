@@ -11,25 +11,10 @@ sys.path.insert(0, dir_path + "/../utils")
 from data_manipulation import train_test_split, standardize, categorical_to_binary, normalize
 from data_operation import mean_squared_error, accuracy_score
 from decision_tree import XGBoostRegressionTree
+from loss_functions import LogisticLoss
 sys.path.insert(0, dir_path + "/../unsupervised_learning/")
 from principal_component_analysis import PCA
 
-
-class LogisticLoss():
-    def __init__(self): pass 
-
-    def log_func(self, t, dt=False):
-        if dt:
-            return self.log_func(t) * (1 - self.log_func(t))
-        else:
-            return 1 / (1 + np.exp(-t))
-
-    def gradient(self, y, y_pred):
-        return y * (y - self.log_func(y_pred))
-
-    def hess(self, y, y_pred):
-        prob = self.log_func(y_pred)
-        return prob * (1 - prob)
 
 
 class XGBoost(object):
@@ -60,11 +45,10 @@ class XGBoost(object):
         self.min_samples_split = min_samples_split  # The minimum n of sampels to justify split
         self.min_impurity = min_impurity              # Minimum variance reduction to continue
         self.max_depth = max_depth                  # Maximum depth for tree
-        self.init_estimate = None                   # The initial prediction of y
         self.debug = debug
         
         # Log loss for classification
-        self.loss = LogisticLoss()
+        self.loss = LogisticLoss(grad_wrt_theta=False)
 
         # Initialize regression trees
         self.trees = []
@@ -80,15 +64,13 @@ class XGBoost(object):
     def fit(self, X, y):
         y = categorical_to_binary(y)
 
-        # Set initial predictions to median of y
-        self.init_estimate = np.median(y, axis=0)
         y_pred = np.zeros(np.shape(y))
         for i, tree in enumerate(self.trees):
             y_and_pred = np.concatenate((y, y_pred), axis=1)
             tree.fit(X, y_and_pred)
             update_pred = tree.predict(X)
 
-            y_pred += np.multiply(self.learning_rate, update_pred)
+            y_pred -= np.multiply(self.learning_rate, update_pred)
 
             if self.debug:
                 progress = 100 * (i / self.n_estimators)
@@ -101,9 +83,8 @@ class XGBoost(object):
         # Make predictions
         for tree in self.trees:
             # Estimate gradient and update prediction
-            update_pred = tree.predict(X)
-            update = np.multiply(self.learning_rate, update_pred)
-            y_pred = update if not y_pred.any() else y_pred + update
+            update = np.multiply(self.learning_rate, tree.predict(X))
+            y_pred = update if not y_pred.any() else y_pred - update
 
         # Turn into probability distribution
         y_pred = np.exp(y_pred) / np.expand_dims(np.sum(np.exp(y_pred), axis=1), axis=1)

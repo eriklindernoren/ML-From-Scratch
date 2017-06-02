@@ -1,40 +1,53 @@
 from __future__ import division
 import numpy as np
+from activation_functions import Sigmoid
 
 
 class SquareLoss():
-    def __init__(self): pass 
+    def __init__(self, grad_wrt_theta=True):
+        if grad_wrt_theta:
+            self.gradient = self._grad_wrt_theta
+        if not grad_wrt_theta:
+            self.gradient = self._grad_wrt_pred
 
     def loss(self, y_true, y_pred):
-        return 0.5 * np.power((y_true - y_pred), 2)
+        return np.power((y_true - y_pred), 2)
 
-    # W.r.t y_pred
-    def gradient(self, y, y_pred):
-        return -1 * (y - y_pred)
+    def _grad_wrt_pred(self, y, y_pred):
+        return -2*(y - y_pred)
 
-    def hess(self, y, y_pred):
-        return np.ones(np.shape(y))
+    def _grad_wrt_theta(self, y, X, theta):
+        y_pred = X.dot(theta)
+        return -2*(y - y_pred).dot(X)
 
 
 class LogisticLoss():
-    def __init__(self): pass 
+    def __init__(self, grad_wrt_theta=True):
+        sigmoid = Sigmoid()
+        self.log_func = sigmoid.function
+        self.log_grad = sigmoid.gradient
 
-    def log_func(self, t, dt=False):
-        if dt:
-            return self.log_func(t) * (1 - self.log_func(t))
-        else:
-            return 1 / (1 + np.exp(-t))
+        if grad_wrt_theta:
+            self.gradient = self._grad_wrt_theta
+        if not grad_wrt_theta:
+            self.gradient = self._grad_wrt_pred
+            self.hess = self._hess_wrt_pred
 
     def loss(self, y, y_pred):
-        l = -y * self.log_func(y_pred)
-        r = -(1 - y) * self.log_func(1 - y_pred)
-        loss = (1/len(y)) * (l + r)
-        return loss
-
-    def gradient(self, y, y_pred):
-        return -(y - self.log_func(y_pred))
-
-    def hess(self, y, y_pred):
         p = self.log_func(y_pred)
-        return -p * (1 - p)
+        return y * np.log(p) + (1 - y) * np.log(1 - p)
 
+    # gradient w.r.t theta
+    def _grad_wrt_theta(self, y, X, theta):
+        p = self.log_func(X.dot(theta))
+        return -(y - p).dot(X)
+
+    # gradient w.r.t y_pred
+    def _grad_wrt_pred(self, y, y_pred):
+        p = self.log_func(y_pred)
+        return -(y - p)
+
+    # w.r.t y_pred
+    def _hess_wrt_pred(self, y, y_pred):
+        p = self.log_func(y_pred)
+        return p * (1 - p)

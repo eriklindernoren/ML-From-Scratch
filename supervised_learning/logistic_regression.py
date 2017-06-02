@@ -13,6 +13,7 @@ sys.path.insert(0, dir_path + "/../utils")
 from data_manipulation import make_diagonal, normalize, train_test_split
 from data_operation import accuracy_score
 from activation_functions import Sigmoid
+from loss_functions import LogisticLoss
 sys.path.insert(0, dir_path + "/../unsupervised_learning/")
 from principal_component_analysis import PCA
 
@@ -34,6 +35,7 @@ class LogisticRegression():
         self.learning_rate = learning_rate
         self.gradient_descent = gradient_descent
         self.sigmoid = Sigmoid()
+        self.log_loss = LogisticLoss()
 
 
     def fit(self, X, y, n_iterations=4000):
@@ -55,7 +57,7 @@ class LogisticRegression():
             if self.gradient_descent:
                 # Move against the gradient of the loss function with 
                 # respect to the parameters to minimize the loss
-                self.param -= self.learning_rate * X.T.dot(y_pred - y)
+                self.param -= self.learning_rate * self.log_loss.gradient(y, X, self.param)
             else:
                 # Make a diagonal matrix of the sigmoid gradient column vector
                 diag_gradient = make_diagonal(self.sigmoid.gradient(X.dot(self.param)))

@@ -25,7 +25,7 @@ class Perceptron():
         The number of training iterations the algorithm will tune the weights for.
     activation_function: class:
         The activation that shall be used for each neuron. 
-        Possible choices: Sigmoid, ReLU, LeakyReLU, SoftPlus, TanH
+        Possible choices: Sigmoid, ExpLU, ReLU, LeakyReLU, SoftPlus, TanH
     learning_rate: float
         The step length that will be used when updating the weights.
     early_stopping: boolean
