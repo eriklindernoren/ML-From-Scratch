@@ -13,7 +13,7 @@ sys.path.insert(0, dir_path + "/../utils")
 from data_manipulation import train_test_split, categorical_to_binary, normalize, binary_to_categorical
 from data_operation import accuracy_score
 from activation_functions import Sigmoid, ReLU, SoftPlus, LeakyReLU, TanH, ExpLU
-from optimization import GradientDescent, NesterovAcceleratedGradient, Adagrad, Adadelta, RMSprop
+from optimizers import GradientDescent, NesterovAcceleratedGradient, Adagrad, Adadelta, RMSprop
 sys.path.insert(0, dir_path + "/../unsupervised_learning/")
 from principal_component_analysis import PCA
 
