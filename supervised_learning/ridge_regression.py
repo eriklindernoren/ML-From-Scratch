@@ -12,6 +12,7 @@ from data_manipulation import k_fold_cross_validation_sets
 from data_manipulation import train_test_split
 from data_operation import mean_squared_error
 from loss_functions import SquareLoss
+from optimization import GradientDescent
 
 
 class RidgeRegression():
@@ -36,27 +37,24 @@ class RidgeRegression():
     def __init__(self, reg_factor, n_iterations=100, momentum=0.3, learning_rate=0.001, gradient_descent=True):
         self.w = None
         self.n_iterations = n_iterations
-        self.learning_rate = learning_rate
-        self.momentum = momentum
         self.gradient_descent = gradient_descent
         self.regularization_factor = reg_factor
         self.square_loss = SquareLoss()
+        self.grad_desc = GradientDescent(learning_rate=learning_rate, momentum=momentum)
 
     def fit(self, X, y):
         # Insert dummy ones for bias weights
         X = np.insert(X, 0, 1, axis=1)
         n_features = np.shape(X)[1]
-
-        w_gradient = np.zeros(np.shape(self.w))
+        
         # Get weights by gradient descent opt.
         if self.gradient_descent:
             # Initial weights randomly [0, 1]
             self.w = np.random.random((n_features, ))
             # Do gradient descent for n_iterations
             for _ in range(self.n_iterations):
-                update = self.square_loss.gradient(y, X, self.w) + self.regularization_factor * self.w
-                w_gradient = self.momentum * w_gradient + update
-                self.w -= self.learning_rate * w_gradient
+                grad_wrt_w = self.square_loss.gradient(y, X, self.w) + self.regularization_factor * self.w
+                self.w = self.grad_desc.update(w=self.w, grad_wrt_w=grad_wrt_w)
         # Get weights by least squares (by pseudoinverse)
         else:
             U, S, V = np.linalg.svd(

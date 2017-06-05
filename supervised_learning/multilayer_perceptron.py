@@ -13,6 +13,7 @@ sys.path.insert(0, dir_path + "/../utils")
 from data_manipulation import train_test_split, categorical_to_binary, normalize, binary_to_categorical
 from data_operation import accuracy_score
 from activation_functions import Sigmoid, ReLU, SoftPlus, LeakyReLU, TanH, ExpLU
+from optimization import GradientDescent
 sys.path.insert(0, dir_path + "/../unsupervised_learning/")
 from principal_component_analysis import PCA
 
@@ -32,7 +33,7 @@ class MultilayerPerceptron():
     learning_rate: float
         The step length that will be used when updating the weights.
     momentum: float
-        A momentum term that helps accelerate SGD by adding a fraction of the previous
+        A momentum term that helps accelerate the optimization by adding a fraction of the previous
         weight update to the current update.
     early_stopping: boolean
         Whether to stop the training when the validation error has increased for a
@@ -48,11 +49,15 @@ class MultilayerPerceptron():
         self.biasW = None           # Hidden layer bias
         self.biasV = None           # Output layer bias
         self.n_iterations = n_iterations
-        self.learning_rate = learning_rate
-        self.momentum = momentum
         self.plot_errors = plot_errors
         self.early_stopping = early_stopping
         self.activation = activation_function()
+
+        # Optimization methods for each paramater
+        self.w_opt = GradientDescent(learning_rate=learning_rate, momentum=momentum)
+        self.wb_opt = GradientDescent(learning_rate=learning_rate, momentum=momentum)
+        self.v_opt = GradientDescent(learning_rate=learning_rate, momentum=momentum)
+        self.vb_opt = GradientDescent(learning_rate=learning_rate, momentum=momentum)
 
     def fit(self, X, y):
         X_train = X
@@ -77,13 +82,11 @@ class MultilayerPerceptron():
         self.V = (b - a) * np.random.random((self.n_hidden, n_outputs)) + a
         self.biasV = (b - a) * np.random.random((1, n_outputs)) + a
 
+        # Error history
         training_errors = []
         validation_errors = []
         iter_with_rising_val_error = 0
-        v_updt = np.zeros(np.shape(self.V))
-        vb_updt = np.zeros(np.shape(self.biasV))
-        w_updt = np.zeros(np.shape(self.W))
-        wb_updt = np.zeros(np.shape(self.biasW))
+
         for i in range(self.n_iterations):
 
             # Calculate hidden layer
@@ -100,25 +103,24 @@ class MultilayerPerceptron():
             mse = np.mean(np.power(error, 2))
             training_errors.append(mse)
 
-            v_gradient = -2 * (y_train - output) * \
+            # Calculate the loss gradient
+            output_gradient = -2 * (y_train - output) * \
                 self.activation.gradient(output_layer_input)
-            biasV_gradient = v_gradient
-            w_gradient = v_gradient.dot(
+            hidden_gradient = output_gradient.dot(
                 self.V.T) * self.activation.gradient(hidden_input)
-            biasW_gradient = w_gradient
 
-            # Calculate weight updates
-            v_updt = self.momentum*v_updt + hidden_output.T.dot(v_gradient)
-            vb_updt = self.momentum*vb_updt + np.ones((1, n_samples)).dot(biasV_gradient)
-            w_updt = self.momentum*w_updt + X_train.T.dot(w_gradient)
-            wb_updt = self.momentum*wb_updt + np.ones((1, n_samples)).dot(biasW_gradient)
+            # Calcualte the gradient with respect to each weight term
+            grad_wrt_v = hidden_output.T.dot(output_gradient)
+            grad_wrt_vb = np.ones((1, n_samples)).dot(output_gradient)
+            grad_wrt_w = X_train.T.dot(hidden_gradient)
+            grad_wrt_wb = np.ones((1, n_samples)).dot(hidden_gradient)
 
             # Update weights
             # Move against the gradient to minimize loss
-            self.V -= self.learning_rate * v_updt
-            self.biasV -= self.learning_rate * vb_updt
-            self.W -= self.learning_rate * w_updt
-            self.biasW -= self.learning_rate * wb_updt
+            self.V          = self.v_opt.update(w=self.V, grad_wrt_w=grad_wrt_v)
+            self.biasV      = self.vb_opt.update(w=self.biasV, grad_wrt_w=grad_wrt_vb)
+            self.W          = self.w_opt.update(w=self.W, grad_wrt_w=grad_wrt_w)
+            self.biasW      = self.wb_opt.update(w=self.biasW, grad_wrt_w=grad_wrt_wb)
 
             if self.early_stopping:
                 # Calculate the validation error

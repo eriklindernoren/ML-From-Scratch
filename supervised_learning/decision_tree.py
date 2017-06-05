@@ -73,7 +73,6 @@ class DecisionTree(object):
         self._leaf_value_calculation = None
         # If y is nominal
         self.one_dim = None
-
         # If Gradient Boost
         self.loss = loss
 
@@ -81,7 +80,6 @@ class DecisionTree(object):
         # Build tree
         self.one_dim = len(np.shape(y)) == 1
         self.root = self._build_tree(X, y)
-
         self.loss=None
 
     def _build_tree(self, X, y, current_depth=0):
@@ -95,7 +93,7 @@ class DecisionTree(object):
             y = np.expand_dims(y, axis=1)
 
         # Add y as last column of X
-        X_y = np.concatenate((X, y), axis=1)
+        Xy = np.concatenate((X, y), axis=1)
 
         n_samples, n_features = np.shape(X)
 
@@ -109,7 +107,7 @@ class DecisionTree(object):
                 # Iterate through all unique values of feature column i and
                 # calculate the impurity
                 for threshold in unique_values:
-                    Xy1, Xy2 = divide_on_feature(X_y, feature_i, threshold)
+                    Xy1, Xy2 = divide_on_feature(Xy, feature_i, threshold)
                     
                     if len(Xy1) > 0 and len(Xy2) > 0:
                         y1 = Xy1[:, n_features:]

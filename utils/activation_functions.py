@@ -1,6 +1,6 @@
 import numpy as np
 
-# Collection of function functions
+# Collection of activation functions
 # Reference: https://en.wikipedia.org/wiki/Activation_function
 
 class Sigmoid():

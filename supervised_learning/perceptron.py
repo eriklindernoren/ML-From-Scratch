@@ -12,6 +12,7 @@ sys.path.insert(0, dir_path + "/../utils")
 from data_manipulation import train_test_split, categorical_to_binary, normalize, binary_to_categorical
 from data_operation import accuracy_score
 from activation_functions import Sigmoid, ReLU, SoftPlus, LeakyReLU, TanH
+from optimization import GradientDescent
 sys.path.insert(0, dir_path + "/../unsupervised_learning/")
 from principal_component_analysis import PCA
 
@@ -41,12 +42,12 @@ class Perceptron():
             learning_rate=0.01, early_stopping=False, plot_errors=False):
         self.W = None           # Output layer weights
         self.biasW = None       # Bias weights
-        self.learning_rate = learning_rate
-        self.momentum = momentum
         self.n_iterations = n_iterations
         self.plot_errors = plot_errors
         self.early_stopping = early_stopping
         self.activation = activation_function()
+        self.w_opt = GradientDescent(learning_rate=learning_rate, momentum=momentum)
+        self.bias_opt = GradientDescent(learning_rate=learning_rate, momentum=momentum)
 
     def fit(self, X, y):
         X_train = X
@@ -69,11 +70,11 @@ class Perceptron():
         self.W = (b - a) * np.random.random((n_features, n_outputs)) + a
         self.biasW = (b - a) * np.random.random((1, n_outputs)) + a
 
+        # Error history
         training_errors = []
         validation_errors = []
         iter_with_rising_val_error = 0
-        w_updt = np.zeros(np.shape(self.W))
-        b_updt = np.zeros(np.shape(self.biasW))
+
         for i in range(self.n_iterations):
             # Calculate outputs
             neuron_input = np.dot(X_train, self.W) + self.biasW
@@ -85,17 +86,16 @@ class Perceptron():
             training_errors.append(mse)
 
             # Calculate the loss gradient
-            w_gradient = -2 * (y_train - neuron_output) * \
+            error_gradient = -2 * (y_train - neuron_output) * \
                 self.activation.gradient(neuron_input)
-            bias_gradient = w_gradient
 
-            # Calculate the weight updates
-            w_updt = self.momentum*w_updt + X_train.T.dot(w_gradient)
-            b_updt = self.momentum*b_updt + np.ones((1, n_samples)).dot(bias_gradient)
+            # Calculate the gradient of the loss with respect to each weight term
+            grad_wrt_w = X_train.T.dot(error_gradient)
+            grad_wrt_bias = np.ones((1, n_samples)).dot(error_gradient)
 
             # Update weights
-            self.W -= self.learning_rate * w_updt
-            self.biasW -= self.learning_rate * b_updt
+            self.W = self.w_opt.update(w=self.W, grad_wrt_w=grad_wrt_w)
+            self.biasW = self.bias_opt.update(w=self.biasW, grad_wrt_w=grad_wrt_bias)
 
             if self.early_stopping:
                 # Calculate the validation error

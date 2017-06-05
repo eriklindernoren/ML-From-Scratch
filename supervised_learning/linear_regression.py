@@ -11,6 +11,7 @@ sys.path.insert(0, dir_path + "/../utils")
 from data_operation import mean_squared_error
 from data_manipulation import train_test_split
 from loss_functions import SquareLoss
+from optimization import GradientDescent
 
 
 class LinearRegression():
@@ -32,15 +33,13 @@ class LinearRegression():
     def __init__(self, n_iterations=100, learning_rate=0.001, momentum=0.3, gradient_descent=True):
         self.w = None
         self.n_iterations = n_iterations
-        self.learning_rate = learning_rate
-        self.momentum = momentum
         self.gradient_descent = gradient_descent    # Opt. method. If False => Least squares
         self.square_loss = SquareLoss()
+        self.grad_desc = GradientDescent(learning_rate=learning_rate, momentum=momentum)
 
     def fit(self, X, y):
         # Insert constant ones as first column (for bias weights)
         X = np.insert(X, 0, 1, axis=1)
-        w_gradient = np.zeros(np.shape(self.w))
         # Get weights by gradient descent opt.
         if self.gradient_descent:
             n_features = np.shape(X)[1]
@@ -48,10 +47,8 @@ class LinearRegression():
             self.w = np.random.random((n_features, ))
             # Do gradient descent for n_iterations
             for _ in range(self.n_iterations):
-                # Gradient of squared loss w.r.t the weights
-                w_gradient = self.momentum*w_gradient + self.square_loss.gradient(y, X, self.w)
-                # Move against the gradient to minimize loss
-                self.w -= self.learning_rate * w_gradient
+                # Move against the gradient to minimize loss (by gradient descent - '../util/optimization.py')
+                self.w = self.grad_desc.update(w=self.w, grad_wrt_w=self.square_loss.gradient(y, X, self.w))
         # Get weights by least squares (by pseudoinverse)
         else:
             U, S, V = np.linalg.svd(X.T.dot(X))

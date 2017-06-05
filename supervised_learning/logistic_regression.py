@@ -14,6 +14,7 @@ from data_manipulation import make_diagonal, normalize, train_test_split
 from data_operation import accuracy_score
 from activation_functions import Sigmoid
 from loss_functions import LogisticLoss
+from optimization import GradientDescent
 sys.path.insert(0, dir_path + "/../unsupervised_learning/")
 from principal_component_analysis import PCA
 
@@ -35,17 +36,15 @@ class LogisticRegression():
     """
     def __init__(self, learning_rate=.1, momentum=0.3, gradient_descent=True):
         self.param = None
-        self.learning_rate = learning_rate
-        self.momentum = momentum
         self.gradient_descent = gradient_descent
         self.sigmoid = Sigmoid()
         self.log_loss = LogisticLoss()
+        self.grad_desc = GradientDescent(learning_rate=learning_rate, momentum=momentum)
 
 
     def fit(self, X, y, n_iterations=4000):
         # Add dummy ones for bias weights
         X = np.insert(X, 0, 1, axis=1)
-
 
         n_samples, n_features = np.shape(X)
 
@@ -53,8 +52,7 @@ class LogisticRegression():
         a = -1 / math.sqrt(n_features)
         b = -a
         self.param = (b - a) * np.random.random((n_features,)) + a
-
-        param_gradient = np.zeros(np.shape(self.param))
+        
         # Tune parameters for n iterations
         for i in range(n_iterations):
             # Make a new prediction
@@ -62,8 +60,8 @@ class LogisticRegression():
             if self.gradient_descent:
                 # Move against the gradient of the loss function with 
                 # respect to the parameters to minimize the loss
-                param_gradient = self.momentum * param_gradient + self.log_loss.gradient(y, X, self.param)
-                self.param -= self.learning_rate * param_gradient
+                grad_wrt_param = self.log_loss.gradient(y, X, self.param)
+                self.param = self.grad_desc.update(w=self.param, grad_wrt_w=grad_wrt_param)
             else:
                 # Make a diagonal matrix of the sigmoid gradient column vector
                 diag_gradient = make_diagonal(self.sigmoid.gradient(X.dot(self.param)))
