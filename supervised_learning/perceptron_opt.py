@@ -11,8 +11,8 @@ dir_path = os.path.dirname(os.path.realpath(__file__))
 sys.path.insert(0, dir_path + "/../utils")
 from data_manipulation import train_test_split, categorical_to_binary, normalize, binary_to_categorical
 from data_operation import accuracy_score
-from activation_functions import Sigmoid, ReLU, SoftPlus, LeakyReLU, TanH
-from optimization import GradientDescent
+from activation_functions import Sigmoid, ReLU, SoftPlus, LeakyReLU, TanH, ExpLU
+from optimization import GradientDescent, NesterovAcceleratedGradient, Adagrad, Adadelta, RMSprop
 sys.path.insert(0, dir_path + "/../unsupervised_learning/")
 from principal_component_analysis import PCA
 
@@ -38,7 +38,7 @@ class Perceptron():
     plot_errors: boolean
         True or false depending if we wish to plot the training errors after training.
     """
-    def __init__(self, n_iterations=20000, momentum=0.3, activation_function=Sigmoid,
+    def __init__(self, n_iterations=20000, momentum=0.3, activation_function=Sigmoid, opt_method=GradientDescent,
             learning_rate=0.01, early_stopping=False, plot_errors=False):
         self.W = None           # Output layer weights
         self.biasW = None       # Bias weights
@@ -46,8 +46,8 @@ class Perceptron():
         self.plot_errors = plot_errors
         self.early_stopping = early_stopping
         self.activation = activation_function()
-        self.w_opt = GradientDescent(learning_rate=learning_rate, momentum=momentum)
-        self.bias_opt = GradientDescent(learning_rate=learning_rate, momentum=momentum)
+        self.w_opt = opt_method(learning_rate=learning_rate, momentum=momentum)
+        self.bias_opt = opt_method(learning_rate=learning_rate, momentum=momentum)
 
     def fit(self, X, y):
         X_train = X
@@ -75,27 +75,30 @@ class Perceptron():
         validation_errors = []
         iter_with_rising_val_error = 0
 
+        # Lambda functions that calculates the neuron input and outputs
+        calc_neuron_input = lambda w, b: np.dot(X_train, w) + b
+        calc_neuron_output = lambda w, b: self.activation.function(calc_neuron_input(w, b))
+
+        # Lambda function that calculates the loss gradient
+        calc_error_gradient = lambda w, b: -2 * (y_train - calc_neuron_output(w, b)) * \
+            self.activation.gradient(calc_neuron_input(w, b))
+
+        # Lambda functions that calculates the gradient of the loss with 
+        # respect to each weight term
+        grad_wrt_w = lambda w: X_train.T.dot(calc_error_gradient(w, self.biasW))
+        grad_wrt_bias = lambda b: np.ones((1, n_samples)).dot(calc_error_gradient(self.W, b))
+
+        # Optimize paramaters for n_iterations
         for i in range(self.n_iterations):
-            # Calculate outputs
-            neuron_input = np.dot(X_train, self.W) + self.biasW
-            neuron_output = self.activation.function(neuron_input)
 
             # Training error
-            error = y_train - neuron_output
+            error = y_train - calc_neuron_output(self.W, self.biasW)
             mse = np.mean(np.power(error, 2))
             training_errors.append(mse)
 
-            # Calculate the loss gradient
-            error_gradient = -2 * (y_train - neuron_output) * \
-                self.activation.gradient(neuron_input)
-
-            # Calculate the gradient of the loss with respect to each weight term
-            grad_wrt_w = X_train.T.dot(error_gradient)
-            grad_wrt_bias = np.ones((1, n_samples)).dot(error_gradient)
-
             # Update weights
-            self.W = self.w_opt.update(w=self.W, grad_wrt_w=grad_wrt_w)
-            self.biasW = self.bias_opt.update(w=self.biasW, grad_wrt_w=grad_wrt_bias)
+            self.W = self.w_opt.update(w=self.W, grad_func=grad_wrt_w)
+            self.biasW = self.bias_opt.update(w=self.biasW, grad_func=grad_wrt_bias)
 
             if self.early_stopping:
                 # Calculate the validation error
@@ -151,8 +154,10 @@ def main():
 
     # Perceptron
     clf = Perceptron(n_iterations=5000,
-        learning_rate=0.001, 
-        activation_function=SoftPlus,
+        learning_rate=0.01, 
+        activation_function=LeakyReLU,
+        opt_method=RMSprop,
+        momentum=0.3,
         early_stopping=True,
         plot_errors=True)
     clf.fit(X_train, y_train)
