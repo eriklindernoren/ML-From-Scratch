@@ -43,11 +43,13 @@ class NesterovAcceleratedGradient():
         self.w_updt = np.array([])
 
     def update(self, w, grad_func):
+        # Calculate the gradient of the loss a bit further down the slope from w
+        grad_at_w = grad_func(w - self.momentum * self.w_updt)
         # Initialize on first update
         if not self.w_updt.any():
             self.w_updt = np.zeros(np.shape(w))
         # Use momentum if set
-        self.w_updt = self.momentum * self.w_updt + self.learning_rate * grad_func(w - self.momentum * self.w_updt)
+        self.w_updt = self.momentum * self.w_updt + self.learning_rate * grad_at_w
         # Move against the gradient to minimize loss
         return w - self.w_updt
 
@@ -69,7 +71,7 @@ class Adagrad():
         # Add the square of the gradient of the loss function at w
         self.G += np.power(grad_at_w, 2)
 
-        # Adaptiv gradient with higher learning rate for sparse data
+        # Adaptive gradient with higher learning rate for sparse data
         w_updt = self.learning_rate * np.linalg.pinv(np.sqrt(self.G + self.err)).T * grad_at_w
 
         return w - w_updt

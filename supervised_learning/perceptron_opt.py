@@ -5,6 +5,7 @@ import math
 from sklearn import datasets
 import matplotlib.pyplot as plt
 import numpy as np
+import copy
 
 # Import helper functions
 dir_path = os.path.dirname(os.path.realpath(__file__))
@@ -38,16 +39,18 @@ class Perceptron():
     plot_errors: boolean
         True or false depending if we wish to plot the training errors after training.
     """
-    def __init__(self, n_iterations=20000, momentum=0.3, activation_function=Sigmoid, opt_method=GradientDescent,
-            learning_rate=0.01, early_stopping=False, plot_errors=False):
+    def __init__(self, n_iterations=20000, activation_function=Sigmoid, optimizer=GradientDescent(0.01, 0.3),
+        early_stopping=False, plot_errors=False):
         self.W = None           # Output layer weights
         self.biasW = None       # Bias weights
         self.n_iterations = n_iterations
         self.plot_errors = plot_errors
         self.early_stopping = early_stopping
+        # Activation function of each neuron
         self.activation = activation_function()
-        self.w_opt = opt_method(learning_rate=learning_rate, momentum=momentum)
-        self.bias_opt = opt_method(learning_rate=learning_rate, momentum=momentum)
+        # Optimization methods for each parameter set
+        self.w_opt = copy.copy(optimizer)
+        self.bias_opt = copy.copy(optimizer)
 
     def fit(self, X, y):
         X_train = X
@@ -152,14 +155,16 @@ def main():
     y = data.target
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, seed=1)
 
+    # Optimization method for finding weights that minimizes loss
+    optimizer = RMSprop(learning_rate=0.01)
+
     # Perceptron
     clf = Perceptron(n_iterations=5000,
-        learning_rate=0.01, 
-        activation_function=LeakyReLU,
-        opt_method=RMSprop,
-        momentum=0.3,
+        activation_function=ExpLU,
+        optimizer=optimizer,
         early_stopping=True,
         plot_errors=True)
+
     clf.fit(X_train, y_train)
     y_pred = clf.predict(X_test)
 
