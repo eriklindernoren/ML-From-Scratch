@@ -13,7 +13,7 @@ sys.path.insert(0, dir_path + "/../utils")
 from data_manipulation import train_test_split, categorical_to_binary, normalize, binary_to_categorical
 from data_operation import accuracy_score
 from activation_functions import Sigmoid, ReLU, SoftPlus, LeakyReLU, TanH, ExpLU
-from optimizers import GradientDescent, NesterovAcceleratedGradient, Adagrad, Adadelta, RMSprop
+from optimizers import GradientDescent, NesterovAcceleratedGradient, Adagrad, Adadelta, RMSprop, Adam
 sys.path.insert(0, dir_path + "/../unsupervised_learning/")
 from principal_component_analysis import PCA
 
@@ -28,11 +28,10 @@ class Perceptron():
     activation_function: class:
         The activation that shall be used for each neuron. 
         Possible choices: Sigmoid, ExpLU, ReLU, LeakyReLU, SoftPlus, TanH
-    learning_rate: float
-        The step length that will be used when updating the weights.
-    momentum: float
-        A momentum term that helps accelerate SGD by adding a fraction of the previous
-        weight update to the current update.
+    optimizer: class:
+        The optimization method that will be used to find the weights that minimizes the
+        loss.
+        Possible choices: GradientDescent, NesterovAcceleratedGradient, Adagrad, Adadelta, RMSprop
     early_stopping: boolean
         Whether to stop the training when the validation error has increased for a
         certain amounts of training iterations. Combats overfitting.
@@ -156,7 +155,7 @@ def main():
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, seed=1)
 
     # Optimization method for finding weights that minimizes loss
-    optimizer = RMSprop(learning_rate=0.01)
+    optimizer = Adam(learning_rate=0.01, b1=0.4, b2=0.4)
 
     # Perceptron
     clf = Perceptron(n_iterations=5000,
