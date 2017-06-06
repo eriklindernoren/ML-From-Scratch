@@ -63,7 +63,7 @@ class Adaboost():
                     prediction = np.ones(np.shape(y))
                     # Label the samples whose values are below threshold as '-1'
                     prediction[X[:, feature_i] < threshold] = -1
-                    # Error = sum of weights of missclassified samples
+                    # Error = sum of weights of misclassified samples
                     error = sum(w[y != prediction])
                     
                     if error > 0.5:
@@ -91,7 +91,7 @@ class Adaboost():
             predictions[negative_idx] = -1
 
             # Calculate new weights 
-            # Missclassified gets larger and correctly classified smaller
+            # Missclassified gets larger weights and correctly classified smaller
             w *= np.exp(-clf.alpha * y * predictions)
             # Normalize to one
             w /= np.sum(w)
@@ -129,7 +129,7 @@ def main():
     digit2 = 8
     idx = np.append(np.where(y == digit1)[0], np.where(y == digit2)[0])
     y = data.target[idx]
-    # Change labels to {0, 1}
+    # Change labels to {-1, 1}
     y[y == digit1] = -1
     y[y == digit2] = 1
     X = data.data[idx]

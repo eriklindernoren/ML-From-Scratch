@@ -155,7 +155,7 @@ def main():
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, seed=1)
 
     # Optimization method for finding weights that minimizes loss
-    optimizer = Adam(learning_rate=0.01, b1=0.4, b2=0.4)
+    optimizer = RMSprop(learning_rate=0.01)
 
     # Perceptron
     clf = Perceptron(n_iterations=5000,
