@@ -92,9 +92,10 @@ class Adaboost():
 
             # Calculate new weights 
             # Missclassified gets larger and correctly classified smaller
-            w = w.dot(np.exp(clf.alpha * y.dot(predictions)))
+            w *= np.exp(-clf.alpha * y * predictions)
             # Normalize to one
             w /= np.sum(w)
+
             # Save classifier
             self.clfs.append(clf)
 
@@ -109,29 +110,34 @@ class Adaboost():
             negative_idx = (clf.polarity * X[:, clf.feature_index] < clf.polarity * clf.threshold)
             # Label those as '-1'
             predictions[negative_idx] = -1
-            # Add column of predictions weighted by the classifiers alpha
+            # Add predictions weighted by the classifiers alpha
             # (alpha indicative of classifiers profieciency)
-            y_pred = np.concatenate((y_pred, clf.alpha * predictions), axis=1)
-        # Sum weighted predictions and return sign of prediction sum
-        y_pred = np.sign(np.sum(y_pred, axis=1))
+            y_pred += clf.alpha * predictions
+
+        # Return sign of prediction sum
+        y_pred = np.sign(y_pred).flatten()
 
         return y_pred
 
 
 def main():
-    data = datasets.load_iris()
+    data = datasets.load_digits()
     X = data.data
     y = data.target
 
-    X = X[y != 2]
-    y = y[y != 2]
-    y[y == 0] = -1
-    y[y == 1] = 1
+    digit1 = 1
+    digit2 = 8
+    idx = np.append(np.where(y == digit1)[0], np.where(y == digit2)[0])
+    y = data.target[idx]
+    # Change labels to {0, 1}
+    y[y == digit1] = -1
+    y[y == digit2] = 1
+    X = data.data[idx]
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5)
 
     # Adaboost classification
-    clf = Adaboost(n_clf=10)
+    clf = Adaboost(n_clf=5)
     clf.fit(X_train, y_train)
     y_pred = clf.predict(X_test)
 
