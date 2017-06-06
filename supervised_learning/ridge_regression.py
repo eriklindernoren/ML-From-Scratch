@@ -17,7 +17,6 @@ from optimization import GradientDescent
 
 class RidgeRegression():
     """Linear regression model with a regularization factor.
-
     Parameters:
     -----------
     reg_factor: float
@@ -27,38 +26,35 @@ class RidgeRegression():
         The number of training iterations the algorithm will tune the weights for.
     learning_rate: float
         The step length that will be used when updating the weights.
-    momentum: float
-        A momentum term that helps accelerate SGD by adding a fraction of the previous
-        weight update to the current update.
     gradient_descent: boolean
         True or false depending if gradient descent should be used when training. If 
         false then we use batch optimization by least squares.
     """
-    def __init__(self, reg_factor, n_iterations=100, momentum=0.3, learning_rate=0.001, gradient_descent=True):
+    def __init__(self, reg_factor, n_iterations=100, learning_rate=0.001, gradient_descent=True):
         self.w = None
         self.n_iterations = n_iterations
+        self.learning_rate = learning_rate
         self.gradient_descent = gradient_descent
-        self.regularization_factor = reg_factor
+        self.reg_factor = reg_factor
         self.square_loss = SquareLoss()
-        self.grad_desc = GradientDescent(learning_rate=learning_rate, momentum=momentum)
 
     def fit(self, X, y):
         # Insert dummy ones for bias weights
         X = np.insert(X, 0, 1, axis=1)
         n_features = np.shape(X)[1]
-        
+
         # Get weights by gradient descent opt.
         if self.gradient_descent:
             # Initial weights randomly [0, 1]
             self.w = np.random.random((n_features, ))
             # Do gradient descent for n_iterations
             for _ in range(self.n_iterations):
-                grad_wrt_w = self.square_loss.gradient(y, X, self.w) + self.regularization_factor * self.w
-                self.w = self.grad_desc.update(w=self.w, grad_wrt_w=grad_wrt_w)
+                grad_w = self.square_loss.gradient(y, X, self.w) + self.reg_factor * self.w
+                self.w -= self.learning_rate * grad_w
         # Get weights by least squares (by pseudoinverse)
         else:
             U, S, V = np.linalg.svd(
-                X.T.dot(X) + self.regularization_factor * np.identity(n_features))
+                X.T.dot(X) + self.reg_factor * np.identity(n_features))
             S = np.diag(S)
             X_sq_reg_inv = V.dot(np.linalg.pinv(S)).dot(U.T)
             self.w = X_sq_reg_inv.dot(X.T).dot(y)
@@ -68,6 +64,7 @@ class RidgeRegression():
         X = np.insert(X, 0, 1, axis=1)
         y_pred = X.dot(self.w)
         return y_pred
+
 
 
 def main():
@@ -81,12 +78,12 @@ def main():
     best_reg_factor = None
     print ("Finding regularization constant using cross validation:")
     k = 10
-    for regularization_factor in np.arange(0, 0.3, 0.001):
+    for reg_factor in np.arange(0, 0.3, 0.001):
         cross_validation_sets = k_fold_cross_validation_sets(
             X_train, y_train, k=k)
         mse = 0
         for _X_train, _X_test, _y_train, _y_test in cross_validation_sets:
-            clf = RidgeRegression(reg_factor=regularization_factor)
+            clf = RidgeRegression(reg_factor=reg_factor)
             clf.fit(_X_train, _y_train)
             y_pred = clf.predict(_X_test)
             _mse = mean_squared_error(_y_test, y_pred)
@@ -94,11 +91,11 @@ def main():
         mse /= k
 
         # Print the mean squared error
-        print ("\tMean Squared Error: %s (regularization: %s)" % (mse, regularization_factor))
+        print ("\tMean Squared Error: %s (regularization: %s)" % (mse, reg_factor))
 
         # Save reg. constant that gave lowest error
         if mse < lowest_error:
-            best_reg_factor = regularization_factor
+            best_reg_factor = reg_factor
             lowest_error = mse
 
     # Make final prediction

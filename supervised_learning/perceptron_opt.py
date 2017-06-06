@@ -31,7 +31,7 @@ class Perceptron():
     optimizer: class:
         The optimization method that will be used to find the weights that minimizes the
         loss.
-        Possible choices: GradientDescent, NesterovAcceleratedGradient, Adagrad, Adadelta, RMSprop
+        Possible choices: GradientDescent, NesterovAcceleratedGradient, Adagrad, Adadelta, RMSprop, Adam
     early_stopping: boolean
         Whether to stop the training when the validation error has increased for a
         certain amounts of training iterations. Combats overfitting.
@@ -77,30 +77,30 @@ class Perceptron():
         validation_errors = []
         iter_with_rising_val_error = 0
 
-        # Lambda functions that calculates the neuron input and outputs
-        calc_neuron_input = lambda w, b: np.dot(X_train, w) + b
-        calc_neuron_output = lambda w, b: self.activation.function(calc_neuron_input(w, b))
+        # Lambda function that calculates the neuron outputs
+        neuron_output = lambda w, b: self.activation.function(np.dot(X_train, w) + b)
 
         # Lambda function that calculates the loss gradient
-        calc_error_gradient = lambda w, b: -2 * (y_train - calc_neuron_output(w, b)) * \
-            self.activation.gradient(calc_neuron_input(w, b))
+        loss_grad = lambda w, b: -2 * (y_train - neuron_output(w, b)) * \
+            self.activation.gradient(np.dot(X_train, w) + b)
 
         # Lambda functions that calculates the gradient of the loss with 
-        # respect to each weight term
-        grad_wrt_w = lambda w: X_train.T.dot(calc_error_gradient(w, self.biasW))
-        grad_wrt_bias = lambda b: np.ones((1, n_samples)).dot(calc_error_gradient(self.W, b))
+        # respect to each weight term. Allows for computation of loss gradient at different
+        # coordinates.
+        grad_func_wrt_w = lambda w: X_train.T.dot(loss_grad(w, self.biasW))
+        grad_func_wrt_bias = lambda b: np.ones((1, n_samples)).dot(loss_grad(self.W, b))
 
         # Optimize paramaters for n_iterations
         for i in range(self.n_iterations):
 
             # Training error
-            error = y_train - calc_neuron_output(self.W, self.biasW)
+            error = y_train - neuron_output(self.W, self.biasW)
             mse = np.mean(np.power(error, 2))
             training_errors.append(mse)
 
             # Update weights
-            self.W = self.w_opt.update(w=self.W, grad_func=grad_wrt_w)
-            self.biasW = self.bias_opt.update(w=self.biasW, grad_func=grad_wrt_bias)
+            self.W = self.w_opt.update(w=self.W, grad_func=grad_func_wrt_w)
+            self.biasW = self.bias_opt.update(w=self.biasW, grad_func=grad_func_wrt_bias)
 
             if self.early_stopping:
                 # Calculate the validation error

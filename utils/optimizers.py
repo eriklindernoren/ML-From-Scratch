@@ -7,7 +7,7 @@ from data_manipulation import make_diagonal
 # http://sebastianruder.com/optimizing-gradient-descent/index.html
 
 class GradientDescent():
-    def __init__(self, learning_rate, momentum=0):
+    def __init__(self, learning_rate=0.01, momentum=0.3):
         self.learning_rate = learning_rate 
         self.momentum = momentum
         self.w_updt = np.array([])
@@ -21,7 +21,7 @@ class GradientDescent():
         return w - self.learning_rate * self.w_updt
 
 class GradientDescent_():
-    def __init__(self, learning_rate, momentum=0):
+    def __init__(self, learning_rate=0.001, momentum=0.3):
         self.learning_rate = learning_rate 
         self.momentum = momentum
         self.w_updt = np.array([])
@@ -36,7 +36,7 @@ class GradientDescent_():
         return w -  self.w_updt
 
 class NesterovAcceleratedGradient():
-    def __init__(self, learning_rate, momentum=0.4):
+    def __init__(self, learning_rate=0.001, momentum=0.4):
         self.learning_rate = learning_rate 
         self.momentum = momentum
         self.w_updt = np.array([])
@@ -108,11 +108,11 @@ class Adadelta():
         return w - self.w_updt
 
 class RMSprop():
-    def __init__(self, learning_rate=0.001):
+    def __init__(self, learning_rate=0.01, rho=0.9):
         self.learning_rate = learning_rate
         self.Eg = np.array([]) # Running average of the square gradients at w
         self.eps = 1e-8
-        self.rho = 0.9
+        self.rho = rho
 
     def update(self, w, grad_func):
         # Calculate the gradient of the loss at w
