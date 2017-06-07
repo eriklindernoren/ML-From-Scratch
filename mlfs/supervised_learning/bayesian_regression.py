@@ -127,7 +127,7 @@ class BayesianRegression(object):
 def main():
 
     # Load temperature data
-    data = pd.read_csv('data/TempLinkoping2016.txt', sep="\t")
+    data = pd.read_csv('mlfs/data/TempLinkoping2016.txt', sep="\t")
 
     time = np.atleast_2d(data["time"].as_matrix()).T
     temp = np.atleast_2d(data["temp"].as_matrix()).T
