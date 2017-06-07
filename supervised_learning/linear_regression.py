@@ -65,7 +65,7 @@ class LinearRegression(object):
 
 
 class PolynomialRegression(LinearRegression):
-    def __init__(self, degree, n_iterations=1500, learning_rate=0.001, gradient_descent=True):
+    def __init__(self, degree, n_iterations=3000, learning_rate=0.001, gradient_descent=True):
         self.degree = degree
         super(PolynomialRegression, self).__init__(n_iterations, learning_rate, gradient_descent)
 
@@ -86,28 +86,36 @@ def main():
     time = np.atleast_2d(data["time"].as_matrix()).T
     temp = np.atleast_2d(data["temp"].as_matrix()).T
 
-    X = time
+    X = time # fraction of the year [0, 1]
     y = temp
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4)
 
-    clf = PolynomialRegression(degree=2, n_iterations=3000)
+
+    clf = PolynomialRegression(degree=7, n_iterations=3000)
     clf.fit(X_train, y_train)
     y_pred = clf.predict(X_test)
 
     mse = mean_squared_error(y_test, y_pred)
 
+
+    # Generate data for prediction line
+    X_pred_ = np.arange(0, 1, 0.001).reshape((1000, 1))
+    y_pred_ = clf.predict(X=X_pred_)
+
     # Print the mean squared error
     print ("Mean Squared Error:", mse)
 
     # Plot the results
-    m = plt.scatter(X_test[:, 0], y_test, color='gray', s=10)
-    p = plt.scatter(X_test[:, 0], y_pred, color='black', s=15)
-    plt.suptitle("Linear Regression of temperature data in Linkoping, Sweden 2016")
+    m1 = plt.scatter(X_train, y_train, color='lightgray', s=10)
+    m2 = plt.scatter(X_test, y_test, color='gray', s=10)
+    p = plt.plot(X_pred_, y_pred_, color='black', linewidth=2, label="Prediction")
+    plt.suptitle("Polynomial Regression of temperature data in Linkoping, Sweden 2016")
     plt.title("(%.2f MSE)" % mse)
     plt.xlabel('Fraction of year')
     plt.ylabel('Temperature in Celcius')
-    plt.legend((m, p), ("Measurements", "Prediction"), scatterpoints=1, loc='lower right')
+    plt.legend(loc='lower right')
+    plt.legend((m1, m2), ("Training data", "Test data"), loc='lower right')
 
     plt.show()
 
