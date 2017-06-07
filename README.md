@@ -31,7 +31,7 @@ Feel free to [reach out](mailto:eriklindernoren@gmail.com) if you can think of w
     $ python supervised_learning/linear_regression.py
 
 <p align="center">
-    <img src="http://eriklindernoren.se/images/pr2.png">
+    <img src="http://eriklindernoren.se/images/pr3.png" width="640"\>
 </p>
 <p align="center">
     Figure: Polynomial regression of temperature data in Linköping, Sweden 2016.
@@ -41,7 +41,7 @@ Feel free to [reach out](mailto:eriklindernoren@gmail.com) if you can think of w
     $ python supervised_learning/multilayer_perceptron.py
 
 <p align="center">
-    <img src="http://eriklindernoren.se/images/mlp1.png">
+    <img src="http://eriklindernoren.se/images/mlp3.png" width="640">
 </p>
 <p align="center">
     Figure: Classification of the digit dataset using MLP.
@@ -51,7 +51,7 @@ Feel free to [reach out](mailto:eriklindernoren@gmail.com) if you can think of w
     $ python unsupervised_learning/dbscan.py
    
 <p align="center">
-    <img src="http://eriklindernoren.se/images/dbs.png">
+    <img src="http://eriklindernoren.se/images/dbscan3.png" width="640">
 </p>
 <p align="center">
     Figure: Clustering of the moons dataset using DBSCAN.
