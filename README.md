@@ -31,7 +31,7 @@ Feel free to [reach out](mailto:eriklindernoren@gmail.com) if you can think of w
     $ python supervised_learning/linear_regression.py
 
 <p align="center">
-    <img src="http://eriklindernoren.se/images/pr3.png" width="640"\>
+    <img src="http://eriklindernoren.se/images/pr4.png" width="640"\>
 </p>
 <p align="center">
     Figure: Polynomial regression of temperature data in Linköping, Sweden 2016.
