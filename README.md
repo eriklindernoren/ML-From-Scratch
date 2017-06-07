@@ -80,6 +80,7 @@ Feel free to [reach out](mailto:eriklindernoren@gmail.com) if you can think of w
 ## Current Implementations
 ### Supervised Learning
 - [Adaboost](supervised_learning/adaboost.py)
+- [Bayesian Regression](supervised_learning/bayesian_regression.py)
 - [Decision Tree](supervised_learning/decision_tree.py)
 - [Gradient Boosting](supervised_learning/gradient_boosting.py)
 - [K Nearest Neighbors](supervised_learning/k_nearest_neighbors.py)

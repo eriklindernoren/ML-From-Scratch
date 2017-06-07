@@ -92,7 +92,7 @@ def main():
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4)
 
 
-    clf = PolynomialRegression(degree=7, n_iterations=3000)
+    clf = PolynomialRegression(degree=6, n_iterations=100000)
     clf.fit(X_train, y_train)
     y_pred = clf.predict(X_test)
 
@@ -108,14 +108,13 @@ def main():
 
     # Color map
     cmap = plt.get_cmap('viridis')
-    colors = [cmap(i) for i in np.linspace(0, 1, 3)]
 
     # Plot the results
     m1 = plt.scatter(366 * X_train, y_train, color=cmap(0.9), s=10)
     m2 = plt.scatter(366 * X_test, y_test, color=cmap(0.5), s=10)
     p = plt.plot(366 * X_pred_, y_pred_, color="black", linewidth=2, label="Prediction")
-    plt.suptitle("Polynomial Regression of temperature data in Linkoping, Sweden 2016")
-    plt.title("(%.2f MSE)" % mse)
+    plt.suptitle("Polynomial Regression")
+    plt.title("MSE: %.2f" % mse)
     plt.xlabel('Days')
     plt.ylabel('Temperature in Celcius')
     plt.legend(loc='lower right')
