@@ -15,6 +15,7 @@ Feel free to [reach out](mailto:eriklindernoren@gmail.com) if you can think of w
   * [Table of Contents](#table-of-contents)
   * [Usage](#usage)
     + [Installation](#installation)
+    + [Regression](#regression)
     + [Classification](#classification)
     + [Clustering](#clustering)
     + [Association Analysis](#association-analysis)
@@ -26,11 +27,21 @@ Feel free to [reach out](mailto:eriklindernoren@gmail.com) if you can think of w
 ### Installation
     $ pip install -r requirements.txt
 
+### Regression
+    $ python supervised_learning/linear_regression.py
+
+<p align="center">
+    <img src="http://eriklindernoren.se/images/pr2.png">
+</p>
+<p align="center">
+    Figure: Polynomial regression of temperature data in Linköping, Sweden 2016.
+</p>
+
 ### Classification
     $ python supervised_learning/multilayer_perceptron.py
 
 <p align="center">
-    <img src="http://eriklindernoren.se/images/mlp.png">
+    <img src="http://eriklindernoren.se/images/mlp1.png">
 </p>
 <p align="center">
     Figure: Classification of the digit dataset using MLP.
