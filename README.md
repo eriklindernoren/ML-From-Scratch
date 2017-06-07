@@ -27,7 +27,9 @@ Feel free to [reach out](mailto:eriklindernoren@gmail.com) if you can think of w
 ### Installation
     $ pip install mlfs
 or
-    ```$ python setup.py install```
+
+    $ python setup.py install
+
 
 ### Regression
     $ python mlfs/supervised_learning/linear_regression.py
