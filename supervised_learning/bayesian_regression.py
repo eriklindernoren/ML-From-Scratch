@@ -22,7 +22,8 @@ from optimization import GradientDescent
 class BayesianRegression(object):
     """Bayesian regression model. If poly_degree is specified the features will
     be transformed to with a polynomial basis function, which allows for polynomial
-    regression. Assumes Normal prior and likelihood.
+    regression. Assumes Normal prior and likelihood for the weights and scaled inverse
+    chi-squared prior and likelihood for the variance of the weights.
     Parameters:
     -----------
     n_draws: float
@@ -78,12 +79,16 @@ class BayesianRegression(object):
         # Least squares approximate of beta
         beta_hat = np.linalg.pinv(X_X).dot(X.T).dot(y)
 
-        # Conjugacy: Normal prior => Normal  posterior
-        # Posterior parameters
+        # The posterior parameters can be determined analytically since we assume
+        # conjugate priors for the likelihoods.
+
+        # Normal prior / likelihood => Normal posterior
         mu_n = np.linalg.pinv(X_X + self.omega0).dot(X_X.dot(beta_hat)+self.omega0.dot(self.mu0))
         omega_n = X_X + self.omega0
+        # Scaled inverse chi-squared prior / likelihood => Scaled inverse chi-squared posterior
         nu_n = self.nu0 + n_samples
-        sigma_sq_n = (1.0/nu_n)*(self.nu0*self.sigma_sq0 + (y.T.dot(y) + self.mu0.T.dot(self.omega0).dot(self.mu0) - mu_n.dot(omega_n.dot(mu_n))))
+        sigma_sq_n = (1.0/nu_n)*(self.nu0*self.sigma_sq0 + \
+            (y.T.dot(y) + self.mu0.T.dot(self.omega0).dot(self.mu0) - mu_n.dot(omega_n.dot(mu_n))))
 
         # Simulate parameter values for n_draws
         beta_draws = np.empty((self.n_draws, n_features))
@@ -97,7 +102,8 @@ class BayesianRegression(object):
         self.w = np.mean(beta_draws, axis=0)
 
         # Calculate the 95% equal tail interval
-        self.eti = np.array([[np.percentile(beta_draws[:,i], q=2.5), np.percentile(beta_draws[:,i], q=97.5)] for i in range(n_features)])
+        self.eti = np.array([[np.percentile(beta_draws[:,i], q=2.5), np.percentile(beta_draws[:,i], q=97.5)] \
+                                for i in range(n_features)])
 
     def predict(self, X, eti=False):
 
@@ -133,15 +139,23 @@ def main():
     n_samples, n_features = np.shape(X)
 
     # Prior parameters
-    # Sets mu0 to zero and omega0 to low value to model
-    # high prior uncertainty
-    mu0 = np.array([0] * n_features) # Prior means
-    omega0 = np.diag([.0001] * n_features) # Prior precision
-    # Low df and large scale => High uncertainty
-    nu0 = 10    # Prior degrees of freedom (scaled inv-chi2)
-    sigma_sq0 = 100 # Prior scale (scaled inv-chi2)
+    # - Weights are assumed distr. according to a Normal distribution
+    # - The variance of the weights are assumed distributed according to 
+    #   a scaled inverse chi-squared distribution.
+    # High prior uncertainty!
+    # Normal
+    mu0 = np.array([0] * n_features)
+    omega0 = np.diag([.0001] * n_features)
+    # Scaled inverse chi-squared
+    nu0 = 1
+    sigma_sq0 = 100
 
-    clf = BayesianRegression(n_draws=2000, poly_degree=4, mu0=mu0, omega0=omega0, nu0=nu0, sigma_sq0=sigma_sq0)
+    clf = BayesianRegression(n_draws=2000, 
+        poly_degree=4, 
+        mu0=mu0, 
+        omega0=omega0, 
+        nu0=nu0, 
+        sigma_sq0=sigma_sq0)
     clf.fit(X_train, y_train)
     y_pred = clf.predict(X_test)
 
