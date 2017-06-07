@@ -9,7 +9,7 @@ import pandas as pd
 # Import helper functions
 from mlfs.utils.data_operation import calculate_covariance_matrix, accuracy_score
 from mlfs.utils.data_manipulation import normalize, standardize, train_test_split
-from mlfs.unsupervised_learning.principal_component_analysis import PCA
+from mlfs.unsupervised_learning import PCA
 
 
 class LDA():

@@ -8,9 +8,9 @@ import matplotlib.pyplot as plt
 # Import helper functions
 from mlfs.utils.data_manipulation import train_test_split, standardize, categorical_to_binary, normalize
 from mlfs.utils.data_operation import mean_squared_error, accuracy_score
-from mlfs.supervised_learning.decision_tree import XGBoostRegressionTree
+from mlfs.supervised_learning import XGBoostRegressionTree
 from mlfs.utils.loss_functions import LogisticLoss
-from mlfs.unsupervised_learning.principal_component_analysis import PCA
+from mlfs.unsupervised_learning import PCA
 
 
 

@@ -9,7 +9,7 @@ from sklearn import datasets
 # Import helper functions
 from mlfs.utils.data_manipulation import train_test_split, normalize
 from mlfs.utils.data_operation import euclidean_distance, accuracy_score
-from mlfs.unsupervised_learning.principal_component_analysis import PCA
+from mlfs.unsupervised_learning import PCA
 
 
 class KNN():

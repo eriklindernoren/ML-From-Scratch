@@ -10,7 +10,7 @@ import pandas as pd
 # Import helper functions
 from mlfs.utils.data_manipulation import train_test_split
 from mlfs.utils.data_operation import accuracy_score
-from mlfs.unsupervised_learning.principal_component_analysis import PCA
+from mlfs.unsupervised_learning import PCA
 
 # Decision stump used as weak classifier in Adaboost
 class DecisionStump():

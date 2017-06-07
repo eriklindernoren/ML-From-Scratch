@@ -7,8 +7,8 @@ import math
 # Import helper functions
 from mlfs.utils.data_manipulation import divide_on_feature, train_test_split, get_random_subsets, normalize
 from mlfs.utils.data_operation import accuracy_score, calculate_entropy
-from mlfs.unsupervised_learning.principal_component_analysis import PCA
-from mlfs.supervised_learning.decision_tree import ClassificationTree
+from mlfs.unsupervised_learning import PCA
+from mlfs.supervised_learning import ClassificationTree
 
 
 class RandomForest():

@@ -11,7 +11,7 @@ from mlfs.utils.data_manipulation import train_test_split, standardize, categori
 from mlfs.utils.data_operation import mean_squared_error, accuracy_score
 from mlfs.utils.loss_functions import SquareLoss, LogisticLoss
 from mlfs.supervised_learning.decision_tree import RegressionTree
-from mlfs.unsupervised_learning.principal_component_analysis import PCA
+from mlfs.unsupervised_learning import PCA
 
 
 # Super class to GradientBoostingRegressor and GradientBoostingClassifier

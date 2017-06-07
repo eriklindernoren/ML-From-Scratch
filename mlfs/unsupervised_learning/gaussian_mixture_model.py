@@ -9,7 +9,7 @@ import numpy as np
 # Import helper functions
 from mlfs.utils.data_manipulation import normalize
 from mlfs.utils.data_operation import euclidean_distance, calculate_covariance_matrix
-from mlfs.unsupervised_learning.principal_component_analysis import PCA
+from mlfs.unsupervised_learning import PCA
 
 
 class GaussianMixtureModel():

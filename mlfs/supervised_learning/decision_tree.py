@@ -10,7 +10,7 @@ from mlfs.utils.data_manipulation import divide_on_feature
 from mlfs.utils.data_manipulation import train_test_split, standardize
 from mlfs.utils.data_operation import calculate_entropy, accuracy_score
 from mlfs.utils.data_operation import mean_squared_error, calculate_variance
-from mlfs.unsupervised_learning.principal_component_analysis import PCA
+from mlfs.unsupervised_learning import PCA
 
 
 class DecisionNode():

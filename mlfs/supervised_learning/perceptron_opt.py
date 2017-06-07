@@ -12,7 +12,7 @@ from mlfs.utils.data_manipulation import train_test_split, categorical_to_binary
 from mlfs.utils.data_operation import accuracy_score
 from mlfs.utils.activation_functions import Sigmoid, ReLU, SoftPlus, LeakyReLU, TanH, ExpLU
 from mlfs.utils.optimizers import GradientDescent, NesterovAcceleratedGradient, Adagrad, Adadelta, RMSprop, Adam
-from mlfs.unsupervised_learning.principal_component_analysis import PCA
+from mlfs.unsupervised_learning import PCA
 
 
 class Perceptron():

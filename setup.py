@@ -2,13 +2,9 @@ from setuptools import setup, find_packages
 from codecs import open
 from os import path
 
-__version__ = '0.0.2'
+__version__ = '0.0.3'
 
 here = path.abspath(path.dirname(__file__))
-
-# Get the long description from the README file
-with open(path.join(here, 'README.md'), encoding='utf-8') as f:
-    long_description = f.read()
 
 # get the dependencies and installs
 with open(path.join(here, 'requirements.txt'), encoding='utf-8') as f:
@@ -21,7 +17,6 @@ setup(
     name='mlfs',
     version=__version__,
     description='Python implementations of some of the fundamental Machine Learning models and algorithms from scratch.',
-    long_description=long_description,
     url='https://github.com/eriklindernoren/ML-From-Scratch',
     download_url='https://github.com/eriklindernoren/ML-From-Scratch/tarball/master',
     license='MIT',

@@ -11,7 +11,7 @@ from sklearn import datasets
 from mlfs.utils.data_manipulation import train_test_split, normalize
 from mlfs.utils.data_operation import accuracy_score
 from mlfs.utils.kernels import *
-from mlfs.unsupervised_learning.principal_component_analysis import PCA
+from mlfs.unsupervised_learning import PCA
 
 # Hide cvxopt output
 cvxopt.solvers.options['show_progress'] = False

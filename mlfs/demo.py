@@ -10,20 +10,9 @@ from mlfs.utils.data_manipulation import train_test_split, normalize
 from mlfs.utils.data_operation import accuracy_score
 from mlfs.utils.kernels import *
 # Import ML models
-from mlfs.supervised_learning.adaboost import Adaboost
-from mlfs.supervised_learning.naive_bayes import NaiveBayes
-from mlfs.supervised_learning.k_nearest_neighbors import KNN
-from mlfs.supervised_learning.multilayer_perceptron import MultilayerPerceptron
-from mlfs.supervised_learning.logistic_regression import LogisticRegression
-from mlfs.supervised_learning.perceptron import Perceptron
-from mlfs.supervised_learning.decision_tree import ClassificationTree
-from mlfs.supervised_learning.random_forest import RandomForest
-from mlfs.supervised_learning.support_vector_machine import SupportVectorMachine
-from mlfs.supervised_learning.linear_discriminant_analysis import LDA
-from mlfs.supervised_learning.gradient_boosting import GradientBoostingClassifier
-from mlfs.supervised_learning.xgboost import XGBoost
+from mlfs.supervised_learning import *
 # Import PCA
-from mlfs.unsupervised_learning.principal_component_analysis import PCA
+from mlfs.unsupervised_learning import PCA
 
 
 print ("+-------------------------------------------+")
