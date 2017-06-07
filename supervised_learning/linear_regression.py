@@ -106,13 +106,17 @@ def main():
     # Print the mean squared error
     print ("Mean Squared Error:", mse)
 
+    # Color map
+    cmap = plt.get_cmap('viridis')
+    colors = [cmap(i) for i in np.linspace(0, 1, 3)]
+
     # Plot the results
-    m1 = plt.scatter(X_train, y_train, color='lightgray', s=10)
-    m2 = plt.scatter(X_test, y_test, color='gray', s=10)
-    p = plt.plot(X_pred_, y_pred_, color='black', linewidth=2, label="Prediction")
+    m1 = plt.scatter(366 * X_train, y_train, color=cmap(0.9), s=10)
+    m2 = plt.scatter(366 * X_test, y_test, color=cmap(0.5), s=10)
+    p = plt.plot(366 * X_pred_, y_pred_, color="black", linewidth=2, label="Prediction")
     plt.suptitle("Polynomial Regression of temperature data in Linkoping, Sweden 2016")
     plt.title("(%.2f MSE)" % mse)
-    plt.xlabel('Fraction of year')
+    plt.xlabel('Days')
     plt.ylabel('Temperature in Celcius')
     plt.legend(loc='lower right')
     plt.legend((m1, m2), ("Training data", "Test data"), loc='lower right')
