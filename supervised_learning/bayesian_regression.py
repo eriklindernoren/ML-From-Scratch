@@ -39,15 +39,18 @@ class BayesianRegression(object):
     poly_degree: int
         The polynomial degree that the features should be transformed to. Allows
         for polynomial regression.
+    cred_int: float
+        The credible interval (ETI is used). 95 => 95% credible interval of the posterior
+        of the parameters.
 
     Reference: 
         https://github.com/mattiasvillani/BayesLearnCourse/raw/master/Slides/BayesLearnL5.pdf
     """
-    def __init__(self, n_draws, mu0, omega0, nu0, sigma_sq0, poly_degree=0):
+    def __init__(self, n_draws, mu0, omega0, nu0, sigma_sq0, poly_degree=0, cred_int=95):
         self.w = None
         self.n_draws = n_draws
-        self.square_loss = SquareLoss()
         self.poly_degree = poly_degree
+        self.cred_int = cred_int
 
         # Prior parameters
         self.mu0 = mu0
@@ -60,7 +63,7 @@ class BayesianRegression(object):
     # this distribution.
     # Reference:
     #   https://en.wikipedia.org/wiki/Scaled_inverse_chi-squared_distribution
-    def _draw_scaled_inv_chis_q(self, n, df, scale):
+    def _draw_scaled_inv_chi_sq(self, n, df, scale):
         X = chi2.rvs(size=n, df=df)
         sigma_sq = df * scale / X
         return sigma_sq
@@ -93,7 +96,7 @@ class BayesianRegression(object):
         # Simulate parameter values for n_draws
         beta_draws = np.empty((self.n_draws, n_features))
         for i in range(self.n_draws):
-            sigma_sq = self._draw_scaled_inv_chis_q(n=1, df=nu_n, scale=sigma_sq_n)
+            sigma_sq = self._draw_scaled_inv_chi_sq(n=1, df=nu_n, scale=sigma_sq_n)
             beta = multivariate_normal.rvs(size=1, mean=mu_n, cov=sigma_sq*np.linalg.pinv(omega_n))
             # Save parameter draws
             beta_draws[i, :] = beta
@@ -101,9 +104,14 @@ class BayesianRegression(object):
         # Select the mean of the simulated variables as the ones used to make predictions
         self.w = np.mean(beta_draws, axis=0)
 
-        # Calculate the 95% equal tail interval
-        self.eti = np.array([[np.percentile(beta_draws[:,i], q=2.5), np.percentile(beta_draws[:,i], q=97.5)] \
+        l_eti = 50 - self.cred_int/2
+        u_eti = 50 + self.cred_int/2
+        self.eti = np.array([[np.percentile(beta_draws[:,i], q=l_eti), np.percentile(beta_draws[:,i], q=u_eti)] \
                                 for i in range(n_features)])
+
+        # # Credible interval: Calculate the 95% equal tail interval
+        # self.eti = np.array([[np.percentile(beta_draws[:,i], q=2.5), np.percentile(beta_draws[:,i], q=97.5)] \
+        #                         for i in range(n_features)])
 
     def predict(self, X, eti=False):
 
@@ -150,12 +158,16 @@ def main():
     nu0 = 1
     sigma_sq0 = 100
 
+    # The credible interval
+    cred_int = 10
+
     clf = BayesianRegression(n_draws=2000, 
         poly_degree=4, 
         mu0=mu0, 
         omega0=omega0, 
         nu0=nu0, 
-        sigma_sq0=sigma_sq0)
+        sigma_sq0=sigma_sq0,
+        cred_int=cred_int)
     clf.fit(X_train, y_train)
     y_pred = clf.predict(X_test)
 
@@ -174,7 +186,7 @@ def main():
     m1 = plt.scatter(366 * X_train, y_train, color=cmap(0.9), s=10)
     m2 = plt.scatter(366 * X_test, y_test, color=cmap(0.5), s=10)
     p1 = plt.plot(366 * X, y_pred_, color="black", linewidth=2, label="Prediction")
-    p2 = plt.plot(366 * X, y_lower_, color="gray", linewidth=2, label="Credible Interval")
+    p2 = plt.plot(366 * X, y_lower_, color="gray", linewidth=2, label="{0}% Credible Interval".format(cred_int))
     p3 = plt.plot(366 * X, y_upper_, color="gray", linewidth=2)
     plt.axis((0, 366, -20, 25))
     plt.suptitle("Bayesian Regression")
