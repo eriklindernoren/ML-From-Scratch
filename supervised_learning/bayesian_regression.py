@@ -109,10 +109,6 @@ class BayesianRegression(object):
         self.eti = np.array([[np.percentile(beta_draws[:,i], q=l_eti), np.percentile(beta_draws[:,i], q=u_eti)] \
                                 for i in range(n_features)])
 
-        # # Credible interval: Calculate the 95% equal tail interval
-        # self.eti = np.array([[np.percentile(beta_draws[:,i], q=2.5), np.percentile(beta_draws[:,i], q=97.5)] \
-        #                         for i in range(n_features)])
-
     def predict(self, X, eti=False):
 
         # If polynomial transformation
