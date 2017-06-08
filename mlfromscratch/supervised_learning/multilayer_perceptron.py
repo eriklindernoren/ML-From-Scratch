@@ -8,11 +8,11 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 # Import helper functions
-from mlfs.utils.data_manipulation import train_test_split, categorical_to_binary, normalize, binary_to_categorical
-from mlfs.utils.data_operation import accuracy_score
-from mlfs.utils.activation_functions import Sigmoid, ReLU, SoftPlus, LeakyReLU, TanH, ExpLU
-from mlfs.utils.optimizers import GradientDescent
-from mlfs.unsupervised_learning import PCA
+from mlfromscratch.utils.data_manipulation import train_test_split, categorical_to_binary, normalize, binary_to_categorical
+from mlfromscratch.utils.data_operation import accuracy_score
+from mlfromscratch.utils.activation_functions import Sigmoid, ReLU, SoftPlus, LeakyReLU, TanH, ExpLU
+from mlfromscratch.utils.optimizers import GradientDescent
+from mlfromscratch.unsupervised_learning import PCA
 
 
 class MultilayerPerceptron():

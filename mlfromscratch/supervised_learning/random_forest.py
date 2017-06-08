@@ -5,10 +5,10 @@ import sys
 import os
 import math
 # Import helper functions
-from mlfs.utils.data_manipulation import divide_on_feature, train_test_split, get_random_subsets, normalize
-from mlfs.utils.data_operation import accuracy_score, calculate_entropy
-from mlfs.unsupervised_learning import PCA
-from mlfs.supervised_learning import ClassificationTree
+from mlfromscratch.utils.data_manipulation import divide_on_feature, train_test_split, get_random_subsets, normalize
+from mlfromscratch.utils.data_operation import accuracy_score, calculate_entropy
+from mlfromscratch.unsupervised_learning import PCA
+from mlfromscratch.supervised_learning import ClassificationTree
 
 
 class RandomForest():

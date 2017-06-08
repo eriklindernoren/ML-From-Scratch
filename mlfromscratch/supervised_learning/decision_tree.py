@@ -6,11 +6,11 @@ import sys
 import os
 
 # Import helper functions
-from mlfs.utils.data_manipulation import divide_on_feature
-from mlfs.utils.data_manipulation import train_test_split, standardize
-from mlfs.utils.data_operation import calculate_entropy, accuracy_score
-from mlfs.utils.data_operation import mean_squared_error, calculate_variance
-from mlfs.unsupervised_learning import PCA
+from mlfromscratch.utils.data_manipulation import divide_on_feature
+from mlfromscratch.utils.data_manipulation import train_test_split, standardize
+from mlfromscratch.utils.data_operation import calculate_entropy, accuracy_score
+from mlfromscratch.utils.data_operation import mean_squared_error, calculate_variance
+from mlfromscratch.unsupervised_learning import PCA
 
 
 class DecisionNode():

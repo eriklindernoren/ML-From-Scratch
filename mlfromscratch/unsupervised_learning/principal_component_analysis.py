@@ -8,9 +8,9 @@ import matplotlib.cm as cmx
 import matplotlib.colors as colors
 import numpy as np
 
-from mlfs.utils.data_operation import calculate_covariance_matrix
-from mlfs.utils.data_operation import calculate_correlation_matrix
-from mlfs.utils.data_manipulation import standardize
+from mlfromscratch.utils.data_operation import calculate_covariance_matrix
+from mlfromscratch.utils.data_operation import calculate_correlation_matrix
+from mlfromscratch.utils.data_manipulation import standardize
 
 class PCA():
     """A method for doing dimensionality reduction by transforming the feature

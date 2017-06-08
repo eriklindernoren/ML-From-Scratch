@@ -7,9 +7,9 @@ import numpy as np
 import pandas as pd
 
 # Import helper functions
-from mlfs.utils.data_operation import calculate_covariance_matrix, accuracy_score
-from mlfs.utils.data_manipulation import normalize, standardize, train_test_split
-from mlfs.unsupervised_learning import PCA
+from mlfromscratch.utils.data_operation import calculate_covariance_matrix, accuracy_score
+from mlfromscratch.utils.data_manipulation import normalize, standardize, train_test_split
+from mlfromscratch.unsupervised_learning import PCA
 
 
 class LDA():

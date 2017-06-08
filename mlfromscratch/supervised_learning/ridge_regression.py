@@ -6,10 +6,10 @@ import sys
 import os
 import math
 # Import helper functions
-from mlfs.utils.data_manipulation import k_fold_cross_validation_sets
-from mlfs.utils.data_manipulation import train_test_split
-from mlfs.utils.data_operation import mean_squared_error
-from mlfs.utils.loss_functions import SquareLoss
+from mlfromscratch.utils.data_manipulation import k_fold_cross_validation_sets
+from mlfromscratch.utils.data_manipulation import train_test_split
+from mlfromscratch.utils.data_operation import mean_squared_error
+from mlfromscratch.utils.loss_functions import SquareLoss
 
 
 class RidgeRegression():

@@ -8,10 +8,10 @@ import cvxopt
 from sklearn import datasets
 
 # Import helper functions
-from mlfs.utils.data_manipulation import train_test_split, normalize
-from mlfs.utils.data_operation import accuracy_score
-from mlfs.utils.kernels import *
-from mlfs.unsupervised_learning import PCA
+from mlfromscratch.utils.data_manipulation import train_test_split, normalize
+from mlfromscratch.utils.data_operation import accuracy_score
+from mlfromscratch.utils.kernels import *
+from mlfromscratch.unsupervised_learning import PCA
 
 # Hide cvxopt output
 cvxopt.solvers.options['show_progress'] = False

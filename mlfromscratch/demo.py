@@ -6,13 +6,13 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 # Import helper functions
-from mlfs.utils.data_manipulation import train_test_split, normalize
-from mlfs.utils.data_operation import accuracy_score
-from mlfs.utils.kernels import *
+from mlfromscratch.utils.data_manipulation import train_test_split, normalize
+from mlfromscratch.utils.data_operation import accuracy_score
+from mlfromscratch.utils.kernels import *
 # Import ML models
-from mlfs.supervised_learning import *
+from mlfromscratch.supervised_learning import *
 # Import PCA
-from mlfs.unsupervised_learning import PCA
+from mlfromscratch.unsupervised_learning import PCA
 
 
 print ("+-------------------------------------------+")

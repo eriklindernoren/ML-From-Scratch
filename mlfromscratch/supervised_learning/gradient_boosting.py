@@ -7,11 +7,11 @@ import matplotlib.pyplot as plt
 from scipy.optimize import line_search
 
 # Import helper functions
-from mlfs.utils.data_manipulation import train_test_split, standardize, categorical_to_binary
-from mlfs.utils.data_operation import mean_squared_error, accuracy_score
-from mlfs.utils.loss_functions import SquareLoss, LogisticLoss
-from mlfs.supervised_learning.decision_tree import RegressionTree
-from mlfs.unsupervised_learning import PCA
+from mlfromscratch.utils.data_manipulation import train_test_split, standardize, categorical_to_binary
+from mlfromscratch.utils.data_operation import mean_squared_error, accuracy_score
+from mlfromscratch.utils.loss_functions import SquareLoss, LogisticLoss
+from mlfromscratch.supervised_learning.decision_tree import RegressionTree
+from mlfromscratch.unsupervised_learning import PCA
 
 
 # Super class to GradientBoostingRegressor and GradientBoostingClassifier

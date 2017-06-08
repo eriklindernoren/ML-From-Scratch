@@ -10,8 +10,8 @@ import math
 from scipy.stats import chi2, multivariate_normal
 
 # Import helper functions
-from mlfs.utils.data_operation import mean_squared_error
-from mlfs.utils.data_manipulation import train_test_split, polynomial_features
+from mlfromscratch.utils.data_operation import mean_squared_error
+from mlfromscratch.utils.data_manipulation import train_test_split, polynomial_features
 
 
 
@@ -127,7 +127,7 @@ class BayesianRegression(object):
 def main():
 
     # Load temperature data
-    data = pd.read_csv('mlfs/data/TempLinkoping2016.txt', sep="\t")
+    data = pd.read_csv('mlfromscratch/data/TempLinkoping2016.txt', sep="\t")
 
     time = np.atleast_2d(data["time"].as_matrix()).T
     temp = np.atleast_2d(data["temp"].as_matrix()).T

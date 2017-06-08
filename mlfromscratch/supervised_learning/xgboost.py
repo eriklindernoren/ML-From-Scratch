@@ -6,11 +6,11 @@ import os
 import matplotlib.pyplot as plt
 
 # Import helper functions
-from mlfs.utils.data_manipulation import train_test_split, standardize, categorical_to_binary, normalize
-from mlfs.utils.data_operation import mean_squared_error, accuracy_score
-from mlfs.supervised_learning import XGBoostRegressionTree
-from mlfs.utils.loss_functions import LogisticLoss
-from mlfs.unsupervised_learning import PCA
+from mlfromscratch.utils.data_manipulation import train_test_split, standardize, categorical_to_binary, normalize
+from mlfromscratch.utils.data_operation import mean_squared_error, accuracy_score
+from mlfromscratch.supervised_learning import XGBoostRegressionTree
+from mlfromscratch.utils.loss_functions import LogisticLoss
+from mlfromscratch.unsupervised_learning import PCA
 
 
 

@@ -9,8 +9,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 # Import helper functions
-from mlfs.utils.data_operation import calculate_covariance_matrix
-from mlfs.utils.data_manipulation import normalize, standardize
+from mlfromscratch.utils.data_operation import calculate_covariance_matrix
+from mlfromscratch.utils.data_manipulation import normalize, standardize
 
 
 class MultiClassLDA():

@@ -6,9 +6,9 @@ from sklearn import datasets
 import numpy as np
 
 # Import helper functions
-from mlfs.utils.data_manipulation import normalize
-from mlfs.utils.data_operation import euclidean_distance
-from mlfs.unsupervised_learning import PCA
+from mlfromscratch.utils.data_manipulation import normalize
+from mlfromscratch.utils.data_operation import euclidean_distance
+from mlfromscratch.unsupervised_learning import PCA
 
 
 class DBSCAN():

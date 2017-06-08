@@ -8,12 +8,12 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 # Import helper functions
-from mlfs.utils.data_manipulation import make_diagonal, normalize, train_test_split
-from mlfs.utils.data_operation import accuracy_score
-from mlfs.utils.activation_functions import Sigmoid
-from mlfs.utils.loss_functions import LogisticLoss
-from mlfs.utils.optimizers import GradientDescent
-from mlfs.unsupervised_learning import PCA
+from mlfromscratch.utils.data_manipulation import make_diagonal, normalize, train_test_split
+from mlfromscratch.utils.data_operation import accuracy_score
+from mlfromscratch.utils.activation_functions import Sigmoid
+from mlfromscratch.utils.loss_functions import LogisticLoss
+from mlfromscratch.utils.optimizers import GradientDescent
+from mlfromscratch.unsupervised_learning import PCA
 
 
 class LogisticRegression():
