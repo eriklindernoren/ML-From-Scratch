@@ -66,19 +66,19 @@ or
     - Apriori -
     Minimum Support: 0.25 - Minimum Confidence: 0.8
     Transactions:
-     [1, 2, 3, 4]
-     [1, 2, 4]
-     [1, 2]
-     [2, 3, 4]
-     [2, 3]
-     [3, 4]
-     [2, 4]
+         [1, 2, 3, 4]
+         [1, 2, 4]
+         [1, 2]
+         [2, 3, 4]
+         [2, 3]
+         [3, 4]
+         [2, 4]
     Frequent Itemsets:
-     [1, 2, 3, 4, [1, 2], [1, 4], [2, 3], [2, 4], [3, 4], [1, 2, 4], [2, 3, 4]]
+         [1, 2, 3, 4, [1, 2], [1, 4], [2, 3], [2, 4], [3, 4], [1, 2, 4], [2, 3, 4]]
     Rules:
-     1 -> 2 (support: 0.43, confidence: 1.0)
-     4 -> 2 (support: 0.57, confidence: 0.8)
-     [1, 4] -> 2 (support: 0.29, confidence: 1.0)
+         1 -> 2 (support: 0.43, confidence: 1.0)
+         4 -> 2 (support: 0.57, confidence: 0.8)
+         [1, 4] -> 2 (support: 0.29, confidence: 1.0)
 
 
 ## Current Implementations
