@@ -207,7 +207,10 @@ def main():
         ["B", "C", "D"]
     ])
 
-    print ("- FP-Growth -")
+    print ("+-------------------------+")
+    print ("|        FP-Growth        |")
+    print ("+-------------------------+")
+
     min_sup = 3
     print ("Minimum Support: %s" % min_sup)
     print ("Transactions:")
