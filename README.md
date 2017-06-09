@@ -65,8 +65,8 @@ or
 ### Association Analysis
     $ python mlfromscratch/unsupervised_learning/apriori.py 
     - Apriori -
-    Minimum support: 0.25
-    Minimum confidence: 0.8
+    Minimum Support: 0.25
+    Minimum Confidence: 0.8
     Transactions:
          [1, 2, 3, 4]
          [1, 2, 4]
