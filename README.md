@@ -33,10 +33,10 @@ or
 
 
 ### Regression
-    $ python mlfromscratch/supervised_learning/linear_regression.py
+    $ python mlfromscratch/supervised_learning/regression.py
 
 <p align="center">
-    <img src="http://eriklindernoren.se/images/pr4.png" width="640"\>
+    <img src="http://eriklindernoren.se/images/prr.png" width="640"\>
 </p>
 <p align="center">
     Figure: Polynomial regression of temperature data in Linköping, Sweden 2016.
@@ -89,20 +89,19 @@ or
 ### Supervised Learning
 - [Adaboost](mlfromscratch/supervised_learning/adaboost.py)
 - [Bayesian Regression](mlfromscratch/supervised_learning/bayesian_regression.py)
-- [Decision Tree Classifier](mlfromscratch/supervised_learning/decision_tree.py)
-- [Decision Tree Regressor](mlfromscratch/supervised_learning/decision_tree.py)
+- [Decision Tree](mlfromscratch/supervised_learning/decision_tree.py)
 - [Gradient Boosting](mlfromscratch/supervised_learning/gradient_boosting.py)
 - [K Nearest Neighbors](mlfromscratch/supervised_learning/k_nearest_neighbors.py)
 - [Linear Discriminant Analysis](mlfromscratch/supervised_learning/linear_discriminant_analysis.py)
-- [Linear Regression](mlfromscratch/supervised_learning/linear_regression.py)
+- [Linear Regression](mlfromscratch/supervised_learning/regression.py)
 - [Logistic Regression](mlfromscratch/supervised_learning/logistic_regression.py)
 - [Multi-class Linear Discriminant Analysis](mlfromscratch/supervised_learning/multi_class_lda.py)
 - [Multilayer Perceptron](mlfromscratch/supervised_learning/multilayer_perceptron.py)
 - [Naive Bayes](mlfromscratch/supervised_learning/naive_bayes.py)
 - [Perceptron](mlfromscratch/supervised_learning/perceptron.py)
-- [Polynomial Regression](mlfromscratch/supervised_learning/linear_regression.py)
+- [Polynomial Regression](mlfromscratch/supervised_learning/regression.py)
 - [Random Forest](mlfromscratch/supervised_learning/random_forest.py)
-- [Ridge Regression](mlfromscratch/supervised_learning/ridge_regression.py)
+- [Ridge Regression](mlfromscratch/supervised_learning/regression.py)
 - [Support Vector Machine](mlfromscratch/supervised_learning/support_vector_machine.py)
 - [XGBoost](mlfromscratch/supervised_learning/xgboost.py)
 

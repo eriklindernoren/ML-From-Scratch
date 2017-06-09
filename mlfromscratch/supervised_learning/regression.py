@@ -13,8 +13,9 @@ from mlfromscratch.utils.data_operation import mean_squared_error
 from mlfromscratch.utils.loss_functions import SquareLoss
 
 
-class RidgeRegression(object):
-    """Linear regression model with a regularization factor.
+class Regression(object):
+    """ Base regression model. Models the relationship between a scalar dependent variable y and the independent 
+    variables X. 
     Parameters:
     -----------
     reg_factor: float
@@ -28,7 +29,7 @@ class RidgeRegression(object):
         True or false depending if gradient descent should be used when training. If 
         false then we use batch optimization by least squares.
     """
-    def __init__(self, reg_factor, n_iterations=100, learning_rate=0.001, gradient_descent=True):
+    def __init__(self, reg_factor, n_iterations, learning_rate, gradient_descent):
         self.w = None
         self.n_iterations = n_iterations
         self.learning_rate = learning_rate
@@ -37,6 +38,8 @@ class RidgeRegression(object):
         self.square_loss = SquareLoss()
 
     def fit(self, X, y):
+        # Insert constant ones as first column (for bias weights)
+        X = np.insert(X, 0, 1, axis=1)
 
         n_features = np.shape(X)[1]
 
@@ -57,12 +60,95 @@ class RidgeRegression(object):
             self.w = X_sq_reg_inv.dot(X.T).dot(y)
 
     def predict(self, X):
+        # Insert constant ones for bias weights
+        X = np.insert(X, 0, 1, axis=1)
         y_pred = X.dot(self.w)
         return y_pred
 
 
-class PolynomialRidgeRegression(RidgeRegression):
-    def __init__(self, degree, reg_factor, n_iterations=400, learning_rate=0.01, gradient_descent=True):
+class LinearRegression(Regression):
+    """Linear model.
+    Parameters:
+    -----------
+    n_iterations: float
+        The number of training iterations the algorithm will tune the weights for.
+    learning_rate: float
+        The step length that will be used when updating the weights.
+    gradient_descent: boolean
+        True or false depending if gradient descent should be used when training. If 
+        false then we use batch optimization by least squares.
+    """
+    def __init__(self, n_iterations=1000, learning_rate=0.001, gradient_descent=True):
+        super(RidgeRegression, self).__init__(reg_factor=0, n_iterations=n_iterations, \
+                                learning_rate=learning_rate, gradient_descent=gradient_descent)
+
+class PolynomialRegression(Regression):
+    """Performs a non-linear transformation of the data before fitting the model
+    and doing predictions which allows for doing non-linear regression.
+    Parameters:
+    -----------
+    degree: int
+        The power of the polynomial that the independent variable X will be transformed to.
+    n_iterations: float
+        The number of training iterations the algorithm will tune the weights for.
+    learning_rate: float
+        The step length that will be used when updating the weights.
+    gradient_descent: boolean
+        True or false depending if gradient descent should be used when training. If 
+        false then we use batch optimization by least squares.
+    """
+    def __init__(self, degree, n_iterations=3000, learning_rate=0.001, gradient_descent=True):
+        self.degree = degree
+        super(PolynomialRegression, self).__init__(reg_factor=0, n_iterations=n_iterations, \
+                                learning_rate=learning_rate, gradient_descent=gradient_descent)
+
+    def fit(self, X, y):
+        X_transformed = polynomial_features(X, degree=self.degree)
+        super(PolynomialRegression, self).fit(X_transformed, y)
+
+    def predict(self, X):
+        X_transformed = polynomial_features(X, degree=self.degree)
+        return super(PolynomialRegression, self).predict(X_transformed)
+
+class RidgeRegression(Regression):
+    """Also referred to as Tikhonov regularization. Linear regression model with a regularization factor.
+    Model that tries to balance the fit of the model with respect to the training data and the complexity
+    of the model. A large regularization factor with decreases the variance of the model.
+    Parameters:
+    -----------
+    reg_factor: float
+        The factor that will determine the amount of regularization and feature
+        shrinkage. 
+    n_iterations: float
+        The number of training iterations the algorithm will tune the weights for.
+    learning_rate: float
+        The step length that will be used when updating the weights.
+    gradient_descent: boolean
+        True or false depending if gradient descent should be used when training. If 
+        false then we use batch optimization by least squares.
+    """
+    def __init__(self, reg_factor, n_iterations=1000, learning_rate=0.001, gradient_descent=True):
+        super(RidgeRegression, self).__init__(reg_factor, n_iterations, learning_rate, gradient_descent)
+
+class PolynomialRidgeRegression(Regression):
+    """Similar to regular ridge regression except that the data is transformed to allow
+    for polynomial regression.
+    Parameters:
+    -----------
+    degree: int
+        The power of the polynomial that the independent variable X will be transformed to.
+    reg_factor: float
+        The factor that will determine the amount of regularization and feature
+        shrinkage. 
+    n_iterations: float
+        The number of training iterations the algorithm will tune the weights for.
+    learning_rate: float
+        The step length that will be used when updating the weights.
+    gradient_descent: boolean
+        True or false depending if gradient descent should be used when training. If 
+        false then we use batch optimization by least squares.
+    """
+    def __init__(self, degree, reg_factor, n_iterations=3000, learning_rate=0.01, gradient_descent=True):
         self.degree = degree
         super(PolynomialRidgeRegression, self).__init__(reg_factor, n_iterations, learning_rate, gradient_descent)
 
@@ -100,7 +186,7 @@ def main():
             X_train, y_train, k=k)
         mse = 0
         for _X_train, _X_test, _y_train, _y_test in cross_validation_sets:
-            clf = PolynomialRidgeRegression(degree=pol_degree, 
+            clf = PolynomialRegression(degree=pol_degree, 
                                             reg_factor=reg_factor,
                                             learning_rate=0.001,
                                             n_iterations=10000)
@@ -137,7 +223,7 @@ def main():
     m1 = plt.scatter(366 * X_train, y_train, color=cmap(0.9), s=10)
     m2 = plt.scatter(366 * X_test, y_test, color=cmap(0.5), s=10)
     plt.plot(366 * X, y_pred_line, color='black', linewidth=2, label="Prediction")
-    plt.suptitle("Ridge Regression")
+    plt.suptitle("Polynomial Ridge Regression")
     plt.title("MSE: %.2f" % mse, fontsize=10)
     plt.xlabel('Day')
     plt.ylabel('Temperature in Celcius')
@@ -147,3 +233,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
