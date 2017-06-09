@@ -190,9 +190,9 @@ def main():
     # Demo transaction set
     # Example 2: https://en.wikipedia.org/wiki/Apriori_algorithm
     transactions = np.array([[1, 2, 3, 4], [1, 2, 4], [1, 2], [2, 3, 4], [2, 3], [3, 4], [2, 4]])
-    print ("+---------+")
-    print ("| Apriori |")
-    print ("+---------+")
+    print ("+-------------+")
+    print ("|   Apriori   |")
+    print ("+-------------+")
     min_sup = 0.25
     min_conf = 0.8
     print ("Minimum Support: %.2f" % (min_sup))

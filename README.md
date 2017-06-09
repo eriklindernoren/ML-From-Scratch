@@ -64,9 +64,9 @@ or
 
 ### Association Analysis
     $ python mlfromscratch/unsupervised_learning/apriori.py 
-    +---------+
-    | Apriori |
-    +---------+
+    +-------------+
+    |   Apriori   |
+    +-------------+
     Minimum Support: 0.25
     Minimum Confidence: 0.8
     Transactions:
@@ -89,7 +89,8 @@ or
 ### Supervised Learning
 - [Adaboost](mlfromscratch/supervised_learning/adaboost.py)
 - [Bayesian Regression](mlfromscratch/supervised_learning/bayesian_regression.py)
-- [Decision Tree](mlfromscratch/supervised_learning/decision_tree.py)
+- [Decision Tree Classifier](mlfromscratch/supervised_learning/decision_tree.py)
+- [Decision Tree Regressor](mlfromscratch/supervised_learning/decision_tree.py)
 - [Gradient Boosting](mlfromscratch/supervised_learning/gradient_boosting.py)
 - [K Nearest Neighbors](mlfromscratch/supervised_learning/k_nearest_neighbors.py)
 - [Linear Discriminant Analysis](mlfromscratch/supervised_learning/linear_discriminant_analysis.py)
@@ -99,6 +100,7 @@ or
 - [Multilayer Perceptron](mlfromscratch/supervised_learning/multilayer_perceptron.py)
 - [Naive Bayes](mlfromscratch/supervised_learning/naive_bayes.py)
 - [Perceptron](mlfromscratch/supervised_learning/perceptron.py)
+- [Polynomial Regression](mlfromscratch/supervised_learning/linear_regression.py)
 - [Random Forest](mlfromscratch/supervised_learning/random_forest.py)
 - [Ridge Regression](mlfromscratch/supervised_learning/ridge_regression.py)
 - [Support Vector Machine](mlfromscratch/supervised_learning/support_vector_machine.py)

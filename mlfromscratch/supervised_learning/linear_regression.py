@@ -108,8 +108,8 @@ def main():
     m2 = plt.scatter(366 * X_test, y_test, color=cmap(0.5), s=10)
     p = plt.plot(366 * X_pred_, y_pred_, color="black", linewidth=2, label="Prediction")
     plt.suptitle("Polynomial Regression")
-    plt.title("MSE: %.2f" % mse)
-    plt.xlabel('Days')
+    plt.title("MSE: %.2f" % mse, fontsize=10)
+    plt.xlabel('Day')
     plt.ylabel('Temperature in Celcius')
     plt.legend(loc='lower right')
     plt.legend((m1, m2), ("Training data", "Test data"), loc='lower right')
@@ -118,3 +118,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
