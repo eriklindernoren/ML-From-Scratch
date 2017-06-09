@@ -51,7 +51,7 @@ class LeakyReLU():
         dx[x < 0] = 0.01
         return dx
 
-class ExpLU():
+class ELU():
     def __init__(self, alpha=0.1):
         self.alpha = alpha 
 

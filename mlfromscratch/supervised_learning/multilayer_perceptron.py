@@ -10,7 +10,7 @@ import numpy as np
 # Import helper functions
 from mlfromscratch.utils.data_manipulation import train_test_split, categorical_to_binary, normalize, binary_to_categorical
 from mlfromscratch.utils.data_operation import accuracy_score
-from mlfromscratch.utils.activation_functions import Sigmoid, ReLU, SoftPlus, LeakyReLU, TanH, ExpLU
+from mlfromscratch.utils.activation_functions import Sigmoid, ReLU, SoftPlus, LeakyReLU, TanH, ELU
 from mlfromscratch.utils.optimizers import GradientDescent
 from mlfromscratch.unsupervised_learning import PCA
 
@@ -43,8 +43,8 @@ class MultilayerPerceptron():
         self.n_hidden = n_hidden    # Number of hidden neurons
         self.W = None               # Hidden layer weights
         self.V = None               # Output layer weights
-        self.biasW = None           # Hidden layer bias
-        self.biasV = None           # Output layer bias
+        self.w0 = None              # Hidden layer bias
+        self.v0 = None              # Output layer bias
         self.n_iterations = n_iterations
         self.plot_errors = plot_errors
         self.early_stopping = early_stopping
@@ -52,9 +52,9 @@ class MultilayerPerceptron():
 
         # Optimization methods for each paramater
         self.w_opt = GradientDescent(learning_rate=learning_rate, momentum=momentum)
-        self.wb_opt = GradientDescent(learning_rate=learning_rate, momentum=momentum)
+        self.w0_opt = GradientDescent(learning_rate=learning_rate, momentum=momentum)
         self.v_opt = GradientDescent(learning_rate=learning_rate, momentum=momentum)
-        self.vb_opt = GradientDescent(learning_rate=learning_rate, momentum=momentum)
+        self.v0_opt = GradientDescent(learning_rate=learning_rate, momentum=momentum)
 
     def fit(self, X, y):
         X_train = X
@@ -75,9 +75,9 @@ class MultilayerPerceptron():
         a = -1 / math.sqrt(n_features)
         b = -a
         self.W = (b - a) * np.random.random((n_features, self.n_hidden)) + a
-        self.biasW = (b - a) * np.random.random((1, self.n_hidden)) + a
+        self.w0 = (b - a) * np.random.random((1, self.n_hidden)) + a
         self.V = (b - a) * np.random.random((self.n_hidden, n_outputs)) + a
-        self.biasV = (b - a) * np.random.random((1, n_outputs)) + a
+        self.v0 = (b - a) * np.random.random((1, n_outputs)) + a
 
         # Error history
         training_errors = []
@@ -87,12 +87,10 @@ class MultilayerPerceptron():
         for i in range(self.n_iterations):
 
             # Calculate hidden layer
-            hidden_input = X_train.dot(self.W) + self.biasW
-            # hidden_output = sigmoid(hidden_input)
-            hidden_output = self.activation.function(hidden_input)
+            hidden_layer_input = X_train.dot(self.W) + self.w0
+            hidden_layer_output = self.activation.function(hidden_layer_input)
             # Calculate output layer
-            output_layer_input = hidden_output.dot(self.V) + self.biasV
-            # output = sigmoid(output_layer_input)
+            output_layer_input = hidden_layer_output.dot(self.V) + self.v0
             output = self.activation.function(output_layer_input)
 
             # Calculate the error
@@ -104,20 +102,20 @@ class MultilayerPerceptron():
             output_gradient = -2 * (y_train - output) * \
                 self.activation.gradient(output_layer_input)
             hidden_gradient = output_gradient.dot(
-                self.V.T) * self.activation.gradient(hidden_input)
+                self.V.T) * self.activation.gradient(hidden_layer_input)
 
             # Calcualte the gradient with respect to each weight term
-            grad_wrt_v = hidden_output.T.dot(output_gradient)
-            grad_wrt_vb = np.ones((1, n_samples)).dot(output_gradient)
+            grad_wrt_v = hidden_layer_output.T.dot(output_gradient)
+            grad_wrt_v0 = np.ones((1, n_samples)).dot(output_gradient)
             grad_wrt_w = X_train.T.dot(hidden_gradient)
-            grad_wrt_wb = np.ones((1, n_samples)).dot(hidden_gradient)
+            grad_wrt_w0 = np.ones((1, n_samples)).dot(hidden_gradient)
 
             # Update weights
             # Move against the gradient to minimize loss
             self.V          = self.v_opt.update(w=self.V, grad_wrt_w=grad_wrt_v)
-            self.biasV      = self.vb_opt.update(w=self.biasV, grad_wrt_w=grad_wrt_vb)
+            self.v0      = self.v0_opt.update(w=self.v0, grad_wrt_w=grad_wrt_v0)
             self.W          = self.w_opt.update(w=self.W, grad_wrt_w=grad_wrt_w)
-            self.biasW      = self.wb_opt.update(w=self.biasW, grad_wrt_w=grad_wrt_wb)
+            self.w0      = self.w0_opt.update(w=self.w0, grad_wrt_w=grad_wrt_w0)
 
             if self.early_stopping:
                 # Calculate the validation error
@@ -154,10 +152,10 @@ class MultilayerPerceptron():
 
     def _calculate_output(self, X):
         # Calculate hidden layer
-        hidden_input = X.dot(self.W) + self.biasW
-        hidden_output = self.activation.function(hidden_input)
+        hidden_layer_input = X.dot(self.W) + self.w0
+        hidden_layer_output = self.activation.function(hidden_layer_input)
         # Calculate output layer
-        output_layer_input = hidden_output.dot(self.V) + self.biasV
+        output_layer_input = hidden_layer_output.dot(self.V) + self.v0
         output = self.activation.function(output_layer_input)
 
         return output

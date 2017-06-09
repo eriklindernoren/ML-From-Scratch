@@ -10,7 +10,7 @@ import copy
 # Import helper functions
 from mlfromscratch.utils.data_manipulation import train_test_split, categorical_to_binary, normalize, binary_to_categorical
 from mlfromscratch.utils.data_operation import accuracy_score
-from mlfromscratch.utils.activation_functions import Sigmoid, ReLU, SoftPlus, LeakyReLU, TanH, ExpLU
+from mlfromscratch.utils.activation_functions import Sigmoid, ReLU, SoftPlus, LeakyReLU, TanH, ELU
 from mlfromscratch.utils.optimizers import GradientDescent, NesterovAcceleratedGradient, Adagrad, Adadelta, RMSprop, Adam
 from mlfromscratch.unsupervised_learning import PCA
 
@@ -38,7 +38,7 @@ class Perceptron():
     def __init__(self, n_iterations=20000, activation_function=Sigmoid, optimizer=GradientDescent(0.01, 0.3),
         early_stopping=False, plot_errors=False):
         self.W = None           # Output layer weights
-        self.biasW = None       # Bias weights
+        self.w0 = None          # Bias weights
         self.n_iterations = n_iterations
         self.plot_errors = plot_errors
         self.early_stopping = early_stopping
@@ -46,7 +46,7 @@ class Perceptron():
         self.activation = activation_function()
         # Optimization methods for each parameter set
         self.w_opt = copy.copy(optimizer)
-        self.bias_opt = copy.copy(optimizer)
+        self.w0_opt = copy.copy(optimizer)
 
     def fit(self, X, y):
         X_train = X
@@ -67,7 +67,7 @@ class Perceptron():
         a = -1 / math.sqrt(n_features)
         b = -a
         self.W = (b - a) * np.random.random((n_features, n_outputs)) + a
-        self.biasW = (b - a) * np.random.random((1, n_outputs)) + a
+        self.w0 = (b - a) * np.random.random((1, n_outputs)) + a
 
         # Error history
         training_errors = []
@@ -84,20 +84,20 @@ class Perceptron():
         # Lambda functions that calculates the gradient of the loss with 
         # respect to each weight term. Allows for computation of loss gradient at different
         # coordinates.
-        grad_func_wrt_w = lambda w: X_train.T.dot(loss_grad(w, self.biasW))
-        grad_func_wrt_bias = lambda b: np.ones((1, n_samples)).dot(loss_grad(self.W, b))
+        grad_func_wrt_w = lambda w: X_train.T.dot(loss_grad(w, self.w0))
+        grad_func_wrt_w0 = lambda b: np.ones((1, n_samples)).dot(loss_grad(self.W, b))
 
         # Optimize paramaters for n_iterations
         for i in range(self.n_iterations):
 
             # Training error
-            error = y_train - neuron_output(self.W, self.biasW)
+            error = y_train - neuron_output(self.W, self.w0)
             mse = np.mean(np.power(error, 2))
             training_errors.append(mse)
 
             # Update weights
             self.W = self.w_opt.update(w=self.W, grad_func=grad_func_wrt_w)
-            self.biasW = self.bias_opt.update(w=self.biasW, grad_func=grad_func_wrt_bias)
+            self.w0 = self.w0_opt.update(w=self.w0, grad_func=grad_func_wrt_w0)
 
             if self.early_stopping:
                 # Calculate the validation error
@@ -133,7 +133,7 @@ class Perceptron():
 
     def _calculate_output(self, X):
         # Calculate the output layer values
-        output = self.activation.function(np.dot(X, self.W) + self.biasW)
+        output = self.activation.function(np.dot(X, self.W) + self.w0)
 
         return output
 

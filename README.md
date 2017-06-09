@@ -26,6 +26,7 @@ Feel free to [reach out](mailto:eriklindernoren@gmail.com) if you can think of w
 ## Usage
 ### Installation
     $ pip install mlfromscratch
+
 or
 
     $ python setup.py install
@@ -64,7 +65,8 @@ or
 ### Association Analysis
     $ python mlfromscratch/unsupervised_learning/apriori.py 
     - Apriori -
-    Minimum - support: 0.25, confidence: 0.8
+    Minimum support: 0.25
+    Minimum confidence: 0.8
     Transactions:
         [1, 2, 3, 4]
         [1, 2, 4]

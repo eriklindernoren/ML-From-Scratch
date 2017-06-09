@@ -12,8 +12,6 @@ from mlfromscratch.utils.data_manipulation import train_test_split, polynomial_f
 from mlfromscratch.utils.loss_functions import SquareLoss
 from mlfromscratch.utils.optimizers import GradientDescent
 
-
-
 class LinearRegression(object):
     """Linear model for doing regression.
     Parameters:
@@ -94,7 +92,6 @@ def main():
     y_pred = clf.predict(X_test)
 
     mse = mean_squared_error(y_test, y_pred)
-
 
     # Generate data for prediction line
     X_pred_ = np.arange(0, 1, 0.001).reshape((1000, 1))

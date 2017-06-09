@@ -11,14 +11,14 @@ class SquareLoss():
             self.gradient = self._grad_wrt_pred
 
     def loss(self, y_true, y_pred):
-        return np.power((y_true - y_pred), 2)
+        return 0.5 * np.power((y_true - y_pred), 2)
 
     def _grad_wrt_pred(self, y, y_pred):
-        return -2*(y - y_pred)
+        return -(y - y_pred)
 
     def _grad_wrt_theta(self, y, X, theta):
         y_pred = X.dot(theta)
-        return -2*(y - y_pred).dot(X)
+        return -(y - y_pred).dot(X)
 
 
 class LogisticLoss():
