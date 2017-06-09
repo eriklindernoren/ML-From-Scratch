@@ -207,9 +207,9 @@ def main():
         ["B", "C", "D"]
     ])
 
-    print ("+-------------------------+")
-    print ("|        FP-Growth        |")
-    print ("+-------------------------+")
+    print ("+-----------+")
+    print ("| FP-Growth |")
+    print ("+-----------+")
 
     min_sup = 3
     print ("Minimum Support: %s" % min_sup)
