@@ -7,7 +7,7 @@ from data_manipulation import make_diagonal
 # http://sebastianruder.com/optimizing-gradient-descent/index.html
 
 class GradientDescent():
-    def __init__(self, learning_rate=0.01, momentum):
+    def __init__(self, learning_rate=0.01, momentum=0):
         self.learning_rate = learning_rate 
         self.momentum = momentum
         self.w_updt = np.array([])
@@ -21,7 +21,7 @@ class GradientDescent():
         return w - self.learning_rate * self.w_updt
 
 class GradientDescent_():
-    def __init__(self, learning_rate=0.001, momentum=):
+    def __init__(self, learning_rate=0.001, momentum=0):
         self.learning_rate = learning_rate 
         self.momentum = momentum
         self.w_updt = np.array([])
