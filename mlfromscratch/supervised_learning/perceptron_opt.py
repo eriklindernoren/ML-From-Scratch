@@ -10,8 +10,8 @@ import copy
 # Import helper functions
 from mlfromscratch.utils.data_manipulation import train_test_split, categorical_to_binary, normalize, binary_to_categorical
 from mlfromscratch.utils.data_operation import accuracy_score
-from mlfromscratch.utils.activation_functions import Sigmoid, ReLU, SoftPlus, LeakyReLU, TanH, ELU
-from mlfromscratch.utils.optimizers import GradientDescent, NesterovAcceleratedGradient, Adagrad, Adadelta, RMSprop, Adam
+from mlfromscratch.utils.activation_functions import Sigmoid, ReLU, SoftPlus, LeakyReLU, TanH, ELU, SELU
+from mlfromscratch.utils.optimizers import GradientDescent, GradientDescent_, NesterovAcceleratedGradient, Adagrad, Adadelta, RMSprop, Adam
 from mlfromscratch.unsupervised_learning import PCA
 
 
@@ -152,11 +152,11 @@ def main():
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, seed=1)
 
     # Optimization method for finding weights that minimizes loss
-    optimizer = RMSprop(learning_rate=0.01)
+    optimizer = Adam(learning_rate=0.003, b1=0.9, b2=0.9)
 
     # Perceptron
     clf = Perceptron(n_iterations=5000,
-        activation_function=ExpLU,
+        activation_function=ELU,
         optimizer=optimizer,
         early_stopping=True,
         plot_errors=True)

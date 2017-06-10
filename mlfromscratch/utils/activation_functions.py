@@ -26,30 +26,22 @@ class ReLU():
 
     def function(self, x):
         # If x < 0: output = 0 else: output = x
-        h = x
-        h[x < 0] = 0
-        return h
+        return np.where(x >= 0, x, 0)
 
     def gradient(self, x):
         # If x < 0: output = 0 else: output = 1
-        dx = np.zeros(np.shape(x))
-        dx[x >= 0] = 1
-        return dx
+        return np.where(x >= 0, 1, 0)
 
 class LeakyReLU():
     def __init__(self): pass 
 
     def function(self, x):
         # If x < 0: output = 0.01*x else: output = x
-        h = x
-        h[h < 0] = 0.01 * h[h < 0]
-        return h
+        return np.where(x >= 0, x, 0.01 * x)
 
     def gradient(self, x):
         # If x < 0: output = 0.01 else: output = 1
-        dx = np.ones(np.shape(x))
-        dx[x < 0] = 0.01
-        return dx
+        return np.where(x >= 0, 1, 0.01)
 
 class ELU():
     def __init__(self, alpha=0.1):
@@ -57,15 +49,23 @@ class ELU():
 
     def function(self, x):
         # If x < 0: output = alpha*(exp(x)-1) else: output = x
-        h = x
-        h[h < 0] = self.alpha * (np.exp(h[h < 0]) - 1)
-        return h
+        return np.where(x >= 0.0, x, self.alpha * (np.exp(x) - 1))
 
     def gradient(self, x):
         # If x < 0: output = f(alpha, x) + alpha else: output = 1
-        dx = self.function(x) + self.alpha
-        dx[x >= 0] = 1
-        return dx
+        return np.where(x >= 0.0, 1, self.function(x) + self.alpha)
+
+class SELU():
+    def __init__(self):
+        self.alpha = 1.6732632423543772848170429916717
+        self.scale = 1.0507009873554804934193349852946 
+
+    def function(self, x):
+        return self.scale * np.where(x >= 0.0, x, self.alpha*(np.exp(x)-1))
+
+    def gradient(self, x):
+        # If x < 0: output = f(alpha, x) + scale * alpha else: output = 1
+        return self.scale * np.where(x >= 0.0, 1, self.alpha * np.exp(x))
 
 class SoftPlus():
     def __init__(self): pass 
@@ -75,3 +75,4 @@ class SoftPlus():
 
     def gradient(self, x):
         return Sigmoid().function(x)
+
