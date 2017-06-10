@@ -47,7 +47,7 @@ or
     $ python mlfromscratch/supervised_learning/multilayer_perceptron.py
 
 <p align="center">
-    <img src="http://eriklindernoren.se/images/mlp.png" width="640">
+    <img src="http://eriklindernoren.se/images/mlp4.png" width="640">
 </p>
 <p align="center">
     Figure: Classification of the digit dataset using an MLP with one <br>
