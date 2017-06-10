@@ -4,12 +4,18 @@ from sklearn import datasets
 import sys
 import os
 import math
+import progressbar
+
 # Import helper functions
 from mlfromscratch.utils.data_manipulation import divide_on_feature, train_test_split, get_random_subsets, normalize
 from mlfromscratch.utils.data_operation import accuracy_score, calculate_entropy
 from mlfromscratch.unsupervised_learning import PCA
 from mlfromscratch.supervised_learning import ClassificationTree
 
+bar_widgets = [
+    'Training:', progressbar.Percentage(), ' ', progressbar.Bar(marker="-", left="[", right="]"),
+    ' ', progressbar.ETA()
+]
 
 class RandomForest():
     """Random Forest classifier. Uses a collection of classification trees that
@@ -40,6 +46,7 @@ class RandomForest():
         self.min_gain = min_gain            # Minimum information gain req. to continue
         self.max_depth = max_depth          # Maximum depth for tree
         self.debug = debug
+        self.bar = progressbar.ProgressBar(widgets=bar_widgets)
 
         # Initialize decision trees
         self.trees = []
@@ -61,7 +68,8 @@ class RandomForest():
             print ("Training (%s estimators):" % (self.n_estimators))
         # Choose one random subset of the data for each tree
         subsets = get_random_subsets(X, y, self.n_estimators)
-        for i in range(self.n_estimators):
+
+        for i in self.bar(range(self.n_estimators)):
             X_subset, y_subset = subsets[i]
             # Feature bagging (select random subsets of the features)
             idx = np.random.choice(range(n_features), size=self.max_features, replace=True)

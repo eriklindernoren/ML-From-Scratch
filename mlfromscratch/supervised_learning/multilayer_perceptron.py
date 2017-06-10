@@ -3,28 +3,81 @@ from sklearn import datasets
 import sys
 import os
 import math
+import copy
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
+import progressbar
 
 # Import helper functions
 from mlfromscratch.utils.data_manipulation import train_test_split, categorical_to_binary, normalize, binary_to_categorical
 from mlfromscratch.utils.data_operation import accuracy_score
-from mlfromscratch.utils.activation_functions import Sigmoid, ReLU, SoftPlus, LeakyReLU, TanH, ELU
+from mlfromscratch.utils.activation_functions import Sigmoid, ReLU, SoftPlus, LeakyReLU, TanH, ELU, SELU
 from mlfromscratch.utils.optimizers import GradientDescent
 from mlfromscratch.unsupervised_learning import PCA
 
+bar_widgets = [
+    'Training:', progressbar.Percentage(), ' ', progressbar.Bar(marker="-", left="[", right="]"),
+    ' ', progressbar.ETA()
+]
 
-class MultilayerPerceptron():
-    """Multilayer Perceptron classifier. A neural network with one hidden layer.
+class DenseLayer():
+    """A fully-connected NN layer. 
 
     Parameters:
     -----------
-    n_hidden: int:
-        The number of processing nodes (neurons) in the hidden layer. 
+    n_inputs: int
+        The number of inputs per neuron.
+    n_units: int
+        The number of neurons in the layer.
     activation_function: class:
         The activation function that will be used for each neuron. 
         Possible choices: Sigmoid, ExpLU, ReLU, LeakyReLU, SoftPlus, TanH
+    """
+    def __init__(self, n_inputs, n_units, activation_function=LeakyReLU):
+        self.activation = activation_function()
+        self.prev_layer_output = None
+
+        # Initialize weights between [-1/sqrt(N), 1/sqrt(N)]
+        a = -1 / math.sqrt(n_inputs)
+        b = -a
+        self.W  = (b - a) * np.random.random((n_inputs, n_units)) + a
+        self.wb = (b - a) * np.random.random((1, n_units)) + a
+
+    def set_optimizer(self, optimizer):
+        # Weight optimizers
+        self.W_opt  = copy.copy(optimizer)
+        self.wb_opt = copy.copy(optimizer)
+
+    def update_weights(self, acc_grad, output=False):
+
+        # The accumulated gradient at the layer
+        layer_grad = acc_grad * self.activation.gradient(self.prev_layer_output.dot(self.W) + self.wb)
+
+        # Calculate gradient w.r.t layer weights
+        grad_w = self.prev_layer_output.T.dot(layer_grad)
+        grad_wb = np.ones((1, np.shape(layer_grad)[0])).dot(layer_grad)
+
+        # Update the layer weights
+        self.W = self.W_opt.update(w=self.W, grad_wrt_w=grad_w)
+        self.wb = self.wb_opt.update(w=self.wb, grad_wrt_w=grad_wb)
+
+        # Return accumulated gradient for next layer
+        acc_grad = layer_grad.dot(self.W.T)
+        return acc_grad
+
+    def calc_layer_output(self, prev_layer_output):
+        self.prev_layer_output = prev_layer_output
+        layer_output = self.activation.function(prev_layer_output.dot(self.W) + self.wb)
+        return layer_output
+
+
+
+class MultilayerPerceptron():
+    """Multilayer Perceptron classifier.
+
+    Parameters:
+    -----------
     n_iterations: float
         The number of training iterations the algorithm will tune the weights for.
     learning_rate: float
@@ -38,23 +91,18 @@ class MultilayerPerceptron():
     plot_errors: boolean
         True or false depending if we wish to plot the training errors after training.
     """
-    def __init__(self, n_hidden, activation_function = Sigmoid, n_iterations=3000, learning_rate=0.01, momentum=0.3, \
-     early_stopping=False, plot_errors=False):
-        self.n_hidden = n_hidden    # Number of hidden neurons
-        self.W = None               # Hidden layer weights
-        self.V = None               # Output layer weights
-        self.w0 = None              # Hidden layer bias
-        self.v0 = None              # Output layer bias
+    def __init__(self, n_iterations=3000, learning_rate=0.0001, momentum=0, early_stopping=False, plot_errors=False):
         self.n_iterations = n_iterations
         self.plot_errors = plot_errors
         self.early_stopping = early_stopping
-        self.activation = activation_function()
 
-        # Optimization methods for each paramater
-        self.w_opt = GradientDescent(learning_rate=learning_rate, momentum=momentum)
-        self.w0_opt = GradientDescent(learning_rate=learning_rate, momentum=momentum)
-        self.v_opt = GradientDescent(learning_rate=learning_rate, momentum=momentum)
-        self.v0_opt = GradientDescent(learning_rate=learning_rate, momentum=momentum)
+        self.optimizer = GradientDescent(learning_rate, momentum)
+
+        self.layers = []
+
+    def add(self, layer):
+        layer.set_optimizer(self.optimizer)
+        self.layers.append(layer)
 
     def fit(self, X, y):
         X_train = X
@@ -68,58 +116,30 @@ class MultilayerPerceptron():
         # Convert the nominal y values to binary
         y_train = categorical_to_binary(y_train)
 
-        n_samples, n_features = np.shape(X_train)
-        n_outputs = np.shape(y_train)[1]
-
-        # Initial weights between [-1/sqrt(N), 1/sqrt(N)]
-        a = -1 / math.sqrt(n_features)
-        b = -a
-        self.W = (b - a) * np.random.random((n_features, self.n_hidden)) + a
-        self.w0 = (b - a) * np.random.random((1, self.n_hidden)) + a
-        self.V = (b - a) * np.random.random((self.n_hidden, n_outputs)) + a
-        self.v0 = (b - a) * np.random.random((1, n_outputs)) + a
-
         # Error history
         training_errors = []
         validation_errors = []
         iter_with_rising_val_error = 0
 
-        for i in range(self.n_iterations):
+        bar = progressbar.ProgressBar(widgets=bar_widgets)
 
-            # Calculate hidden layer
-            hidden_layer_input = X_train.dot(self.W) + self.w0
-            hidden_layer_output = self.activation.function(hidden_layer_input)
-            # Calculate output layer
-            output_layer_input = hidden_layer_output.dot(self.V) + self.v0
-            output = self.activation.function(output_layer_input)
+        for i in bar(range(self.n_iterations)):
 
-            # Calculate the error
-            error = y_train - output
+            # Calculate output
+            y_pred = self._forward_pass(X_train)
+
+            # Determine the error
+            error = y_train - y_pred
             mse = np.mean(np.power(error, 2))
             training_errors.append(mse)
 
-            # Calculate the loss gradient
-            output_gradient = -2 * (y_train - output) * \
-                self.activation.gradient(output_layer_input)
-            hidden_gradient = output_gradient.dot(
-                self.V.T) * self.activation.gradient(hidden_layer_input)
+            # Update the NN weights
+            self._backward_pass(-2*(y_train - y_pred))
 
-            # Calcualte the gradient with respect to each weight term
-            grad_wrt_v = hidden_layer_output.T.dot(output_gradient)
-            grad_wrt_v0 = np.ones((1, n_samples)).dot(output_gradient)
-            grad_wrt_w = X_train.T.dot(hidden_gradient)
-            grad_wrt_w0 = np.ones((1, n_samples)).dot(hidden_gradient)
-
-            # Update weights
-            # Move against the gradient to minimize loss
-            self.V          = self.v_opt.update(w=self.V, grad_wrt_w=grad_wrt_v)
-            self.v0      = self.v0_opt.update(w=self.v0, grad_wrt_w=grad_wrt_v0)
-            self.W          = self.w_opt.update(w=self.W, grad_wrt_w=grad_wrt_w)
-            self.w0      = self.w0_opt.update(w=self.w0, grad_wrt_w=grad_wrt_w0)
 
             if self.early_stopping:
                 # Calculate the validation error
-                error = y_validate - self._calculate_output(X_validate)
+                error = y_validate - self._forward_pass(X_validate)
                 mse = np.mean(np.power(error, 2))
                 validation_errors.append(mse)
 
@@ -150,19 +170,22 @@ class MultilayerPerceptron():
             plt.xlabel('Iterations')
             plt.show()
 
-    def _calculate_output(self, X):
-        # Calculate hidden layer
-        hidden_layer_input = X.dot(self.W) + self.w0
-        hidden_layer_output = self.activation.function(hidden_layer_input)
-        # Calculate output layer
-        output_layer_input = hidden_layer_output.dot(self.V) + self.v0
-        output = self.activation.function(output_layer_input)
+    def _forward_pass(self, X):
+        layer_output = X
+        for layer in self.layers:
+            layer_output = layer.calc_layer_output(layer_output)
 
-        return output
+        return layer_output
+
+    def _backward_pass(self, loss_grad):
+        acc_grad = loss_grad
+        for layer in reversed(self.layers):
+            acc_grad = layer.update_weights(acc_grad)
+
 
     # Use the trained model to predict labels of X
     def predict(self, X):
-        output = self._calculate_output(X)
+        output = self._forward_pass(X)
         # Predict as the indices of the highest valued outputs
         y_pred = np.argmax(output, axis=1)
         return y_pred
@@ -172,18 +195,23 @@ def main():
     data = datasets.load_digits()
     X = normalize(data.data)
     y = data.target
+
+    n_samples, n_features = np.shape(X)
+
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, seed=1)
 
     # MLP
-    clf = MultilayerPerceptron(n_hidden=12,
-        n_iterations=1000,
-        learning_rate=0.0001, 
-        momentum=0.8,
-        activation_function=ExpLU,
-        early_stopping=True,
-        plot_errors=True)
+    clf = MultilayerPerceptron(n_iterations=10000,
+                            learning_rate=0.0001, 
+                            momentum=0.4,
+                            early_stopping=True,
+                            plot_errors=True)
 
+    clf.add(DenseLayer(n_inputs=n_features, n_units=15))
+    clf.add(DenseLayer(n_inputs=15, n_units=15))
+    clf.add(DenseLayer(n_inputs=15, n_units=10))   
     clf.fit(X_train, y_train)
+
     y_pred = clf.predict(X_test)
 
     accuracy = accuracy_score(y_test, y_pred)

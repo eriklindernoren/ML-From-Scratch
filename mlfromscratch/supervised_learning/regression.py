@@ -174,7 +174,7 @@ def main():
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4)
 
-    pol_degree=11
+    poly_degree = 11
 
     # Finding regularization constant using cross validation
     lowest_error = float("inf")
@@ -186,7 +186,7 @@ def main():
             X_train, y_train, k=k)
         mse = 0
         for _X_train, _X_test, _y_train, _y_test in cross_validation_sets:
-            clf = PolynomialRidgeRegression(degree=pol_degree, 
+            clf = PolynomialRidgeRegression(degree=poly_degree, 
                                             reg_factor=reg_factor,
                                             learning_rate=0.001,
                                             n_iterations=10000)
@@ -205,7 +205,7 @@ def main():
             lowest_error = mse
 
     # Make final prediction
-    clf = PolynomialRidgeRegression(degree=pol_degree, 
+    clf = PolynomialRidgeRegression(degree=poly_degree, 
                                     reg_factor=best_reg_factor,
                                     learning_rate=0.001,
                                     n_iterations=10000)
@@ -227,7 +227,6 @@ def main():
     plt.title("MSE: %.2f" % mse, fontsize=10)
     plt.xlabel('Day')
     plt.ylabel('Temperature in Celcius')
-    plt.legend(loc='lower right')
     plt.legend((m1, m2), ("Training data", "Test data"), loc='lower right')
     plt.show()
 

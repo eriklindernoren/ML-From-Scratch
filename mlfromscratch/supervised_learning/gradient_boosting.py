@@ -5,6 +5,7 @@ import sys
 import os
 import matplotlib.pyplot as plt
 from scipy.optimize import line_search
+import progressbar
 
 # Import helper functions
 from mlfromscratch.utils.data_manipulation import train_test_split, standardize, categorical_to_binary
@@ -13,6 +14,10 @@ from mlfromscratch.utils.loss_functions import SquareLoss, LogisticLoss
 from mlfromscratch.supervised_learning.decision_tree import RegressionTree
 from mlfromscratch.unsupervised_learning import PCA
 
+bar_widgets = [
+    'Training:', progressbar.Percentage(), ' ', progressbar.Bar(marker="-", left="[", right="]"),
+    ' ', progressbar.ETA()
+]
 
 # Super class to GradientBoostingRegressor and GradientBoostingClassifier
 class GradientBoosting(object):
@@ -49,6 +54,7 @@ class GradientBoosting(object):
         self.regression = regression
         self.debug = debug
         self.multipliers = []
+        self.bar = progressbar.ProgressBar(widgets=bar_widgets)
         
         # Square loss for regression
         # Log loss for classification
@@ -68,17 +74,15 @@ class GradientBoosting(object):
 
     def fit(self, X, y):
         y_pred = np.full(np.shape(y), np.mean(y, axis=0))
-        for i, tree in enumerate(self.trees):
-            
+        
+        for i in self.bar(range(self.n_estimators)):
+            tree = self.trees[i]
             gradient = self.loss.gradient(y, y_pred)
             tree.fit(X, gradient)
             update = tree.predict(X)
             # Update y prediction
             y_pred -= np.multiply(self.learning_rate, update)
-            
-            if self.debug:
-                progress = 100 * (i / self.n_estimators)
-                print ("Progress: %.2f%%" % progress)
+
 
     def predict(self, X):
         y_pred = np.array([])

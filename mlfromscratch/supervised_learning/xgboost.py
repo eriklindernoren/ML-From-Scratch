@@ -4,6 +4,7 @@ from sklearn import datasets
 import sys
 import os
 import matplotlib.pyplot as plt
+import progressbar
 
 # Import helper functions
 from mlfromscratch.utils.data_manipulation import train_test_split, standardize, categorical_to_binary, normalize
@@ -12,6 +13,10 @@ from mlfromscratch.supervised_learning import XGBoostRegressionTree
 from mlfromscratch.utils.loss_functions import LogisticLoss
 from mlfromscratch.unsupervised_learning import PCA
 
+bar_widgets = [
+    'Training:', progressbar.Percentage(), ' ', progressbar.Bar(marker="-", left="[", right="]"),
+    ' ', progressbar.ETA()
+]
 
 
 class XGBoost(object):
@@ -43,6 +48,8 @@ class XGBoost(object):
         self.min_impurity = min_impurity              # Minimum variance reduction to continue
         self.max_depth = max_depth                  # Maximum depth for tree
         self.debug = debug
+
+        self.bar = progressbar.ProgressBar(widgets=bar_widgets)
         
         # Log loss for classification
         self.loss = LogisticLoss(grad_wrt_theta=False)
@@ -62,16 +69,14 @@ class XGBoost(object):
         y = categorical_to_binary(y)
 
         y_pred = np.zeros(np.shape(y))
-        for i, tree in enumerate(self.trees):
+
+        for i in self.bar(range(self.n_estimators)):
+            tree = self.trees[i]
             y_and_pred = np.concatenate((y, y_pred), axis=1)
             tree.fit(X, y_and_pred)
             update_pred = tree.predict(X)
 
             y_pred -= np.multiply(self.learning_rate, update_pred)
-
-            if self.debug:
-                progress = 100 * (i / self.n_estimators)
-                print ("Progress: %.2f%%" % progress)
 
     def predict(self, X):
         # Fix shape of y_pred as (n_samples, n_outputs)
