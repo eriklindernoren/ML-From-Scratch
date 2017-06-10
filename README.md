@@ -39,8 +39,8 @@ or
     <img src="http://eriklindernoren.se/images/prr.png" width="640"\>
 </p>
 <p align="center">
-    Figure: Polynomial ridge regression of temperature data measured in Linköping,<br>
-    Sweden 2016.
+    Figure: Polynomial ridge regression of temperature data measured in <br> 
+    Linköping, Sweden 2016.
 </p>
 
 ### Classification
