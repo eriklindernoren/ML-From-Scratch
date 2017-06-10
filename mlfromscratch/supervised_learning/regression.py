@@ -186,7 +186,7 @@ def main():
             X_train, y_train, k=k)
         mse = 0
         for _X_train, _X_test, _y_train, _y_test in cross_validation_sets:
-            clf = PolynomialRegression(degree=pol_degree, 
+            clf = PolynomialRidgeRegression(degree=pol_degree, 
                                             reg_factor=reg_factor,
                                             learning_rate=0.001,
                                             n_iterations=10000)
