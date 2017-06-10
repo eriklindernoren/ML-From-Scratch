@@ -13,7 +13,7 @@ from mlfromscratch.unsupervised_learning import PCA
 from mlfromscratch.supervised_learning import ClassificationTree
 
 bar_widgets = [
-    'Training:', progressbar.Percentage(), ' ', progressbar.Bar(marker="-", left="[", right="]"),
+    'Training: ', progressbar.Percentage(), ' ', progressbar.Bar(marker="-", left="[", right="]"),
     ' ', progressbar.ETA()
 ]
 

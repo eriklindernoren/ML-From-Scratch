@@ -17,7 +17,7 @@ from mlfromscratch.utils.optimizers import GradientDescent
 from mlfromscratch.unsupervised_learning import PCA
 
 bar_widgets = [
-    'Training:', progressbar.Percentage(), ' ', progressbar.Bar(marker="-", left="[", right="]"),
+    'Training: ', progressbar.Percentage(), ' ', progressbar.Bar(marker="-", left="[", right="]"),
     ' ', progressbar.ETA()
 ]
 
@@ -32,15 +32,14 @@ class DenseLayer():
         The number of neurons in the layer.
     activation_function: class:
         The activation function that will be used for each neuron. 
-        Possible choices: Sigmoid, ExpLU, ReLU, LeakyReLU, SoftPlus, TanH
+        Possible choices: Sigmoid, ELU, ReLU, LeakyReLU, SoftPlus, TanH, SELU
     """
     def __init__(self, n_inputs, n_units, activation_function=LeakyReLU):
         self.activation = activation_function()
-        self.prev_layer_output = None
+        self.layer_input = None
 
         # Initialize weights between [-1/sqrt(N), 1/sqrt(N)]
-        a = -1 / math.sqrt(n_inputs)
-        b = -a
+        a, b = -1 / math.sqrt(n_inputs), 1 / math.sqrt(n_inputs)
         self.W  = (b - a) * np.random.random((n_inputs, n_units)) + a
         self.wb = (b - a) * np.random.random((1, n_units)) + a
 
@@ -52,10 +51,10 @@ class DenseLayer():
     def update_weights(self, acc_grad, output=False):
 
         # The accumulated gradient at the layer
-        layer_grad = acc_grad * self.activation.gradient(self.prev_layer_output.dot(self.W) + self.wb)
+        layer_grad = acc_grad * self.activation.gradient(self.layer_input.dot(self.W) + self.wb)
 
         # Calculate gradient w.r.t layer weights
-        grad_w = self.prev_layer_output.T.dot(layer_grad)
+        grad_w = self.layer_input.T.dot(layer_grad)
         grad_wb = np.ones((1, np.shape(layer_grad)[0])).dot(layer_grad)
 
         # Update the layer weights
@@ -66,9 +65,9 @@ class DenseLayer():
         acc_grad = layer_grad.dot(self.W.T)
         return acc_grad
 
-    def calc_layer_output(self, prev_layer_output):
-        self.prev_layer_output = prev_layer_output
-        layer_output = self.activation.function(prev_layer_output.dot(self.W) + self.wb)
+    def calc_layer_output(self, layer_input):
+        self.layer_input = layer_input
+        layer_output = self.activation.function(layer_input.dot(self.W) + self.wb)
         return layer_output
 
 
@@ -95,9 +94,7 @@ class MultilayerPerceptron():
         self.n_iterations = n_iterations
         self.plot_errors = plot_errors
         self.early_stopping = early_stopping
-
         self.optimizer = GradientDescent(learning_rate, momentum)
-
         self.layers = []
 
     def add(self, layer):
@@ -129,26 +126,25 @@ class MultilayerPerceptron():
             y_pred = self._forward_pass(X_train)
 
             # Determine the error
-            error = y_train - y_pred
-            mse = np.mean(np.power(error, 2))
+            mse = np.mean(np.power(y_train - y_pred, 2))
             training_errors.append(mse)
 
             # Update the NN weights
-            self._backward_pass(-2*(y_train - y_pred))
+            self._backward_pass(loss_grad=-2*(y_train - y_pred))
 
 
             if self.early_stopping:
                 # Calculate the validation error
-                error = y_validate - self._forward_pass(X_validate)
-                mse = np.mean(np.power(error, 2))
+                e = y_validate - self._forward_pass(X_validate)
+                mse = np.mean(np.power(e, 2))
                 validation_errors.append(mse)
 
                 # If the validation error is larger than the previous iteration increase
                 # the counter
                 if len(validation_errors) > 1 and validation_errors[-1] > validation_errors[-2]:
                     iter_with_rising_val_error += 1
-                    # # If the validation error has been for more than 50 iterations
-                    # # stop training to avoid overfitting
+                    # If the validation error has been for more than 50 iterations
+                    # stop training to avoid overfitting
                     if iter_with_rising_val_error > 50:
                         break
                 else:
@@ -171,6 +167,8 @@ class MultilayerPerceptron():
             plt.show()
 
     def _forward_pass(self, X):
+        # Calculate the output of the NN. The output of layer l1 becomes the
+        # input of the following layer l2
         layer_output = X
         for layer in self.layers:
             layer_output = layer.calc_layer_output(layer_output)
@@ -178,6 +176,8 @@ class MultilayerPerceptron():
         return layer_output
 
     def _backward_pass(self, loss_grad):
+        # Propogate the gradient 'backwards' and update the
+        # weights by moving against the gradient of the loss func.
         acc_grad = loss_grad
         for layer in reversed(self.layers):
             acc_grad = layer.update_weights(acc_grad)
@@ -197,6 +197,7 @@ def main():
     y = data.target
 
     n_samples, n_features = np.shape(X)
+    n_hidden, n_output = 128, 10
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, seed=1)
 
@@ -207,9 +208,9 @@ def main():
                             early_stopping=True,
                             plot_errors=True)
 
-    clf.add(DenseLayer(n_inputs=n_features, n_units=15))
-    clf.add(DenseLayer(n_inputs=15, n_units=15))
-    clf.add(DenseLayer(n_inputs=15, n_units=10))   
+    clf.add(DenseLayer(n_inputs=n_features, n_units=n_hidden))
+    clf.add(DenseLayer(n_inputs=n_hidden, n_units=n_hidden))
+    clf.add(DenseLayer(n_inputs=n_hidden, n_units=n_output))   
     clf.fit(X_train, y_train)
 
     y_pred = clf.predict(X_test)

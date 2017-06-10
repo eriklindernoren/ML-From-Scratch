@@ -4,3 +4,4 @@ sklearn
 pandas
 cvxopt
 scipy
+progressbar

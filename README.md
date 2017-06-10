@@ -47,10 +47,11 @@ or
     $ python mlfromscratch/supervised_learning/multilayer_perceptron.py
 
 <p align="center">
-    <img src="http://eriklindernoren.se/images/mlp3.png" width="640">
+    <img src="http://eriklindernoren.se/images/mlp.png" width="640">
 </p>
 <p align="center">
-    Figure: Classification of the digit dataset using MLP with two hidden layers.
+    Figure: Classification of the digit dataset using an MLP with one <br>
+    hidden layer.
 </p>
 
 ### Clustering

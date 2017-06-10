@@ -14,7 +14,7 @@ from mlfromscratch.utils.loss_functions import LogisticLoss
 from mlfromscratch.unsupervised_learning import PCA
 
 bar_widgets = [
-    'Training:', progressbar.Percentage(), ' ', progressbar.Bar(marker="-", left="[", right="]"),
+    'Training: ', progressbar.Percentage(), ' ', progressbar.Bar(marker="-", left="[", right="]"),
     ' ', progressbar.ETA()
 ]
 
