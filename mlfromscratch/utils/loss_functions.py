@@ -21,6 +21,20 @@ class SquareLoss():
         return -(y - y_pred).dot(X)
 
 
+class CrossEntropy():
+    def __init__(self): pass
+
+    def loss(self, y, p):
+        # Avoid division by zero
+        p = np.clip(p, 1e-15, 1 - 1e-15)
+        return - y * np.log(p) - (1 - y) * np.log(1 - p)
+
+    def gradient(self, y, p):
+        # Avoid division by zero
+        p = np.clip(p, 1e-15, 1 - 1e-15)
+        return - (y / p) + (1 - y) / (1 - p)
+
+
 class LogisticLoss():
     def __init__(self, grad_wrt_theta=True):
         sigmoid = Sigmoid()
@@ -34,6 +48,7 @@ class LogisticLoss():
             self.hess = self._hess_wrt_pred
 
     def loss(self, y, y_pred):
+        y_pred = np.clip(y_pred, 1e-15, 1 - 1e-15)
         p = self.log_func(y_pred)
         return y * np.log(p) + (1 - y) * np.log(1 - p)
 

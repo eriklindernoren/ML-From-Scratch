@@ -8,6 +8,8 @@ import matplotlib.pyplot as plt
 # Import helper functions
 from mlfromscratch.utils.data_manipulation import train_test_split, normalize
 from mlfromscratch.utils.data_operation import accuracy_score
+from mlfromscratch.utils.optimizers import GradientDescent_
+from mlfromscratch.utils.activation_functions import Softmax
 from mlfromscratch.utils.kernels import *
 # Import ML models
 from mlfromscratch.supervised_learning import *
@@ -61,10 +63,10 @@ adaboost = Adaboost(n_clf = 8)
 naive_bayes = NaiveBayes()
 knn = KNN(k=4)
 logistic_regression = LogisticRegression()
-mlp = MultilayerPerceptron(n_iterations=5000, learning_rate=0.0001)
-mlp.add(DenseLayer(n_inputs=n_features, n_units=15))
-mlp.add(DenseLayer(n_inputs=15, n_units=15))
-mlp.add(DenseLayer(n_inputs=15, n_units=2))   
+mlp = MultilayerPerceptron(n_iterations=2000, optimizer=GradientDescent_(0.001, 0.4), batch_size=50)
+mlp.add(DenseLayer(n_inputs=n_features, n_units=64))
+mlp.add(DenseLayer(n_inputs=64, n_units=64))
+mlp.add(DenseLayer(n_inputs=64, n_units=2, activation_function=Softmax))   
 perceptron = Perceptron()
 decision_tree = ClassificationTree()
 random_forest = RandomForest(n_estimators=50)

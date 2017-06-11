@@ -1,4 +1,5 @@
 import numpy as np
+import sys
 
 # Collection of activation functions
 # Reference: https://en.wikipedia.org/wiki/Activation_function
@@ -11,6 +12,17 @@ class Sigmoid():
 
     def gradient(self, x):
         return self.function(x) * (1 - self.function(x))
+
+class Softmax():
+    def __init__(self): pass 
+
+    def function(self, x):
+        e_x = np.exp(x - np.max(x, axis=1, keepdims=True))
+        return e_x / np.sum(e_x, axis=1, keepdims=True)
+
+    def gradient(self, x):
+        p = self.function(x)
+        return p * (1 - p)
 
 class TanH():
     def __init__(self): pass 
@@ -25,22 +37,18 @@ class ReLU():
     def __init__(self): pass 
 
     def function(self, x):
-        # If x < 0: output = 0 else: output = x
         return np.where(x >= 0, x, 0)
 
     def gradient(self, x):
-        # If x < 0: output = 0 else: output = 1
         return np.where(x >= 0, 1, 0)
 
 class LeakyReLU():
     def __init__(self): pass 
 
     def function(self, x):
-        # If x < 0: output = 0.01*x else: output = x
         return np.where(x >= 0, x, 0.01 * x)
 
     def gradient(self, x):
-        # If x < 0: output = 0.01 else: output = 1
         return np.where(x >= 0, 1, 0.01)
 
 class ELU():

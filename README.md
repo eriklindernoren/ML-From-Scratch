@@ -50,8 +50,8 @@ or
     <img src="http://eriklindernoren.se/images/mlp.png" width="640">
 </p>
 <p align="center">
-    Figure: Classification of the digit dataset using an MLP with one <br>
-    hidden layer.
+    Figure: Classification of the digit dataset using an MLP with two <br>
+    hidden layers.
 </p>
 
 ### Clustering

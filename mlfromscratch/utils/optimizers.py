@@ -116,7 +116,7 @@ class RMSprop():
 
     def update(self, w, grad_func):
         # Calculate the gradient of the loss at w
-        grad_at_w = grad_func(w)
+        grad_at_w = np.clip(grad_func(w), -1, 1)
         # If not initialized
         if not self.Eg.any():
             self.Eg = np.zeros(np.shape(grad_at_w))
@@ -154,7 +154,7 @@ class Adam():
         m_hat = self.m / (1 - self.b1)
         v_hat = self.v / (1 - self.b2)
 
-        self.w_updt = self.learning_rate * np.linalg.pinv(np.sqrt(v_hat) + self.eps).T * m_hat
+        self.w_updt = np.clip(self.learning_rate * np.linalg.pinv(np.sqrt(v_hat) + self.eps).T * m_hat, -1, 1)
 
         return w - self.w_updt
 

@@ -6,14 +6,13 @@ import sys
 
 
 def shuffle_data(X, y, seed=None):
-    # Concatenate x and y and do a random shuffle
-    X_y = np.concatenate((X, y.reshape((1, len(y))).T), axis=1)
     if seed:
         np.random.seed(seed)
-    np.random.shuffle(X_y)
-    X = X_y[:, :-1]  # every column except the last
-    y = X_y[:, -1].astype(int)  # last column
-
+    n_samples = X.shape[0]
+    idx = np.arange(n_samples)
+    np.random.shuffle(idx)
+    X = X[idx]
+    y = y[idx]
     return X, y
 
 
@@ -65,8 +64,7 @@ def get_random_subsets(X, y, n_subsets, replacements=True):
     for _ in range(n_subsets):
         idx = np.random.choice(
             range(n_samples),
-            size=np.shape(
-                range(subsample_size)),
+            size=np.shape(range(subsample_size)),
             replace=replacements)
         X = X_y[idx][:, :-1]
         y = X_y[idx][:, -1]
