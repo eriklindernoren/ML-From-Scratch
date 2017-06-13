@@ -56,12 +56,6 @@ class DBSCAN():
                 self.neighbors[neighbor_i] = self._get_neighbors(neighbor_i)
                 # Make sure the neighbors neighbors are more than min_samples
                 if len(self.neighbors[neighbor_i]) >= self.min_samples:
-                    # Choose neighbors of neighbor except for sample
-                    distant_neighbors = self.neighbors[neighbor_i][
-                        np.where(self.neighbors[neighbor_i] != sample_i)]
-                    # Add the neighbors neighbors as neighbors of sample
-                    self.neighbors[sample_i] = np.concatenate(
-                        (self.neighbors[sample_i], distant_neighbors))
                     # Expand the cluster from the neighbor
                     expanded_cluster = self._expand_cluster(
                         neighbor_i, self.neighbors[neighbor_i])
@@ -109,7 +103,7 @@ class DBSCAN():
 
 def main():
     # Load the dataset
-    X, y = datasets.make_moons(n_samples=300, noise=0.1)
+    X, y = datasets.make_moons(n_samples=300, noise=0.1, shuffle=False)
 
     # Cluster the data using DBSCAN
     clf = DBSCAN(eps=0.17, min_samples=5)

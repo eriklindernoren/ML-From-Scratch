@@ -34,9 +34,9 @@ class DenseLayer():
         The number of neurons in the layer.
     activation_function: class:
         The activation function that will be used for each neuron. 
-        Possible choices: Sigmoid, ELU, ReLU, LeakyReLU, SoftPlus, TanH, SELU
+        Possible choices: Sigmoid, ELU, ReLU, LeakyReLU, SoftPlus, TanH, SELU, Softmax
     """
-    def __init__(self, n_inputs, n_units, activation_function=ELU):
+    def __init__(self, n_inputs, n_units, activation_function=ReLU):
         self.activation = activation_function()
         self.layer_input = None
         a, b = -1 / math.sqrt(n_inputs), 1 / math.sqrt(n_inputs)
