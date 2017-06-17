@@ -11,6 +11,7 @@ from mlfromscratch.utils.data_manipulation import train_test_split, standardize
 from mlfromscratch.utils.data_operation import calculate_entropy, accuracy_score
 from mlfromscratch.utils.data_operation import mean_squared_error, calculate_variance
 from mlfromscratch.unsupervised_learning import PCA
+from mlfromscratch.utils import Plot
 
 
 class DecisionNode():
@@ -304,8 +305,7 @@ def main():
 
     print ("Accuracy:", accuracy)
 
-    pca = PCA()
-    pca.plot_in_2d(X_test, y_pred, 
+    Plot().plot_in_2d(X_test, y_pred, 
         title="Decision Tree", 
         accuracy=accuracy, 
         legend_labels=data.target_names)

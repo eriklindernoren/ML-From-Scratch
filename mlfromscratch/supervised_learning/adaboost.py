@@ -10,7 +10,7 @@ import pandas as pd
 # Import helper functions
 from mlfromscratch.utils.data_manipulation import train_test_split
 from mlfromscratch.utils.data_operation import accuracy_score
-from mlfromscratch.unsupervised_learning import PCA
+from mlfromscratch.utils import Plot
 
 # Decision stump used as weak classifier in Adaboost
 class DecisionStump():
@@ -143,8 +143,7 @@ def main():
     print ("Accuracy:", accuracy)
 
     # Reduce dimensions to 2d using pca and plot the results
-    pca = PCA()
-    pca.plot_in_2d(X_test, y_pred, title="Adaboost", accuracy=accuracy)
+    Plot().plot_in_2d(X_test, y_pred, title="Adaboost", accuracy=accuracy)
 
 
 if __name__ == "__main__":

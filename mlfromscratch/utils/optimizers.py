@@ -1,5 +1,5 @@
 import numpy as np
-from data_manipulation import make_diagonal
+from data_manipulation import make_diagonal, normalize
 
 # Optimizers for models that use gradient methods for finding the 
 # weights that minimizes the loss.
@@ -43,7 +43,7 @@ class NesterovAcceleratedGradient():
 
     def update(self, w, grad_func):
         # Calculate the gradient of the loss a bit further down the slope from w
-        approx_future_grad = grad_func(w - self.momentum * self.w_updt)
+        approx_future_grad = np.clip(grad_func(w - self.momentum * self.w_updt), -1, 1)
         # Initialize on first update
         if not self.w_updt.any():
             self.w_updt = np.zeros(np.shape(w))
@@ -61,7 +61,7 @@ class Adagrad():
 
     def update(self, w, grad_func):
         # Calculate the gradient of the loss at w
-        grad_at_w = grad_func(w)
+        grad_at_w = np.clip(grad_func(w), -1, 1)
         # If not initialized
         if not self.G.any():
             self.G = np.zeros(np.shape(w))
@@ -83,7 +83,7 @@ class Adadelta():
 
     def update(self, w, grad_func):
         # Calculate the gradient of the loss at w
-        grad_at_w = grad_func(w)
+        grad_at_w = np.clip(grad_func(w), -1, 1)
         # If not initialized
         if not self.w_updt.any():
             self.w_updt = np.zeros(np.shape(w))
@@ -141,7 +141,7 @@ class Adam():
 
     def update(self, w, grad_func):
         # Calculate the gradient of the loss at w
-        grad_at_w = grad_func(w)
+        grad_at_w = np.clip(grad_func(w), -1, 1)
 
         # If not initialized
         if not self.m.any():
@@ -154,7 +154,7 @@ class Adam():
         m_hat = self.m / (1 - self.b1)
         v_hat = self.v / (1 - self.b2)
 
-        self.w_updt = np.clip(self.learning_rate * np.linalg.pinv(np.sqrt(v_hat) + self.eps).T * m_hat, -1, 1)
+        self.w_updt = self.learning_rate * np.linalg.pinv(np.sqrt(v_hat) + self.eps).T * m_hat
 
         return w - self.w_updt
 

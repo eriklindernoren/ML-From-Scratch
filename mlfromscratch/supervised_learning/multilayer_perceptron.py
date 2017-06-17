@@ -11,17 +11,15 @@ import progressbar
 
 # Import helper functions
 from mlfromscratch.utils.data_manipulation import train_test_split, categorical_to_binary, normalize, binary_to_categorical
-from mlfromscratch.utils.data_manipulation import get_random_subsets, shuffle_data
+from mlfromscratch.utils.data_manipulation import get_random_subsets, shuffle_data, normalize
 from mlfromscratch.utils.data_operation import accuracy_score
 from mlfromscratch.utils.activation_functions import Sigmoid, ReLU, SoftPlus, LeakyReLU, TanH, ELU, SELU, Softmax
 from mlfromscratch.utils.optimizers import GradientDescent, GradientDescent_, Adam, RMSprop, Adagrad, Adadelta
 from mlfromscratch.utils.loss_functions import CrossEntropy
 from mlfromscratch.unsupervised_learning import PCA
+from mlfromscratch.utils.misc import bar_widgets
+from mlfromscratch.utils import Plot
 
-bar_widgets = [
-    'Training: ', progressbar.Percentage(), ' ', progressbar.Bar(marker="-", left="[", right="]"),
-    ' ', progressbar.ETA()
-]
 
 class DenseLayer():
     """A fully-connected NN layer. 
@@ -36,14 +34,19 @@ class DenseLayer():
         The activation function that will be used for each neuron. 
         Possible choices: Sigmoid, ELU, ReLU, LeakyReLU, SoftPlus, TanH, SELU, Softmax
     """
-    def __init__(self, n_inputs, n_units, activation_function=ReLU):
+    def __init__(self, n_inputs, n_units, activation_function=SELU):
         self.activation = activation_function()
         self.layer_input = None
-        a, b = -1 / math.sqrt(n_inputs), 1 / math.sqrt(n_inputs)
-        self.W  = (b - a) * np.random.random((n_inputs, n_units)) + a
-        self.wb = (b - a) * np.random.random((1, n_units)) + a
+        self.initialized = False
+        self.n_inputs, self.n_units = n_inputs, n_units
+        self.W = None
+        self.wb = None
 
-    def set_optimizer(self, optimizer):
+    def initialize(self, optimizer):
+        # Initialize the weights
+        a, b = -1 / math.sqrt(self.n_inputs), 1 / math.sqrt(self.n_inputs)
+        self.W  = (b - a) * np.random.random((self.n_inputs, self.n_units)) + a
+        self.wb = (b - a) * np.random.random((1, self.n_units)) + a
         # Weight optimizers
         self.W_opt  = copy.copy(optimizer)
         self.wb_opt = copy.copy(optimizer)
@@ -79,48 +82,42 @@ class MultilayerPerceptron():
     -----------
     n_iterations: float
         The number of training iterations the algorithm will tune the weights for.
+    batch_size: int
+        The size of the batches that the model will train on at a time.
     optimizer: class
         The weight optimizer that will be used to tune the weights in order of minimizing
         the loss.
-    val_error: boolean
-        Whether to save some training data as validation data in order of evaluating how
-        the model generalizes as training progresses.
+    validation: tuple
+        A tuple containing validation data and labels
     """
-    def __init__(self, n_iterations, batch_size, optimizer, val_error=False):
+    def __init__(self, n_iterations, batch_size, optimizer, validation_data=None):
         self.n_iterations = n_iterations
         self.optimizer = optimizer
-        self.val_error = val_error
         self.layers = []
         self.errors = {"training": [], "validation": []}
         self.cross_ent = CrossEntropy()
         self.batch_size = batch_size
+        self.X_val = self.y_val = np.empty([])
+        if validation_data:
+            self.X_val, self.y_val = validation_data
+            self.y_val = categorical_to_binary(self.y_val.astype("int"))
 
     def add(self, layer):
-        layer.set_optimizer(self.optimizer)
+        layer.initialize(optimizer=self.optimizer)
         self.layers.append(layer)
 
     def fit(self, X, y):
-        X_train = X
-        y_train = y
+        # Convert the categorical data to binary
+        y = categorical_to_binary(y.astype("int"))
 
-        if self.val_error:
-            # Split the data into training and validation sets
-            X_train, X_validate, y_train, y_validate = train_test_split(X, y, test_size=0.1)
-            y_validate = categorical_to_binary(y_validate)
-
-        # Convert the nominal y values to binary
-        y_train = categorical_to_binary(y_train)
-
-        n_samples, n_features = np.shape(X_train)
+        n_samples, n_features = np.shape(X)
         n_batches = int(n_samples / self.batch_size)
 
         bar = progressbar.ProgressBar(widgets=bar_widgets)
-
         for i in bar(range(self.n_iterations)):
-            X_, y_ = shuffle_data(X_train, y_train)
+            X_, y_ = shuffle_data(X, y)
 
             batch_t_error = 0   # Mean batch training error
-            batch_v_error = 0   # Mean batch validation error
             for idx in np.array_split(np.arange(n_samples), n_batches):
                 X_batch, y_batch = X_[idx], y_[idx]
 
@@ -136,16 +133,13 @@ class MultilayerPerceptron():
                 # Update the NN weights
                 self._backward_pass(loss_grad=loss_grad)
 
-                if self.val_error:
-                    # Calculate the validation error
-                    y_val_pred = self._forward_pass(X_validate)
-                    loss = np.mean(self.cross_ent.loss(y_validate, y_val_pred))
-                    batch_v_error += loss
-
             batch_t_error /= n_batches
-            batch_v_error /= n_batches
             self.errors["training"].append(batch_t_error)
-            self.errors["validation"].append(batch_v_error)
+            if self.X_val.any():
+                # Calculate the validation error
+                y_val_p = self._forward_pass(self.X_val)
+                loss = np.mean(self.cross_ent.loss(self.y_val, y_val_p))
+                self.errors["validation"].append(loss)
 
     def _forward_pass(self, X):
         # Calculate the output of the NN. The output of layer l1 becomes the
@@ -182,31 +176,31 @@ class MultilayerPerceptron():
     # Use the trained model to predict labels of X
     def predict(self, X):
         output = self._forward_pass(X)
-        # Predict as the indices of the highest valued outputs
-        y_pred = np.argmax(output, axis=1)
-        return y_pred
+        # Return the sample with the highest output
+        return np.argmax(output, axis=1)
 
 
 def main():
+
     data = datasets.load_digits()
     X = normalize(data.data)
     y = data.target
 
     n_samples, n_features = np.shape(X)
-    n_hidden, n_output = 50, 10
+    n_hidden, n_output = 128, 10
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4, seed=1)
 
-    optimizer = GradientDescent_(learning_rate=0.0001, momentum=0.3)
+    optimizer = GradientDescent_(learning_rate=0.005, momentum=0.9)
 
     # MLP
-    clf = MultilayerPerceptron(n_iterations=6000,
-                            batch_size=200,
+    clf = MultilayerPerceptron(n_iterations=150,
+                            batch_size=64,
                             optimizer=optimizer,
-                            val_error=True)
+                            validation_data=(X_test, y_test))
 
     clf.add(DenseLayer(n_inputs=n_features, n_units=n_hidden))
-    clf.add(DenseLayer(n_inputs=n_hidden, n_units=n_hidden))
+    # clf.add(DenseLayer(n_inputs=n_hidden, n_units=n_hidden))
     clf.add(DenseLayer(n_inputs=n_hidden, n_units=n_output, activation_function=Softmax))  
     
     clf.fit(X_train, y_train)
@@ -218,8 +212,7 @@ def main():
     print ("Accuracy:", accuracy)
 
     # Reduce dimension to two using PCA and plot the results
-    pca = PCA()
-    pca.plot_in_2d(X_test, y_pred, title="Multilayer Perceptron", accuracy=accuracy, legend_labels=np.unique(y))
+    Plot().plot_in_2d(X_test, y_pred, title="Multilayer Perceptron", accuracy=accuracy, legend_labels=np.unique(y))
 
 if __name__ == "__main__":
     main()

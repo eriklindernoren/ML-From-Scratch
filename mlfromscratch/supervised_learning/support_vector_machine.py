@@ -12,6 +12,7 @@ from mlfromscratch.utils.data_manipulation import train_test_split, normalize
 from mlfromscratch.utils.data_operation import accuracy_score
 from mlfromscratch.utils.kernels import *
 from mlfromscratch.unsupervised_learning import PCA
+from mlfromscratch.utils import Plot
 
 # Hide cvxopt output
 cvxopt.solvers.options['show_progress'] = False
@@ -136,8 +137,7 @@ def main():
     print ("Accuracy:", accuracy)
 
     # Reduce dimension to two using PCA and plot the results
-    pca = PCA()
-    pca.plot_in_2d(X_test, y_pred, title="Support Vector Machine", accuracy=accuracy)
+    Plot().plot_in_2d(X_test, y_pred, title="Support Vector Machine", accuracy=accuracy)
 
 
 if __name__ == "__main__":

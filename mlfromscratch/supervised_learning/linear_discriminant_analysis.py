@@ -10,6 +10,7 @@ import pandas as pd
 from mlfromscratch.utils.data_operation import calculate_covariance_matrix, accuracy_score
 from mlfromscratch.utils.data_manipulation import normalize, standardize, train_test_split
 from mlfromscratch.unsupervised_learning import PCA
+from mlfromscratch.utils import Plot
 
 
 class LDA():
@@ -75,8 +76,7 @@ def main():
 
     print ("Accuracy:", accuracy)
 
-    pca = PCA()
-    pca.plot_in_2d(X_test, y_pred, title="LDA", accuracy=accuracy)
+    Plot().plot_in_2d(X_test, y_pred, title="LDA", accuracy=accuracy)
 
 if __name__ == "__main__":
     main()

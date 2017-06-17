@@ -11,11 +11,9 @@ from mlfromscratch.utils.data_manipulation import divide_on_feature, train_test_
 from mlfromscratch.utils.data_operation import accuracy_score, calculate_entropy
 from mlfromscratch.unsupervised_learning import PCA
 from mlfromscratch.supervised_learning import ClassificationTree
+from mlfromscratch.utils.misc import bar_widgets
+from mlfromscratch.utils import Plot
 
-bar_widgets = [
-    'Training: ', progressbar.Percentage(), ' ', progressbar.Bar(marker="-", left="[", right="]"),
-    ' ', progressbar.ETA()
-]
 
 class RandomForest():
     """Random Forest classifier. Uses a collection of classification trees that
@@ -132,8 +130,7 @@ def main():
 
     print ("Accuracy:", accuracy)
 
-    pca = PCA()
-    pca.plot_in_2d(X_test, y_pred, title="Random Forest", accuracy=accuracy, legend_labels=data.target_names)
+    Plot().plot_in_2d(X_test, y_pred, title="Random Forest", accuracy=accuracy, legend_labels=data.target_names)
 
 
 if __name__ == "__main__":

@@ -11,6 +11,7 @@ from mlfromscratch.utils.data_manipulation import k_fold_cross_validation_sets, 
 from mlfromscratch.utils.data_manipulation import train_test_split, polynomial_features
 from mlfromscratch.utils.data_operation import mean_squared_error
 from mlfromscratch.utils.loss_functions import SquareLoss
+from mlfromscratch.utils import Plot
 
 
 class Regression(object):
@@ -50,6 +51,7 @@ class Regression(object):
             # Do gradient descent for n_iterations
             for _ in range(self.n_iterations):
                 grad_w = self.square_loss.gradient(y, X, self.w) + self.reg_factor * self.w
+
                 self.w -= self.learning_rate * grad_w
         # Get weights by least squares (by pseudoinverse)
         else:
@@ -79,7 +81,7 @@ class LinearRegression(Regression):
         false then we use batch optimization by least squares.
     """
     def __init__(self, n_iterations=1000, learning_rate=0.001, gradient_descent=True):
-        super(RidgeRegression, self).__init__(reg_factor=0, n_iterations=n_iterations, \
+        super(LinearRegression, self).__init__(reg_factor=0, n_iterations=n_iterations, \
                                 learning_rate=learning_rate, gradient_descent=gradient_descent)
 
 class PolynomialRegression(Regression):
@@ -167,7 +169,7 @@ def main():
     data = pd.read_csv('mlfromscratch/data/TempLinkoping2016.txt', sep="\t")
 
     time = np.atleast_2d(data["time"].as_matrix()).T
-    temp = np.atleast_2d(data["temp"].as_matrix()).T
+    temp = data["temp"].as_matrix()
 
     X = time # fraction of the year [0, 1]
     y = temp

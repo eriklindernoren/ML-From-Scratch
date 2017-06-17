@@ -10,6 +10,7 @@ import numpy as np
 from mlfromscratch.utils.data_manipulation import normalize
 from mlfromscratch.utils.data_operation import euclidean_distance, calculate_covariance_matrix
 from mlfromscratch.unsupervised_learning import PCA
+from mlfromscratch.utils import Plot
 
 
 class GaussianMixtureModel():
@@ -133,9 +134,9 @@ def main():
     clf = GaussianMixtureModel(k=3)
     y_pred = clf.predict(X)
 
-    pca = PCA()
-    pca.plot_in_2d(X, y_pred, title="GMM Clustering")
-    pca.plot_in_2d(X, y, title="Actual Clustering")
+    p = MatplotlibWrapper()
+    p.plot_in_2d(X, y_pred, title="GMM Clustering")
+    p.plot_in_2d(X, y, title="Actual Clustering")
 
 
 if __name__ == "__main__":

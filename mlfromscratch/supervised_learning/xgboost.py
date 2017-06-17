@@ -12,11 +12,8 @@ from mlfromscratch.utils.data_operation import mean_squared_error, accuracy_scor
 from mlfromscratch.supervised_learning import XGBoostRegressionTree
 from mlfromscratch.utils.loss_functions import LogisticLoss
 from mlfromscratch.unsupervised_learning import PCA
-
-bar_widgets = [
-    'Training: ', progressbar.Percentage(), ' ', progressbar.Bar(marker="-", left="[", right="]"),
-    ' ', progressbar.ETA()
-]
+from mlfromscratch.utils.misc import bar_widgets
+from mlfromscratch.utils import Plot
 
 
 class XGBoost(object):
@@ -112,8 +109,7 @@ def main():
 
     print ("Accuracy:", accuracy)
 
-    pca = PCA()
-    pca.plot_in_2d(X_test, y_pred, 
+    Plot().plot_in_2d(X_test, y_pred, 
         title="XGBoost", 
     accuracy=accuracy, 
     legend_labels=data.target_names)

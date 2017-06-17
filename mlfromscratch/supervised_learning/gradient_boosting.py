@@ -13,11 +13,9 @@ from mlfromscratch.utils.data_operation import mean_squared_error, accuracy_scor
 from mlfromscratch.utils.loss_functions import SquareLoss, LogisticLoss
 from mlfromscratch.supervised_learning.decision_tree import RegressionTree
 from mlfromscratch.unsupervised_learning import PCA
+from mlfromscratch.utils.misc import bar_widgets
+from mlfromscratch.utils import Plot
 
-bar_widgets = [
-    'Training: ', progressbar.Percentage(), ' ', progressbar.Bar(marker="-", left="[", right="]"),
-    ' ', progressbar.ETA()
-]
 
 # Super class to GradientBoostingRegressor and GradientBoostingClassifier
 class GradientBoosting(object):
@@ -146,8 +144,8 @@ def main():
 
     print ("Accuracy:", accuracy)
 
-    pca = PCA()
-    pca.plot_in_2d(X_test, y_pred, 
+
+    Plot().plot_in_2d(X_test, y_pred, 
         title="Gradient Boosting", 
         accuracy=accuracy, 
         legend_labels=data.target_names)

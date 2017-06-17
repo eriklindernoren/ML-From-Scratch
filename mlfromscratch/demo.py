@@ -5,15 +5,12 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-# Import helper functions
-from mlfromscratch.utils.data_manipulation import train_test_split, normalize
+from mlfromscratch.utils.data_manipulation import train_test_split, normalize, categorical_to_binary
 from mlfromscratch.utils.data_operation import accuracy_score
 from mlfromscratch.utils.optimizers import GradientDescent_
 from mlfromscratch.utils.activation_functions import Softmax
 from mlfromscratch.utils.kernels import *
-# Import ML models
 from mlfromscratch.supervised_learning import *
-# Import PCA
 from mlfromscratch.unsupervised_learning import PCA
 
 
@@ -127,10 +124,12 @@ y_pred["XGBoost"] = xgboost.predict(X_test)
 
 print ("Accuracy:")
 for clf in y_pred:
-	if clf == "Adaboost" or clf == "Support Vector Machine":
-		print ("\t%-23s: %.5f" %(clf, accuracy_score(rescaled_y_test, y_pred[clf])))
-	else:
-		print ("\t%-23s: %.5f" %(clf, accuracy_score(y_test, y_pred[clf])))
+    # Rescaled {-1 1}
+    if clf == "Adaboost" or clf == "Support Vector Machine":
+        print ("\t%-23s: %.5f" %(clf, accuracy_score(rescaled_y_test, y_pred[clf])))
+    # Categorical
+    else:
+        print ("\t%-23s: %.5f" %(clf, accuracy_score(y_test, y_pred[clf])))
 
 # .......
 #  PLOT

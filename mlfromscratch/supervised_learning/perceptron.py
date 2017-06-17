@@ -12,6 +12,7 @@ from mlfromscratch.utils.data_operation import accuracy_score
 from mlfromscratch.utils.activation_functions import Sigmoid, ReLU, SoftPlus, LeakyReLU, TanH, ELU
 from mlfromscratch.utils.optimizers import GradientDescent
 from mlfromscratch.unsupervised_learning import PCA
+from mlfromscratch.utils import Plot
 
 
 class Perceptron():
@@ -160,8 +161,7 @@ def main():
     print ("Accuracy:", accuracy)
 
     # Reduce dimension to two using PCA and plot the results
-    pca = PCA()
-    pca.plot_in_2d(X_test, y_pred, title="Perceptron", accuracy=accuracy, legend_labels=np.unique(y))
+    Plot().plot_in_2d(X_test, y_pred, title="Perceptron", accuracy=accuracy, legend_labels=np.unique(y))
 
 
 if __name__ == "__main__":

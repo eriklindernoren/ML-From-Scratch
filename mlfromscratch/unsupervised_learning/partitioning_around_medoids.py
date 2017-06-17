@@ -9,6 +9,7 @@ import numpy as np
 from mlfromscratch.utils.data_manipulation import normalize
 from mlfromscratch.utils.data_operation import euclidean_distance
 from mlfromscratch.unsupervised_learning import PCA
+from mlfromscratch.utils import Plot
 
 
 class PAM():
@@ -138,9 +139,9 @@ def main():
     y_pred = clf.predict(X)
 
     # Project the data onto the 2 primary principal components
-    pca = PCA()
-    pca.plot_in_2d(X, y_pred, title="PAM Clustering")
-    pca.plot_in_2d(X, y, title="Actual Clustering")
+    p = Plot()
+    p.plot_in_2d(X, y_pred, title="PAM Clustering")
+    p.plot_in_2d(X, y, title="Actual Clustering")
 
 
 if __name__ == "__main__":

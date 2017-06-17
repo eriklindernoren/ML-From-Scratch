@@ -9,6 +9,7 @@ import numpy as np
 from mlfromscratch.utils.data_manipulation import normalize
 from mlfromscratch.utils.data_operation import euclidean_distance
 from mlfromscratch.unsupervised_learning import *
+from mlfromscratch.utils import Plot
 
 
 class KMeans():
@@ -107,9 +108,9 @@ def main():
     y_pred = clf.predict(X)
 
     # Project the data onto the 2 primary principal components
-    pca = PCA()
-    pca.plot_in_2d(X, y_pred, title="K-Means Clustering")
-    pca.plot_in_2d(X, y, title="Actual Clustering")
+    p = MatplotlibWrapper()
+    p.plot_in_2d(X, y_pred, title="K-Means Clustering")
+    p.plot_in_2d(X, y, title="Actual Clustering")
 
 
 if __name__ == "__main__":

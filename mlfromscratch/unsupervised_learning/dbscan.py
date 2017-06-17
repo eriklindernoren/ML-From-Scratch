@@ -6,6 +6,7 @@ from sklearn import datasets
 import numpy as np
 
 # Import helper functions
+from mlfromscratch.utils import Plot
 from mlfromscratch.utils.data_manipulation import normalize
 from mlfromscratch.utils.data_operation import euclidean_distance
 from mlfromscratch.unsupervised_learning import PCA
@@ -110,9 +111,9 @@ def main():
     y_pred = clf.predict(X)
 
     # Project the data onto the 2 primary principal components
-    pca = PCA()
-    pca.plot_in_2d(X, y_pred, title="DBSCAN")
-    pca.plot_in_2d(X, y, title="Actual Clustering")
+    p = Plot()
+    p.plot_in_2d(X, y_pred, title="DBSCAN")
+    p.plot_in_2d(X, y, title="Actual Clustering")
 
 if __name__ == "__main__":
     main()

@@ -14,6 +14,7 @@ from mlfromscratch.utils.activation_functions import Sigmoid
 from mlfromscratch.utils.loss_functions import LogisticLoss
 from mlfromscratch.utils.optimizers import GradientDescent
 from mlfromscratch.unsupervised_learning import PCA
+from mlfromscratch.utils import Plot
 
 
 class LogisticRegression():
@@ -89,8 +90,7 @@ def main():
     print ("Accuracy:", accuracy)
 
     # Reduce dimension to two using PCA and plot the results
-    pca = PCA()
-    pca.plot_in_2d(X_test, y_pred, title="Logistic Regression", accuracy=accuracy)
+    Plot().plot_in_2d(X_test, y_pred, title="Logistic Regression", accuracy=accuracy)
 
 if __name__ == "__main__":
     main()
