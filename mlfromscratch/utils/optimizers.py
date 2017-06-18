@@ -20,21 +20,6 @@ class GradientDescent():
         # Move against the gradient to minimize loss
         return w - self.learning_rate * self.w_updt
 
-class GradientDescent_():
-    def __init__(self, learning_rate=0.001, momentum=0):
-        self.learning_rate = learning_rate 
-        self.momentum = momentum
-        self.w_updt = np.array([])
-
-    def update(self, w, grad_func):
-        # Initialize on first update
-        if not self.w_updt.any():
-            self.w_updt = np.zeros(np.shape(w))
-        # Use momentum if set
-        self.w_updt = self.momentum * self.w_updt + self.learning_rate * grad_func(w)
-        # Move against the gradient to minimize loss
-        return w -  self.w_updt
-
 class NesterovAcceleratedGradient():
     def __init__(self, learning_rate=0.001, momentum=0.4):
         self.learning_rate = learning_rate 
@@ -59,9 +44,9 @@ class Adagrad():
         self.G = np.array([]) # Sum of squares of the gradients
         self.eps = 1e-8
 
-    def update(self, w, grad_func):
-        # Calculate the gradient of the loss at w
-        grad_at_w = np.clip(grad_func(w), -1, 1)
+    def update(self, w, grad_wrt_w):
+        # Gradient clipping to avoid exploding grads
+        grad_at_w = np.clip(grad_wrt_w, -1, 1)
         # If not initialized
         if not self.G.any():
             self.G = np.zeros(np.shape(w))
@@ -81,9 +66,10 @@ class Adadelta():
         self.eps = eps
         self.rho = rho
 
-    def update(self, w, grad_func):
-        # Calculate the gradient of the loss at w
-        grad_at_w = np.clip(grad_func(w), -1, 1)
+    def update(self, w, grad_wrt_w):
+        # Gradient clipping to avoid exploding grads
+        grad_at_w = np.clip(grad_wrt_w, -1, 1)
+
         # If not initialized
         if not self.w_updt.any():
             self.w_updt = np.zeros(np.shape(w))
@@ -114,9 +100,10 @@ class RMSprop():
         self.eps = 1e-8
         self.rho = rho
 
-    def update(self, w, grad_func):
-        # Calculate the gradient of the loss at w
-        grad_at_w = np.clip(grad_func(w), -1, 1)
+    def update(self, w, grad_wrt_w):
+        # Gradient clipping to avoid exploding grads
+        grad_at_w = np.clip(grad_wrt_w, -1, 1)
+
         # If not initialized
         if not self.Eg.any():
             self.Eg = np.zeros(np.shape(grad_at_w))
@@ -139,9 +126,9 @@ class Adam():
         self.b1 = b1
         self.b2 = b2
 
-    def update(self, w, grad_func):
-        # Calculate the gradient of the loss at w
-        grad_at_w = np.clip(grad_func(w), -1, 1)
+    def update(self, w, grad_wrt_w):
+        # Gradient clipping to avoid exploding grads
+        grad_at_w = np.clip(grad_wrt_w, -1, 1)
 
         # If not initialized
         if not self.m.any():

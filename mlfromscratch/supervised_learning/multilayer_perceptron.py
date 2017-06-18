@@ -14,8 +14,8 @@ from mlfromscratch.utils.data_manipulation import train_test_split, categorical_
 from mlfromscratch.utils.data_manipulation import get_random_subsets, shuffle_data, normalize
 from mlfromscratch.utils.data_operation import accuracy_score
 from mlfromscratch.utils.activation_functions import Sigmoid, ReLU, SoftPlus, LeakyReLU, TanH, ELU, SELU, Softmax
-from mlfromscratch.utils.optimizers import GradientDescent, GradientDescent_, Adam, RMSprop, Adagrad, Adadelta
-from mlfromscratch.utils.loss_functions import CrossEntropy
+from mlfromscratch.utils.optimizers import GradientDescent, Adam, RMSprop, Adagrad, Adadelta
+from mlfromscratch.utils.loss_functions import CrossEntropy, SquareLoss
 from mlfromscratch.unsupervised_learning import PCA
 from mlfromscratch.utils.misc import bar_widgets
 from mlfromscratch.utils import Plot
@@ -27,14 +27,14 @@ class DenseLayer():
     Parameters:
     -----------
     n_inputs: int
-        The number of inputs per neuron.
+        The number of inputs per unit.
     n_units: int
         The number of neurons in the layer.
     activation_function: class:
-        The activation function that will be used for each neuron. 
+        The activation function that will be used for each unit. 
         Possible choices: Sigmoid, ELU, ReLU, LeakyReLU, SoftPlus, TanH, SELU, Softmax
     """
-    def __init__(self, n_inputs, n_units, activation_function=SELU):
+    def __init__(self, n_inputs, n_units, activation_function=ReLU):
         self.activation = activation_function()
         self.layer_input = None
         self.initialized = False
@@ -51,32 +51,53 @@ class DenseLayer():
         self.W_opt  = copy.copy(optimizer)
         self.wb_opt = copy.copy(optimizer)
 
-    def backward_pass(self, acc_grad, output=False):
-
-        # The accumulated gradient at the layer
-        layer_grad = lambda w, b: acc_grad * self.activation.gradient(self.layer_input.dot(w) + b)
-
-        # Calculate gradient w.r.t layer weights
-        grad_w = lambda w: self.layer_input.T.dot(layer_grad(w, self.wb))
-        grad_wb = lambda b: np.ones((1, np.shape(layer_grad(self.W, b))[0])).dot(layer_grad(self.W, b))
-
-        # Update the layer weights
-        self.W = self.W_opt.update(w=self.W, grad_func=grad_w)
-        self.wb = self.wb_opt.update(w=self.wb, grad_func=grad_wb)
-
-        # Return accumulated gradient for next layer
-        acc_grad = layer_grad(self.W, self.wb).dot(self.W.T)
-        return acc_grad
-
-    def forward_pass(self, layer_input):
+    def forward_pass(self, layer_input, training=True):
         self.layer_input = layer_input
         layer_output = self.activation.function(layer_input.dot(self.W) + self.wb)
         return layer_output
 
+    def backward_pass(self, acc_grad):
+        # The accumulated gradient at the layer
+        layer_grad = acc_grad * self.activation.gradient(self.layer_input.dot(self.W) + self.wb)
+        
+        # Calculate gradient w.r.t layer weights
+        grad_w = self.layer_input.T.dot(layer_grad)
+        grad_wb = np.sum(layer_grad, axis=0, keepdims=True)
+
+        # Update the layer weights
+        self.W = self.W_opt.update(self.W, grad_w)
+        self.wb = self.wb_opt.update(self.wb, grad_wb)
+
+        # Return accumulated gradient for next layer
+        acc_grad = layer_grad.dot(self.W.T)
+        return acc_grad
+
+class DropoutLayer():
+    """A layer that randomly sets a fraction p of the output units of the previous layer
+    to zero.
+
+    Parameters:
+    -----------
+    p: float
+        The probability that unit x is set to zero.
+    """
+    def __init__(self, p=0.2):
+        self.p = p
+        self._mask = None
+
+    def forward_pass(self, X, training=True):
+        c = (1 - self.p)
+        if training:
+            self._mask = np.random.uniform(size=X.shape) > self.p
+            c = self._mask
+        return X * c
+
+    def backward_pass(self, acc_grad):
+        return acc_grad * self._mask
 
 
 class MultilayerPerceptron():
-    """Multilayer Perceptron classifier.
+    """The Multilayer Perceptron.
 
     Parameters:
     -----------
@@ -87,15 +108,17 @@ class MultilayerPerceptron():
     optimizer: class
         The weight optimizer that will be used to tune the weights in order of minimizing
         the loss.
+    loss: class
+        The loss function that the weights shall be tuned to minimize. 
     validation: tuple
         A tuple containing validation data and labels
     """
-    def __init__(self, n_iterations, batch_size, optimizer, validation_data=None):
+    def __init__(self, n_iterations, batch_size, optimizer, loss, validation_data=None):
         self.n_iterations = n_iterations
         self.optimizer = optimizer
         self.layers = []
         self.errors = {"training": [], "validation": []}
-        self.cross_ent = CrossEntropy()
+        self.cross_ent = loss()
         self.batch_size = batch_size
         self.X_val = self.y_val = np.empty([])
         if validation_data:
@@ -103,7 +126,8 @@ class MultilayerPerceptron():
             self.y_val = categorical_to_binary(self.y_val.astype("int"))
 
     def add(self, layer):
-        layer.initialize(optimizer=self.optimizer)
+        if hasattr(layer, 'initialize'):
+            layer.initialize(optimizer=self.optimizer)
         self.layers.append(layer)
 
     def fit(self, X, y):
@@ -114,7 +138,7 @@ class MultilayerPerceptron():
         n_batches = int(n_samples / self.batch_size)
 
         bar = progressbar.ProgressBar(widgets=bar_widgets)
-        for i in bar(range(self.n_iterations)):
+        for _ in bar(range(self.n_iterations)):
             X_, y_ = shuffle_data(X, y)
 
             batch_t_error = 0   # Mean batch training error
@@ -141,12 +165,12 @@ class MultilayerPerceptron():
                 loss = np.mean(self.cross_ent.loss(self.y_val, y_val_p))
                 self.errors["validation"].append(loss)
 
-    def _forward_pass(self, X):
+    def _forward_pass(self, X, training=True):
         # Calculate the output of the NN. The output of layer l1 becomes the
         # input of the following layer l2
         layer_output = X
         for layer in self.layers:
-            layer_output = layer.forward_pass(layer_output)
+            layer_output = layer.forward_pass(layer_output, training)
 
         return layer_output
 
@@ -175,7 +199,7 @@ class MultilayerPerceptron():
 
     # Use the trained model to predict labels of X
     def predict(self, X):
-        output = self._forward_pass(X)
+        output = self._forward_pass(X, training=False)
         # Return the sample with the highest output
         return np.argmax(output, axis=1)
 
@@ -187,20 +211,25 @@ def main():
     y = data.target
 
     n_samples, n_features = np.shape(X)
-    n_hidden, n_output = 128, 10
+    n_hidden, n_output = 256, 10
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4, seed=1)
 
-    optimizer = GradientDescent_(learning_rate=0.005, momentum=0.9)
-
+    optimizer = GradientDescent(learning_rate=0.001, momentum=0.9)
+  
     # MLP
-    clf = MultilayerPerceptron(n_iterations=150,
-                            batch_size=64,
+    clf = MultilayerPerceptron(n_iterations=1000,
+                            batch_size=128,
                             optimizer=optimizer,
+                            loss=CrossEntropy,
                             validation_data=(X_test, y_test))
 
     clf.add(DenseLayer(n_inputs=n_features, n_units=n_hidden))
-    # clf.add(DenseLayer(n_inputs=n_hidden, n_units=n_hidden))
+    clf.add(DropoutLayer(p=0.5))
+    clf.add(DenseLayer(n_inputs=n_hidden, n_units=n_hidden))
+    clf.add(DropoutLayer(p=0.5))
+    clf.add(DenseLayer(n_inputs=n_hidden, n_units=n_hidden))
+    clf.add(DropoutLayer(p=0.5))
     clf.add(DenseLayer(n_inputs=n_hidden, n_units=n_output, activation_function=Softmax))  
     
     clf.fit(X_train, y_train)
