@@ -25,11 +25,7 @@ Feel free to [reach out](mailto:eriklindernoren@gmail.com) if you can think of w
     
 ## Usage
 ### Installation
-    $ pip install mlfromscratch
-
-or
-
-    $ python setup.py install
+   $ python setup.py install
 
 
 ### Regression
