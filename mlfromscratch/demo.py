@@ -7,12 +7,13 @@ import matplotlib.pyplot as plt
 
 from mlfromscratch.utils.data_manipulation import train_test_split, normalize, categorical_to_binary
 from mlfromscratch.utils.data_operation import accuracy_score
-from mlfromscratch.utils.optimizers import GradientDescent
+from mlfromscratch.utils.optimizers import GradientDescent, Adam
 from mlfromscratch.utils.loss_functions import CrossEntropy
 from mlfromscratch.utils.activation_functions import Softmax
 from mlfromscratch.utils.kernels import *
 from mlfromscratch.supervised_learning import *
 from mlfromscratch.unsupervised_learning import PCA
+from mlfromscratch.utils.layers import DenseLayer, DropoutLayer, Conv2D, Flatten, Activation
 
 
 print ("+-------------------------------------------+")
@@ -61,13 +62,16 @@ adaboost = Adaboost(n_clf = 8)
 naive_bayes = NaiveBayes()
 knn = KNN(k=4)
 logistic_regression = LogisticRegression()
-mlp = MultilayerPerceptron(n_iterations=2000, 
-                        optimizer=GradientDescent(0.001, 0.4), 
+mlp = NeuralNetwork(n_iterations=300, 
+                        optimizer=Adam(), 
                         loss=CrossEntropy, 
                         batch_size=50)
-mlp.add(DenseLayer(n_inputs=n_features, n_units=64))
-mlp.add(DenseLayer(n_inputs=64, n_units=64))
-mlp.add(DenseLayer(n_inputs=64, n_units=2, activation_function=Softmax))   
+mlp.add(DenseLayer(input_shape=(n_features,), n_units=64))
+mlp.add(Activation('relu'))
+mlp.add(DenseLayer(n_units=64))
+mlp.add(Activation('relu'))
+mlp.add(DenseLayer(n_units=2))   
+mlp.add(Activation('softmax'))
 perceptron = Perceptron()
 decision_tree = ClassificationTree()
 random_forest = RandomForest(n_estimators=50)
