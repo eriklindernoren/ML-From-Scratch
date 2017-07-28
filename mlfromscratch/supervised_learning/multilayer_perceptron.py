@@ -18,7 +18,7 @@ from mlfromscratch.utils.loss_functions import CrossEntropy, SquareLoss
 from mlfromscratch.unsupervised_learning import PCA
 from mlfromscratch.utils.misc import bar_widgets
 from mlfromscratch.utils import Plot
-from mlfromscratch.utils.layers import DenseLayer, DropoutLayer, Conv2D, Flatten, Activation, MaxPooling
+from mlfromscratch.utils.layers import DenseLayer, DropoutLayer, Conv2D, Flatten, Activation
 
 
 
