@@ -81,9 +81,8 @@ class Conv2D(Layer):
     n_filters: int
         The number of filters that will convolve over the input matrix. The number of channels
         of the output shape.
-    padding: String
-        'valid' or 'same'. 'same' will ensure that the height and width of the output shape
-        will not shrink compared to the input shaped depending on the stride and filter shape.
+    padding: tuple
+        The zeros padding that will be added to the input image.
     stride: int
         The stride length of the filters during the convolution over the input.
     activation_function: class:
@@ -130,54 +129,6 @@ class Conv2D(Layer):
 
     def shape(self):
         return convolution_shape(self.input_shape, self.n_filters, self.filter_shape, self.stride, self.padding)
-
-
-class MaxPooling(Layer):
-    def __init__(self, pool_shape=(2, 2), stride=2, padding=(0, 0)):
-        """Max pooling layer.
-        Input shape: (n_images, n_channels, height, width)
-        Parameters
-        ----------
-        pool_shape : tuple(int, int), default (2, 2)
-        stride : tuple(int, int), default (1,1)
-        padding : tuple(int, int), default (0,0)
-        """
-        self.pool_shape = pool_shape
-        self.stride = stride
-        self.padding = padding
-
-    def set_input_shape(self, shape):
-        self.input_shape = shape
-        self.output_shape = (shape[0]/2, shape[1]/2, shape[2])
-
-    def forward_pass(self, X, training=True):
-        self.last_input = X
-
-        out_height, out_width = pooling_shape(self.pool_shape, X.shape, self.stride)
-        n_images, n_channels, _, _ = X.shape
-
-        col = image_to_column(X, self.pool_shape, self.stride, self.padding)
-        col = col.reshape(-1, self.pool_shape[0] * self.pool_shape[1])
-
-        arg_max = np.argmax(col, axis=1)
-        out = np.max(col, axis=1)
-        self.arg_max = arg_max
-        return out.reshape(n_images, out_height, out_width, n_channels)
-
-    def backward_pass(self, delta):
-        delta = delta.transpose(0, 2, 3, 1)
-
-        pool_size = self.pool_shape[0] * self.pool_shape[1]
-        y_max = np.zeros((delta.size, pool_size))
-        y_max[np.arange(self.arg_max.size), self.arg_max.flatten()] = delta.flatten()
-        y_max = y_max.reshape(delta.shape + (pool_size,))
-
-        dcol = y_max.reshape(y_max.shape[0] * y_max.shape[1] * y_max.shape[2], -1)
-        return column_to_image(dcol, self.last_input.shape, self.pool_shape, self.stride, self.padding)
-
-    def shape(self, x_shape):
-        h, w = convoltuion_shape(x_shape[2], x_shape[3], self.pool_shape, self.stride, self.padding)
-        return x_shape[0], x_shape[1], h, w
 
 class Flatten(Layer):
     """ Turns a multidimensional matrix into two-dimensional """
@@ -249,17 +200,7 @@ class Activation(Layer):
     def shape(self):
         return self.input_shape
 
-
-
 def image_to_column(images, filter_shape, stride, padding):
-    """Rearrange image blocks into columns.
-    Parameters
-    ----------
-    filter_shape : tuple(height, width)
-    images : np.array, shape (n_images, height, width, channels)
-    padding: tuple(height, width)
-    stride : tuple (height, width)
-    """
     batch_size, height, width, channels = images.shape
     f_height, f_width = filter_shape
     out_height, out_width, _ = convolution_shape(images.shape[1:], filter_shape, stride, padding)
@@ -277,15 +218,6 @@ def image_to_column(images, filter_shape, stride, padding):
 
 
 def column_to_image(columns, images_shape, filter_shape, stride, padding):
-    """Rearrange columns into image blocks.
-    Parameters
-    ----------
-    columns
-    images_shape : tuple(n_images, channels, height, width)
-    filter_shape : tuple(height, _width)
-    stride : tuple(height, width)
-    padding : tuple(height, width)
-    """
     n_images, height, width, channels = images_shape
     f_height, f_width = filter_shape
 
@@ -305,21 +237,9 @@ def column_to_image(columns, images_shape, filter_shape, stride, padding):
     return img[:, padding[0]:height + padding[0], padding[1]:width + padding[1], :]
 
 def convolution_shape(input_shape, n_filters, filter_shape, stride, padding):
-    """Calculate output height and width for convolution layer."""
+    """Calculate output shape for a convolution layer."""
     img_height, img_width, _ = input_shape
     height = (img_height + 2 * padding[0] - filter_shape[0]) / float(stride) + 1
     width = (img_width + 2 * padding[1] - filter_shape[1]) / float(stride) + 1
 
     return int(height), int(width), n_filters
-
-def pooling_shape(pool_shape, image_shape, stride):
-    """Calculate output shape for pooling layer."""
-    _, height, width, _ = image_shape
-
-    height = (height - pool_shape[0]) / float(stride) + 1
-    width = (width - pool_shape[1]) / float(stride) + 1
-
-    assert height % 1 == 0
-    assert width % 1 == 0
-
-    return int(height), int(width)

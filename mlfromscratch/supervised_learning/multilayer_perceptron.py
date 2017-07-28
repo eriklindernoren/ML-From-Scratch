@@ -23,7 +23,7 @@ from mlfromscratch.utils.layers import DenseLayer, DropoutLayer, Conv2D, Flatten
 
 
 class NeuralNetwork():
-    """The Multilayer Perceptron.
+    """Neural Network.
 
     Parameters:
     -----------
