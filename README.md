@@ -19,7 +19,7 @@ Feel free to [reach out](mailto:eriklindernoren@gmail.com) if you can think of w
     + [Classification](#classification)
     + [Clustering](#clustering)
     + [Association Analysis](#association-analysis)
-  * [Current Implementations](#current-implementations)
+  * [Implementations](#implementations)
     + [Supervised Learning](#supervised-learning)
     + [Unsupervised Learning](#unsupervised-learning)
     
@@ -87,7 +87,7 @@ or
         [1, 4] -> 2 (support: 0.29, confidence: 1.0)
 
 
-## Current Implementations
+## Implementations
 ### Supervised Learning
 - [Adaboost](mlfromscratch/supervised_learning/adaboost.py)
 - [Bayesian Regression](mlfromscratch/supervised_learning/bayesian_regression.py)

@@ -61,7 +61,10 @@ adaboost = Adaboost(n_clf = 8)
 naive_bayes = NaiveBayes()
 knn = KNN(k=4)
 logistic_regression = LogisticRegression()
-mlp = MultilayerPerceptron(n_iterations=2000, optimizer=GradientDescent(0.001, 0.4), loss=CrossEntropy, batch_size=50)
+mlp = MultilayerPerceptron(n_iterations=2000, 
+                        optimizer=GradientDescent(0.001, 0.4), 
+                        loss=CrossEntropy, 
+                        batch_size=50)
 mlp.add(DenseLayer(n_inputs=n_features, n_units=64))
 mlp.add(DenseLayer(n_inputs=64, n_units=64))
 mlp.add(DenseLayer(n_inputs=64, n_units=2, activation_function=Softmax))   

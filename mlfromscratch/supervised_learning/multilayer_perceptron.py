@@ -13,90 +13,16 @@ import progressbar
 from mlfromscratch.utils.data_manipulation import train_test_split, categorical_to_binary, normalize, binary_to_categorical
 from mlfromscratch.utils.data_manipulation import get_random_subsets, shuffle_data, normalize
 from mlfromscratch.utils.data_operation import accuracy_score
-from mlfromscratch.utils.activation_functions import Sigmoid, ReLU, SoftPlus, LeakyReLU, TanH, ELU, SELU, Softmax
 from mlfromscratch.utils.optimizers import GradientDescent, Adam, RMSprop, Adagrad, Adadelta
 from mlfromscratch.utils.loss_functions import CrossEntropy, SquareLoss
 from mlfromscratch.unsupervised_learning import PCA
 from mlfromscratch.utils.misc import bar_widgets
 from mlfromscratch.utils import Plot
+from mlfromscratch.utils.layers import DenseLayer, DropoutLayer, Conv2D, Flatten, Activation, MaxPooling
 
 
-class DenseLayer():
-    """A fully-connected NN layer. 
 
-    Parameters:
-    -----------
-    n_inputs: int
-        The number of inputs per unit.
-    n_units: int
-        The number of neurons in the layer.
-    activation_function: class:
-        The activation function that will be used for each unit. 
-        Possible choices: Sigmoid, ELU, ReLU, LeakyReLU, SoftPlus, TanH, SELU, Softmax
-    """
-    def __init__(self, n_inputs, n_units, activation_function=ReLU):
-        self.activation = activation_function()
-        self.layer_input = None
-        self.initialized = False
-        self.n_inputs, self.n_units = n_inputs, n_units
-        self.W = None
-        self.wb = None
-
-    def initialize(self, optimizer):
-        # Initialize the weights
-        a, b = -1 / math.sqrt(self.n_inputs), 1 / math.sqrt(self.n_inputs)
-        self.W  = (b - a) * np.random.random((self.n_inputs, self.n_units)) + a
-        self.wb = (b - a) * np.random.random((1, self.n_units)) + a
-        # Weight optimizers
-        self.W_opt  = copy.copy(optimizer)
-        self.wb_opt = copy.copy(optimizer)
-
-    def forward_pass(self, layer_input, training=True):
-        self.layer_input = layer_input
-        layer_output = self.activation.function(layer_input.dot(self.W) + self.wb)
-        return layer_output
-
-    def backward_pass(self, acc_grad):
-        # The accumulated gradient at the layer
-        layer_grad = acc_grad * self.activation.gradient(self.layer_input.dot(self.W) + self.wb)
-        
-        # Calculate gradient w.r.t layer weights
-        grad_w = self.layer_input.T.dot(layer_grad)
-        grad_wb = np.sum(layer_grad, axis=0, keepdims=True)
-
-        # Update the layer weights
-        self.W = self.W_opt.update(self.W, grad_w)
-        self.wb = self.wb_opt.update(self.wb, grad_wb)
-
-        # Return accumulated gradient for next layer
-        acc_grad = layer_grad.dot(self.W.T)
-        return acc_grad
-
-class DropoutLayer():
-    """A layer that randomly sets a fraction p of the output units of the previous layer
-    to zero.
-
-    Parameters:
-    -----------
-    p: float
-        The probability that unit x is set to zero.
-    """
-    def __init__(self, p=0.2):
-        self.p = p
-        self._mask = None
-
-    def forward_pass(self, X, training=True):
-        c = (1 - self.p)
-        if training:
-            self._mask = np.random.uniform(size=X.shape) > self.p
-            c = self._mask
-        return X * c
-
-    def backward_pass(self, acc_grad):
-        return acc_grad * self._mask
-
-
-class MultilayerPerceptron():
+class NeuralNetwork():
     """The Multilayer Perceptron.
 
     Parameters:
@@ -109,7 +35,7 @@ class MultilayerPerceptron():
         The weight optimizer that will be used to tune the weights in order of minimizing
         the loss.
     loss: class
-        The loss function that the weights shall be tuned to minimize. 
+        Loss function used to measure the models performance. SquareLoss or CrossEntropy.
     validation: tuple
         A tuple containing validation data and labels
     """
@@ -126,24 +52,31 @@ class MultilayerPerceptron():
             self.y_val = categorical_to_binary(self.y_val.astype("int"))
 
     def add(self, layer):
+
+        if self.layers:
+            layer.set_input_shape(shape=self.layers[-1].shape())
+
         if hasattr(layer, 'initialize'):
             layer.initialize(optimizer=self.optimizer)
+
         self.layers.append(layer)
 
     def fit(self, X, y):
         # Convert the categorical data to binary
         y = categorical_to_binary(y.astype("int"))
 
-        n_samples, n_features = np.shape(X)
+        n_samples = np.shape(X)[0]
         n_batches = int(n_samples / self.batch_size)
 
         bar = progressbar.ProgressBar(widgets=bar_widgets)
         for _ in bar(range(self.n_iterations)):
-            X_, y_ = shuffle_data(X, y)
+            idx = range(n_samples)
+            np.random.shuffle(idx)
 
             batch_t_error = 0   # Mean batch training error
-            for idx in np.array_split(np.arange(n_samples), n_batches):
-                X_batch, y_batch = X_[idx], y_[idx]
+            for i in range(n_batches):
+                X_batch = X[idx[i*self.batch_size:(i+1)*self.batch_size]]
+                y_batch = y[idx[i*self.batch_size:(i+1)*self.batch_size]]
 
                 # Calculate output
                 y_pred = self._forward_pass(X_batch)
@@ -210,27 +143,30 @@ def main():
     X = normalize(data.data)
     y = data.target
 
-    n_samples, n_features = np.shape(X)
-    n_hidden, n_output = 256, 10
+    n_samples = np.shape(X)
+    n_hidden = 512
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4, seed=1)
 
-    optimizer = GradientDescent(learning_rate=0.001, momentum=0.9)
-  
+    _, n_features = X_train.shape
+
+    optimizer = Adam()
+
     # MLP
-    clf = MultilayerPerceptron(n_iterations=1000,
+    clf = NeuralNetwork(n_iterations=50,
                             batch_size=128,
                             optimizer=optimizer,
                             loss=CrossEntropy,
                             validation_data=(X_test, y_test))
 
-    clf.add(DenseLayer(n_inputs=n_features, n_units=n_hidden))
-    clf.add(DropoutLayer(p=0.5))
-    clf.add(DenseLayer(n_inputs=n_hidden, n_units=n_hidden))
-    clf.add(DropoutLayer(p=0.5))
-    clf.add(DenseLayer(n_inputs=n_hidden, n_units=n_hidden))
-    clf.add(DropoutLayer(p=0.5))
-    clf.add(DenseLayer(n_inputs=n_hidden, n_units=n_output, activation_function=Softmax))  
+    clf.add(DenseLayer(n_hidden, input_shape=(n_features,)))
+    clf.add(Activation('leaky_relu'))
+    clf.add(DenseLayer(n_hidden))
+    clf.add(Activation('leaky_relu'))
+    clf.add(DenseLayer(n_hidden))
+    clf.add(Activation('leaky_relu'))
+    clf.add(DenseLayer(10))
+    clf.add(Activation('softmax'))
     
     clf.fit(X_train, y_train)
     clf.plot_errors()

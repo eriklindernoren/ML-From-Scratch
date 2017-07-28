@@ -53,7 +53,7 @@ class Adagrad():
         # Add the square of the gradient of the loss function at w
         self.G += np.power(grad_at_w, 2)
         # Adaptive gradient with higher learning rate for sparse data
-        w_updt = self.learning_rate * np.linalg.pinv(np.sqrt(self.G + self.eps)).T * grad_at_w
+        w_updt = self.learning_rate / np.sqrt(self.G + self.eps).T * grad_at_w
 
         return w - w_updt
 
@@ -83,7 +83,7 @@ class Adadelta():
         RMS_grad = np.sqrt(self.E_grad + self.eps)
 
         # Adaptive learning rate
-        adaptive_lr = RMS_delta_w * np.linalg.pinv(RMS_grad).T 
+        adaptive_lr = RMS_delta_w / RMS_grad
 
         # Calculate the update
         self.w_updt = adaptive_lr * grad_at_w
@@ -141,7 +141,7 @@ class Adam():
         m_hat = self.m / (1 - self.b1)
         v_hat = self.v / (1 - self.b2)
 
-        self.w_updt = self.learning_rate * np.linalg.pinv(np.sqrt(v_hat) + self.eps).T * m_hat
+        self.w_updt = self.learning_rate / (np.sqrt(v_hat) + self.eps) * m_hat
 
         return w - self.w_updt
 

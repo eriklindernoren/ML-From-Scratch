@@ -90,7 +90,6 @@ class KMeans():
             prev_centroids = centroids
             # Calculate new centroids from the clusters
             centroids = self._calculate_centroids(clusters, X)
-
             # If no centroids have changed => convergence
             diff = centroids - prev_centroids
             if not diff.any():
