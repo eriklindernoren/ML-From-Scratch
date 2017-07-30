@@ -71,6 +71,8 @@ class Dense(Layer):
         return (self.n_units,)
 
 
+
+
 class Conv2D(Layer):
     """A 2D Convolution Layer.
 
@@ -112,12 +114,12 @@ class Conv2D(Layer):
         self.layer_input = X
         # Turn image shape into column shape 
         # (enables dot product between input and weights)
-        self.col = image_to_column(X, self.filter_shape, self.stride, self.padding)
+        self.X_col = image_to_column(X, self.filter_shape, self.stride, self.padding)
         # Turn weights into column shape
-        self.col_W = self.W.reshape((self.n_filters, -1))
+        self.W_col = self.W.reshape((self.n_filters, -1))
 
         # Calculate output
-        output = self.col_W.dot(self.col) + self.wb
+        output = self.W_col.dot(self.X_col) + self.wb
         # Reshape into (n_filters, out_height, out_width, batch_size)
         output = output.reshape(self.output_shape() + (batch_size, ))
         # Redistribute axises so that batch size comes first
@@ -129,7 +131,7 @@ class Conv2D(Layer):
         
         # Take dot product between column shaped accum. gradient and column shape
         # layer input to determine the gradient at the layer with respect to layer weights
-        grad_w = acc_grad.dot(self.col.T).reshape(self.W.shape)
+        grad_w = acc_grad.dot(self.X_col.T).reshape(self.W.shape)
         # The gradient with respect to bias terms is the sum similarly to in Dense layer
         grad_wb = np.sum(acc_grad, axis=1, keepdims=True)
 
@@ -138,7 +140,7 @@ class Conv2D(Layer):
         self.wb = self.wb_opt.update(self.wb, grad_wb)
 
         # Recalculate the gradient which will be propogated back to prev. layer
-        acc_grad = self.col_W.T.dot(acc_grad)
+        acc_grad = self.W_col.T.dot(acc_grad)
         # Reshape from column shape to image shape
         acc_grad = column_to_image(acc_grad, self.layer_input.shape, self.filter_shape, self.stride, self.padding)
 
@@ -147,6 +149,56 @@ class Conv2D(Layer):
     def output_shape(self):
         height, width = convolution_shape(self.input_shape, self.filter_shape, self.stride, self.padding)
         return self.n_filters, height, width
+
+
+
+class MaxPooling2D(Layer):
+    """A 2D MaxPooling layer.
+    """
+    def __init__(self, pool_shape=(2, 2), stride=1, padding=0):
+        self.pool_shape = pool_shape
+        self.stride = stride
+        self.padding = padding
+
+    def forward_pass(self, X, training=True):
+        self.layer_input = X
+
+        batch_size, channels, height, width = X.shape
+
+        _, out_height, out_width = self.output_shape()
+
+        X = X.reshape(batch_size*channels, 1, height, width)
+        X_col = image_to_column(X, self.pool_shape, self.stride, self.padding)
+        
+        self.arg_max = np.argmax(X_col, axis=0).flatten()
+        output = X_col[self.arg_max, range(self.arg_max.size)]
+        output = output.reshape(out_height, out_width, batch_size, channels)
+        output = output.transpose(2, 3, 0, 1)
+
+        return output
+
+    def backward_pass(self, acc_grad):
+        batch_size, _, _, _ = acc_grad.shape
+        channels, height, width = self.input_shape
+
+        dX_col = np.zeros((np.prod(self.pool_shape), acc_grad.size))
+        acc_grad = acc_grad.transpose(2, 3, 0, 1).ravel()
+
+        dX_col[self.arg_max, range(acc_grad.size)] = acc_grad
+
+        acc_grad = column_to_image(dX_col, (batch_size * channels, 1, height, width), self.pool_shape, self.stride, 0)
+        acc_grad = acc_grad.reshape((batch_size,) + self.input_shape)
+
+        return acc_grad
+
+    def output_shape(self):
+        channels, height, width = self.input_shape
+        out_height = (height - self.pool_shape[0]) / self.stride + 1
+        out_width = (width - self.pool_shape[1]) / self.stride + 1
+        assert out_height % 1 == 0
+        assert out_width % 1 == 0
+        return channels, int(out_height), int(out_width)
+
 
 class Flatten(Layer):
     """ Turns a multidimensional matrix into two-dimensional """
@@ -162,6 +214,8 @@ class Flatten(Layer):
 
     def output_shape(self):
         return (np.prod(self.input_shape),)
+
+
 
 class Dropout(Layer):
     """A layer that randomly sets a fraction p of the output units of the previous layer
@@ -193,6 +247,8 @@ class Dropout(Layer):
         return self.input_shape
 
 
+
+
 class Activation(Layer):
 
     activation_functions = {
@@ -219,27 +275,31 @@ class Activation(Layer):
     def output_shape(self):
         return self.input_shape
 
+
+
 # Reference: CS231n Stanford
-def get_im2col_indices(x_shape, filter_shape, padding=1, stride=1):
+def get_im2col_indices(images_shape, filter_shape, padding=1, stride=1):
   # First figure out what the size of the output should be
-  N, C, H, W = x_shape
+  batch_size, channels, height, width = images_shape
   filter_height, filter_width = filter_shape
-  assert (H + 2 * padding - filter_height) % stride == 0
-  assert (W + 2 * padding - filter_height) % stride == 0
-  out_height = (H + 2 * padding - filter_height) / stride + 1
-  out_width = (W + 2 * padding - filter_width) / stride + 1
+  assert (height + 2 * padding - filter_height) % stride == 0
+  assert (width + 2 * padding - filter_height) % stride == 0
+  out_height = (height + 2 * padding - filter_height) / stride + 1
+  out_width = (width + 2 * padding - filter_width) / stride + 1
 
   i0 = np.repeat(np.arange(filter_height), filter_width)
-  i0 = np.tile(i0, C)
+  i0 = np.tile(i0, channels)
   i1 = stride * np.repeat(np.arange(out_height), out_width)
-  j0 = np.tile(np.arange(filter_width), filter_height * C)
+  j0 = np.tile(np.arange(filter_width), filter_height * channels)
   j1 = stride * np.tile(np.arange(out_width), out_height)
   i = i0.reshape(-1, 1) + i1.reshape(1, -1)
   j = j0.reshape(-1, 1) + j1.reshape(1, -1)
 
-  k = np.repeat(np.arange(C), filter_height * filter_width).reshape(-1, 1)
+  k = np.repeat(np.arange(channels), filter_height * filter_width).reshape(-1, 1)
 
   return (k, i, j)
+
+
 
 # Reference: CS231n Stanford
 def image_to_column(images, filter_shape, stride, padding):
@@ -259,6 +319,8 @@ def image_to_column(images, filter_shape, stride, padding):
     cols = cols.transpose(1, 2, 0).reshape(filter_height * filter_width * channels, -1)
     return cols
 
+
+
 # Reference: CS231n Stanford
 def column_to_image(cols, images_shape, filter_shape, stride, padding):
     batch_size, channels, height, width = images_shape
@@ -277,6 +339,8 @@ def column_to_image(cols, images_shape, filter_shape, stride, padding):
 
     # Return image without padding
     return images_padded[:, :, p:height+p, p:width+p]
+
+
 
 def convolution_shape(input_shape, filter_shape, stride, padding):
     """Calculate output height and width for a convolution layer."""

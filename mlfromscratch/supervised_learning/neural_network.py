@@ -18,7 +18,7 @@ from mlfromscratch.utils.loss_functions import CrossEntropy, SquareLoss
 from mlfromscratch.unsupervised_learning import PCA
 from mlfromscratch.utils.misc import bar_widgets
 from mlfromscratch.utils import Plot
-from mlfromscratch.utils.layers import Dense, Dropout, Conv2D, Flatten, Activation
+from mlfromscratch.utils.layers import Dense, Dropout, Conv2D, Flatten, Activation, MaxPooling2D
 
 
 
@@ -95,6 +95,7 @@ class NeuralNetwork():
                 self._backward_pass(loss_grad=loss_grad)
 
             # Save the epoch mean error
+            print (batch_t_error / n_batches)
             self.errors["training"].append(batch_t_error / n_batches)
             if self.X_val.any():
                 # Calculate the validation error
@@ -193,7 +194,7 @@ def main():
     X_train = X_train.reshape((-1,1,8,8))
     X_test = X_test.reshape((-1,1,8,8))
 
-    clf = NeuralNetwork(n_iterations=30,
+    clf = NeuralNetwork(n_iterations=50,
                             batch_size=128,
                             optimizer=optimizer,
                             loss=CrossEntropy,
@@ -201,14 +202,11 @@ def main():
 
     clf.add(Conv2D(n_filters=16, filter_shape=(3,3), padding=1, input_shape=(1,8,8)))
     clf.add(Activation('relu'))
-    clf.add(Dropout(0.25))
     clf.add(Conv2D(n_filters=32, filter_shape=(3,3), padding=1))
     clf.add(Activation('relu'))
-    clf.add(Dropout(0.25))
     clf.add(Flatten())
     clf.add(Dense(128))
     clf.add(Activation('relu'))
-    clf.add(Dropout(0.25))
     clf.add(Dense(10))
     clf.add(Activation('softmax'))
     
