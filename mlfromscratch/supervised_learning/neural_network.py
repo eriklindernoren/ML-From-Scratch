@@ -18,7 +18,7 @@ from mlfromscratch.utils.loss_functions import CrossEntropy, SquareLoss
 from mlfromscratch.unsupervised_learning import PCA
 from mlfromscratch.utils.misc import bar_widgets
 from mlfromscratch.utils import Plot
-from mlfromscratch.utils.layers import DenseLayer, DropoutLayer, Conv2D, Flatten, Activation
+from mlfromscratch.utils.layers import Dense, Dropout, Conv2D, Flatten, Activation
 
 
 
@@ -44,7 +44,7 @@ class NeuralNetwork():
         self.optimizer = optimizer
         self.layers = []
         self.errors = {"training": [], "validation": []}
-        self.cross_ent = loss()
+        self.loss_function = loss()
         self.batch_size = batch_size
         self.X_val = self.y_val = np.empty([])
         if validation_data:
@@ -82,12 +82,12 @@ class NeuralNetwork():
                 y_pred = self._forward_pass(X_batch)
 
                 # Calculate the cross entropy training loss
-                loss = np.mean(self.cross_ent.loss(y_batch, y_pred))
+                loss = np.mean(self.loss_function.loss(y_batch, y_pred))
                 batch_t_error += loss
 
-                loss_grad = self.cross_ent.gradient(y_batch, y_pred)
+                loss_grad = self.loss_function.gradient(y_batch, y_pred)
 
-                # Update the NN weights
+                # Backprop. Update weights
                 self._backward_pass(loss_grad=loss_grad)
 
             batch_t_error /= n_batches
@@ -95,7 +95,7 @@ class NeuralNetwork():
             if self.X_val.any():
                 # Calculate the validation error
                 y_val_p = self._forward_pass(self.X_val)
-                loss = np.mean(self.cross_ent.loss(self.y_val, y_val_p))
+                loss = np.mean(self.loss_function.loss(self.y_val, y_val_p))
                 self.errors["validation"].append(loss)
 
     def _forward_pass(self, X, training=True):
@@ -139,8 +139,11 @@ class NeuralNetwork():
 
 def main():
 
+    from sklearn.datasets import fetch_mldata
+    # data = fetch_mldata('MNIST original')
+
     data = datasets.load_digits()
-    X = normalize(data.data)
+    X = data.data
     y = data.target
 
     n_samples = np.shape(X)
@@ -148,24 +151,64 @@ def main():
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4, seed=1)
 
-    _, n_features = X_train.shape
-
     optimizer = Adam()
 
+    #-----
     # MLP
+    #-----
+
+    # clf = NeuralNetwork(n_iterations=50,
+    #                         batch_size=128,
+    #                         optimizer=optimizer,
+    #                         loss=CrossEntropy,
+    #                         validation_data=(X_test, y_test))
+
+    # clf.add(Dense(n_hidden, input_shape=(8*8,)))
+    # clf.add(Activation('leaky_relu'))
+    # clf.add(Dense(n_hidden))
+    # clf.add(Activation('leaky_relu'))
+    # clf.add(Dropout(0.25))
+    # clf.add(Dense(n_hidden))
+    # clf.add(Activation('leaky_relu'))
+    # clf.add(Dropout(0.25))
+    # clf.add(Dense(n_hidden))
+    # clf.add(Activation('leaky_relu'))
+    # clf.add(Dropout(0.25))
+    # clf.add(Dense(10))
+    # clf.add(Activation('softmax'))
+    
+    # clf.fit(X_train, y_train)
+    # clf.plot_errors()
+
+    # y_pred = clf.predict(X_test)
+
+    # accuracy = accuracy_score(y_test, y_pred)
+    # print ("Accuracy:", accuracy)
+
+    #----------
+    # Conv Net
+    #----------
+
+    X_train = X_train.reshape((-1,1,8,8))
+    X_test = X_test.reshape((-1,1,8,8))
+
     clf = NeuralNetwork(n_iterations=50,
-                            batch_size=128,
+                            batch_size=256,
                             optimizer=optimizer,
                             loss=CrossEntropy,
                             validation_data=(X_test, y_test))
 
-    clf.add(DenseLayer(n_hidden, input_shape=(n_features,)))
-    clf.add(Activation('leaky_relu'))
-    clf.add(DenseLayer(n_hidden))
-    clf.add(Activation('leaky_relu'))
-    clf.add(DenseLayer(n_hidden))
-    clf.add(Activation('leaky_relu'))
-    clf.add(DenseLayer(10))
+    clf.add(Conv2D(n_filters=16, filter_shape=(3,3), padding=1, input_shape=(1,8,8)))
+    clf.add(Activation('relu'))
+    clf.add(Dropout(0.25))
+    clf.add(Conv2D(n_filters=32, filter_shape=(3,3), padding=1))
+    clf.add(Activation('relu'))
+    clf.add(Dropout(0.25))
+    clf.add(Flatten())
+    clf.add(Dense(128))
+    clf.add(Activation('relu'))
+    clf.add(Dropout(0.25))
+    clf.add(Dense(10))
     clf.add(Activation('softmax'))
     
     clf.fit(X_train, y_train)
@@ -176,8 +219,10 @@ def main():
     accuracy = accuracy_score(y_test, y_pred)
     print ("Accuracy:", accuracy)
 
+    X_test = X_test.reshape(-1, 8*8)
+
     # Reduce dimension to two using PCA and plot the results
-    Plot().plot_in_2d(X_test, y_pred, title="Multilayer Perceptron", accuracy=accuracy, legend_labels=np.unique(y))
+    Plot().plot_in_2d(X_test, y_pred, title="Convolutional Neural Network", accuracy=accuracy, legend_labels=np.unique(y))
 
 if __name__ == "__main__":
     main()

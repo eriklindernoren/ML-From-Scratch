@@ -43,13 +43,14 @@ class ReLU():
         return np.where(x >= 0, 1, 0)
 
 class LeakyReLU():
-    def __init__(self): pass 
+    def __init__(self, alpha=0.01):
+        self.alpha = alpha
 
     def function(self, x):
-        return np.where(x >= 0, x, 0.01 * x)
+        return np.where(x >= 0, x, self.alpha * x)
 
     def gradient(self, x):
-        return np.where(x >= 0, 1, 0.01)
+        return np.where(x >= 0, 1, self.alpha)
 
 class ELU():
     def __init__(self, alpha=0.1):

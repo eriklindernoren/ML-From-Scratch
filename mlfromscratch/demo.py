@@ -13,7 +13,7 @@ from mlfromscratch.utils.activation_functions import Softmax
 from mlfromscratch.utils.kernels import *
 from mlfromscratch.supervised_learning import *
 from mlfromscratch.unsupervised_learning import PCA
-from mlfromscratch.utils.layers import DenseLayer, DropoutLayer, Conv2D, Flatten, Activation
+from mlfromscratch.utils.layers import Dense, Dropout, Conv2D, Flatten, Activation
 
 
 print ("+-------------------------------------------+")
@@ -66,11 +66,11 @@ mlp = NeuralNetwork(n_iterations=300,
                         optimizer=Adam(), 
                         loss=CrossEntropy, 
                         batch_size=50)
-mlp.add(DenseLayer(input_shape=(n_features,), n_units=64))
+mlp.add(Dense(input_shape=(n_features,), n_units=64))
 mlp.add(Activation('relu'))
-mlp.add(DenseLayer(n_units=64))
+mlp.add(Dense(n_units=64))
 mlp.add(Activation('relu'))
-mlp.add(DenseLayer(n_units=2))   
+mlp.add(Dense(n_units=2))   
 mlp.add(Activation('softmax'))
 perceptron = Perceptron()
 decision_tree = ClassificationTree()

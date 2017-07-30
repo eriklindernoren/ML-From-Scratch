@@ -128,7 +128,7 @@ class Adam():
 
     def update(self, w, grad_wrt_w):
         # Gradient clipping to avoid exploding grads
-        grad_at_w = np.clip(grad_wrt_w, -1, 1)
+        grad_at_w = grad_wrt_w
 
         # If not initialized
         if not self.m.any():

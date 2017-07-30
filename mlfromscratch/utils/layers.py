@@ -22,7 +22,7 @@ class Layer(object):
         raise NotImplementedError()
 
 
-class DenseLayer(Layer):
+class Dense(Layer):
     """A fully-connected NN layer. 
 
     Parameters:
@@ -43,9 +43,9 @@ class DenseLayer(Layer):
 
     def initialize(self, optimizer):
         # Initialize the weights
-        a, b = -1 / math.sqrt(self.input_shape[0]), 1 / math.sqrt(self.input_shape[0])
-        self.W  = (b - a) * np.random.random((self.input_shape[0], self.n_units)) + a
-        self.wb = (b - a) * np.random.random((1, self.n_units)) + a
+        limit = 1 / math.sqrt(self.input_shape[0])
+        self.W  = np.random.uniform(-limit, limit, (self.input_shape[0], self.n_units))
+        self.wb = np.zeros((1, self.n_units))
         # Weight optimizers
         self.W_opt  = copy.copy(optimizer)
         self.wb_opt = copy.copy(optimizer)
@@ -81,15 +81,15 @@ class Conv2D(Layer):
     n_filters: int
         The number of filters that will convolve over the input matrix. The number of channels
         of the output shape.
-    padding: tuple
-        The zeros padding that will be added to the input image.
+    padding: int
+        The zero padding that will be added to the input image.
     stride: int
         The stride length of the filters during the convolution over the input.
     activation_function: class:
         The activation function that will be used for each unit. 
         Possible choices: Sigmoid, ELU, ReLU, LeakyReLU, SoftPlus, TanH, SELU, Softmax
     """
-    def __init__(self, n_filters, filter_shape, input_shape=None, padding=(0, 0), stride=1):
+    def __init__(self, n_filters, filter_shape, input_shape=None, padding=0, stride=1):
         self.n_filters = n_filters
         self.filter_shape = filter_shape
         self.padding = padding
@@ -98,37 +98,42 @@ class Conv2D(Layer):
 
     def initialize(self, optimizer):
         # Initialize the weights
-        self.W  = np.random.random((self.n_filters, self.filter_shape[0], self.filter_shape[1], self.input_shape[-1]))
-        self.wb = np.random.random((1, self.n_filters))
+        filter_height, filter_width = self.filter_shape
+        channels = self.input_shape[0]
+        limit = 1 / math.sqrt(np.prod(self.filter_shape))
+        self.W  = np.random.uniform(-limit, limit, size=(self.n_filters, channels, filter_height, filter_width))
+        self.wb = np.zeros((self.n_filters, 1))
         # Weight optimizers
         self.W_opt  = copy.copy(optimizer)
         self.wb_opt = copy.copy(optimizer)
 
     def forward_pass(self, X, training=True):
-        batch_size, height, width, n_filters = X.shape
+        batch_size, channels, height, width = X.shape
         self.layer_input = X
         self.col = image_to_column(X, self.filter_shape, self.stride, self.padding)
-        self.col_W = self.W.reshape((self.n_filters, -1)).T
+        self.col_W = self.W.reshape((self.n_filters, -1))
 
-        output = (self.col.dot(self.col_W) + self.wb).reshape((batch_size, height, width, -1))
-        return output
+        output = self.col_W.dot(self.col) + self.wb
+        output = output.reshape(self.shape() + (batch_size, ))
+        return output.transpose(3,0,1,2)
 
     def backward_pass(self, acc_grad):
-        acc_grad = acc_grad.reshape((self.n_filters, -1)).T
+        acc_grad = acc_grad.transpose(1, 2, 3, 0).reshape(self.n_filters, -1)
         
-        grad_w = self.col.T.dot(acc_grad).reshape(self.W.shape)
-        grad_wb = np.sum(acc_grad, axis=0, keepdims=True)
+        grad_w = acc_grad.dot(self.col.T).reshape(self.W.shape)
+        grad_wb = np.sum(acc_grad, axis=1, keepdims=True)
 
         self.W = self.W_opt.update(self.W, grad_w)
         self.wb = self.wb_opt.update(self.wb, grad_wb)
 
-        acc_grad = acc_grad.dot(self.col_W.T)
+        acc_grad = self.col_W.T.dot(acc_grad)
         acc_grad = column_to_image(acc_grad, self.layer_input.shape, self.filter_shape, self.stride, self.padding)
 
         return acc_grad
 
     def shape(self):
-        return convolution_shape(self.input_shape, self.n_filters, self.filter_shape, self.stride, self.padding)
+        height, width = convolution_shape(self.input_shape, self.filter_shape, self.stride, self.padding)
+        return self.n_filters, height, width
 
 class Flatten(Layer):
     """ Turns a multidimensional matrix into two-dimensional """
@@ -145,7 +150,7 @@ class Flatten(Layer):
     def shape(self):
         return (np.prod(self.input_shape),)
 
-class DropoutLayer(Layer):
+class Dropout(Layer):
     """A layer that randomly sets a fraction p of the output units of the previous layer
     to zero.
 
@@ -175,20 +180,21 @@ class DropoutLayer(Layer):
         return self.input_shape
 
 
-activation_functions = {
-    'relu': ReLU,
-    'sigmoid': Sigmoid,
-    'selu': SELU,
-    'elu': ELU,
-    'softmax': Softmax,
-    'leaky_relu': LeakyReLU,
-    'tanh': TanH,
-    'softplus': SoftPlus
-}
-
 class Activation(Layer):
+
+    activation_functions = {
+        'relu': ReLU,
+        'sigmoid': Sigmoid,
+        'selu': SELU,
+        'elu': ELU,
+        'softmax': Softmax,
+        'leaky_relu': LeakyReLU,
+        'tanh': TanH,
+        'softplus': SoftPlus
+    }
+
     def __init__(self, name):
-        self.activation = activation_functions[name]()
+        self.activation = self.activation_functions[name]()
 
     def forward_pass(self, X, training=True):
         self.layer_input = X
@@ -200,46 +206,58 @@ class Activation(Layer):
     def shape(self):
         return self.input_shape
 
-def image_to_column(images, filter_shape, stride, padding):
-    batch_size, height, width, channels = images.shape
-    f_height, f_width = filter_shape
-    out_height, out_width, _ = convolution_shape(images.shape[1:], filter_shape, stride, padding)
-    images = np.pad(images, ((0, 0), padding, padding, (0, 0)), mode='constant')
+def get_im2col_indices(x_shape, filter_shape, padding=1, stride=1):
+  # First figure out what the size of the output should be
+  N, C, H, W = x_shape
+  filter_height, filter_width = filter_shape
+  assert (H + 2 * padding - filter_height) % stride == 0
+  assert (W + 2 * padding - filter_height) % stride == 0
+  out_height = (H + 2 * padding - filter_height) / stride + 1
+  out_width = (W + 2 * padding - filter_width) / stride + 1
 
-    col = np.zeros((batch_size, f_height, f_width, out_height, out_width, channels))
-    for y in range(f_height):
-        y_bound = y + stride * out_height
-        for x in range(f_width):
-            x_bound = x + stride * out_width
-            col[:, y, x, :, :, :] = images[:, y:y_bound:stride, x:x_bound:stride, :]
+  i0 = np.repeat(np.arange(filter_height), filter_width)
+  i0 = np.tile(i0, C)
+  i1 = stride * np.repeat(np.arange(out_height), out_width)
+  j0 = np.tile(np.arange(filter_width), filter_height * C)
+  j1 = stride * np.tile(np.arange(out_width), out_height)
+  i = i0.reshape(-1, 1) + i1.reshape(1, -1)
+  j = j0.reshape(-1, 1) + j1.reshape(1, -1)
 
-    col = col.reshape(batch_size * out_height * out_width, -1)
-    return col
+  k = np.repeat(np.arange(C), filter_height * filter_width).reshape(-1, 1)
 
+  return (k, i, j)
 
-def column_to_image(columns, images_shape, filter_shape, stride, padding):
-    n_images, height, width, channels = images_shape
-    f_height, f_width = filter_shape
+# Reference: CS231n Stanford
+def image_to_column(X, filter_shape, stride, padding):
+    filter_height, filter_width = filter_shape
+    p = padding
+    X_padded = np.pad(X, ((0, 0), (0, 0), (p, p), (p, p)), mode='constant')
 
-    out_height, out_width, _ = convolution_shape(images_shape[1:], filter_shape, stride, padding)
-    columns = columns.reshape(n_images, out_height, out_width, f_height, f_width, channels).transpose(0, 3, 4, 1,
-                                                                                                        2, 5)
+    k, i, j = get_im2col_indices(X.shape, filter_shape, padding, stride)
 
-    img_h = height + 2 * padding[0] + stride - 1
-    img_w = width + 2 * padding[1] + stride - 1
-    img = np.zeros((n_images, img_h, img_w, channels))
-    for y in range(f_height):
-        y_bound = y + stride * out_height
-        for x in range(f_width):
-            x_bound = x + stride * out_width
-            img[:, y:y_bound:stride, x:x_bound:stride, :] += columns[:, y, x, :, :, :]
+    cols = X_padded[:, k, i, j]
+    channels = X.shape[1]
+    cols = cols.transpose(1, 2, 0).reshape(filter_height * filter_width * channels, -1)
+    return cols
 
-    return img[:, padding[0]:height + padding[0], padding[1]:width + padding[1], :]
+# Reference: CS231n Stanford
+def column_to_image(cols, images_shape, filter_shape, stride, padding):
+    batch_size, channels, height, width = images_shape
+    p = padding
+    height_padded, width_padded = height + 2 * p, width + 2 * p
+    X_padded = np.empty((batch_size, channels, height_padded, width_padded))
+    k, i, j = get_im2col_indices(images_shape, filter_shape, padding, stride)
 
-def convolution_shape(input_shape, n_filters, filter_shape, stride, padding):
-    """Calculate output shape for a convolution layer."""
-    img_height, img_width, _ = input_shape
-    height = (img_height + 2 * padding[0] - filter_shape[0]) / float(stride) + 1
-    width = (img_width + 2 * padding[1] - filter_shape[1]) / float(stride) + 1
+    cols = cols.reshape(channels * np.prod(filter_shape), -1, batch_size)
+    cols = cols.transpose(2, 0, 1)
+    np.add.at(X_padded, (slice(None), k, i, j), cols)
 
-    return int(height), int(width), n_filters
+    return X_padded[:, :, p:height+p, p:width+p]
+
+def convolution_shape(input_shape, filter_shape, stride, padding):
+    """Calculate output height and width for a convolution layer."""
+    _, img_height, img_width = input_shape
+    height = (img_height + 2 * padding - filter_shape[0]) / float(stride) + 1
+    width = (img_width + 2 * padding - filter_shape[1]) / float(stride) + 1
+
+    return int(height), int(width)

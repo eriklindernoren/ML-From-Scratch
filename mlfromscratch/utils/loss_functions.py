@@ -27,13 +27,12 @@ class CrossEntropy():
     def loss(self, y, p):
         # Avoid division by zero
         p = np.clip(p, 1e-15, 1 - 1e-15)
-        return - y * np.log(p) - (1 - y) * np.log(1 - p)
+        return (1/y.shape[0]) * (- y * np.log(p) - (1 - y) * np.log(1 - p))
 
     def gradient(self, y, p):
         # Avoid division by zero
         p = np.clip(p, 1e-15, 1 - 1e-15)
-        return - (y / p) + (1 - y) / (1 - p)
-
+        return (1/y.shape[0]) * (- (y / p) + (1 - y) / (1 - p))
 
 class LogisticLoss():
     def __init__(self, grad_wrt_theta=True):

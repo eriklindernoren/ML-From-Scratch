@@ -40,14 +40,13 @@ Feel free to [reach out](mailto:eriklindernoren@gmail.com) if you can think of w
 </p>
 
 ### Classification
-    $ python mlfromscratch/supervised_learning/multilayer_perceptron.py
+    $ python mlfromscratch/supervised_learning/neural_network.py
 
 <p align="center">
-    <img src="http://eriklindernoren.se/images/mlp4.png" width="640">
+    <img src="http://eriklindernoren.se/images/cnn.png" width="640">
 </p>
 <p align="center">
-    Figure: Classification of the digit dataset using an MLP with two <br>
-    hidden layers.
+    Figure: Classification of the digit dataset using CNN.
 </p>
 
 ### Clustering
@@ -87,6 +86,7 @@ Feel free to [reach out](mailto:eriklindernoren@gmail.com) if you can think of w
 ### Supervised Learning
 - [Adaboost](mlfromscratch/supervised_learning/adaboost.py)
 - [Bayesian Regression](mlfromscratch/supervised_learning/bayesian_regression.py)
+- [Convolutional Neural Network](mlfromscratch/supervised_learning/neural_network.py)
 - [Decision Tree](mlfromscratch/supervised_learning/decision_tree.py)
 - [Gradient Boosting](mlfromscratch/supervised_learning/gradient_boosting.py)
 - [K Nearest Neighbors](mlfromscratch/supervised_learning/k_nearest_neighbors.py)
@@ -94,7 +94,7 @@ Feel free to [reach out](mailto:eriklindernoren@gmail.com) if you can think of w
 - [Linear Regression](mlfromscratch/supervised_learning/regression.py)
 - [Logistic Regression](mlfromscratch/supervised_learning/logistic_regression.py)
 - [Multi-class Linear Discriminant Analysis](mlfromscratch/supervised_learning/multi_class_lda.py)
-- [Multilayer Perceptron](mlfromscratch/supervised_learning/multilayer_perceptron.py)
+- [Multilayer Perceptron](mlfromscratch/supervised_learning/neural_network.py)
 - [Naive Bayes](mlfromscratch/supervised_learning/naive_bayes.py)
 - [Perceptron](mlfromscratch/supervised_learning/perceptron.py)
 - [Polynomial Regression](mlfromscratch/supervised_learning/regression.py)
