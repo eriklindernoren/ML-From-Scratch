@@ -18,7 +18,7 @@ class Layer(object):
     def backward_pass(self, acc_grad):
         raise NotImplementedError()
 
-    def shape(self):
+    def output_shape(self):
         raise NotImplementedError()
 
 
@@ -27,12 +27,12 @@ class Dense(Layer):
 
     Parameters:
     -----------
+    n_units: int
+        The number of neurons in the layer.
     input_shape: tuple
         The expected input shape of the layer. For dense layers a single digit specifying
         the number of features of the input. Must be specified if it is the first layer in
         the network.
-    n_units: int
-        The number of neurons in the layer.
     """
     def __init__(self, n_units, input_shape=None):
         self.layer_input = None
@@ -67,7 +67,7 @@ class Dense(Layer):
         acc_grad = acc_grad.dot(self.W.T)
         return acc_grad
 
-    def shape(self):
+    def output_shape(self):
         return (self.n_units,)
 
 
@@ -76,18 +76,18 @@ class Conv2D(Layer):
 
     Parameters:
     -----------
-    input_shape: tuple
-        The shape of the expected input of the layer. (batch_size, height, width, channels) 
     n_filters: int
         The number of filters that will convolve over the input matrix. The number of channels
         of the output shape.
+    filter_shape: tuple
+        A tuple (filter_height, filter_width).
+    input_shape: tuple
+        The shape of the expected input of the layer. (batch_size, height, width, channels)
+        Only needs to be specified for first layer in the network.
     padding: int
         The zero padding that will be added to the input image.
     stride: int
         The stride length of the filters during the convolution over the input.
-    activation_function: class:
-        The activation function that will be used for each unit. 
-        Possible choices: Sigmoid, ELU, ReLU, LeakyReLU, SoftPlus, TanH, SELU, Softmax
     """
     def __init__(self, n_filters, filter_shape, input_shape=None, padding=0, stride=1):
         self.n_filters = n_filters
@@ -110,28 +110,41 @@ class Conv2D(Layer):
     def forward_pass(self, X, training=True):
         batch_size, channels, height, width = X.shape
         self.layer_input = X
+        # Turn image shape into column shape 
+        # (enables dot product between input and weights)
         self.col = image_to_column(X, self.filter_shape, self.stride, self.padding)
+        # Turn weights into column shape
         self.col_W = self.W.reshape((self.n_filters, -1))
 
+        # Calculate output
         output = self.col_W.dot(self.col) + self.wb
-        output = output.reshape(self.shape() + (batch_size, ))
+        # Reshape into (n_filters, out_height, out_width, batch_size)
+        output = output.reshape(self.output_shape() + (batch_size, ))
+        # Redistribute axises so that batch size comes first
         return output.transpose(3,0,1,2)
 
     def backward_pass(self, acc_grad):
+        # Reshape accumulated gradient into column shape
         acc_grad = acc_grad.transpose(1, 2, 3, 0).reshape(self.n_filters, -1)
         
+        # Take dot product between column shaped accum. gradient and column shape
+        # layer input to determine the gradient at the layer with respect to layer weights
         grad_w = acc_grad.dot(self.col.T).reshape(self.W.shape)
+        # The gradient with respect to bias terms is the sum similarly to in Dense layer
         grad_wb = np.sum(acc_grad, axis=1, keepdims=True)
 
+        # Update the layers weights
         self.W = self.W_opt.update(self.W, grad_w)
         self.wb = self.wb_opt.update(self.wb, grad_wb)
 
+        # Recalculate the gradient which will be propogated back to prev. layer
         acc_grad = self.col_W.T.dot(acc_grad)
+        # Reshape from column shape to image shape
         acc_grad = column_to_image(acc_grad, self.layer_input.shape, self.filter_shape, self.stride, self.padding)
 
         return acc_grad
 
-    def shape(self):
+    def output_shape(self):
         height, width = convolution_shape(self.input_shape, self.filter_shape, self.stride, self.padding)
         return self.n_filters, height, width
 
@@ -147,7 +160,7 @@ class Flatten(Layer):
     def backward_pass(self, acc_grad):
         return acc_grad.reshape(self.prev_shape)
 
-    def shape(self):
+    def output_shape(self):
         return (np.prod(self.input_shape),)
 
 class Dropout(Layer):
@@ -176,7 +189,7 @@ class Dropout(Layer):
     def backward_pass(self, acc_grad):
         return acc_grad * self._mask
 
-    def shape(self):
+    def output_shape(self):
         return self.input_shape
 
 
@@ -203,9 +216,10 @@ class Activation(Layer):
     def backward_pass(self, acc_grad):
         return acc_grad * self.activation.gradient(self.layer_input)
 
-    def shape(self):
+    def output_shape(self):
         return self.input_shape
 
+# Reference: CS231n Stanford
 def get_im2col_indices(x_shape, filter_shape, padding=1, stride=1):
   # First figure out what the size of the output should be
   N, C, H, W = x_shape
@@ -228,15 +242,20 @@ def get_im2col_indices(x_shape, filter_shape, padding=1, stride=1):
   return (k, i, j)
 
 # Reference: CS231n Stanford
-def image_to_column(X, filter_shape, stride, padding):
+def image_to_column(images, filter_shape, stride, padding):
     filter_height, filter_width = filter_shape
     p = padding
-    X_padded = np.pad(X, ((0, 0), (0, 0), (p, p), (p, p)), mode='constant')
+    # Add padding to the image
+    images_padded = np.pad(images, ((0, 0), (0, 0), (p, p), (p, p)), mode='constant')
+    
+    # Calculate the indices where the dot products are applied between weights
+    # and the image
+    k, i, j = get_im2col_indices(images.shape, filter_shape, padding, stride)
 
-    k, i, j = get_im2col_indices(X.shape, filter_shape, padding, stride)
-
-    cols = X_padded[:, k, i, j]
-    channels = X.shape[1]
+    # Get content from image at those indices
+    cols = images_padded[:, k, i, j]
+    channels = images.shape[1]
+    # Reshape content into column shape
     cols = cols.transpose(1, 2, 0).reshape(filter_height * filter_width * channels, -1)
     return cols
 
@@ -245,14 +264,19 @@ def column_to_image(cols, images_shape, filter_shape, stride, padding):
     batch_size, channels, height, width = images_shape
     p = padding
     height_padded, width_padded = height + 2 * p, width + 2 * p
-    X_padded = np.empty((batch_size, channels, height_padded, width_padded))
+    images_padded = np.empty((batch_size, channels, height_padded, width_padded))
+
+    # Calculate the indices where the dot products are applied between weights
+    # and the image
     k, i, j = get_im2col_indices(images_shape, filter_shape, padding, stride)
 
     cols = cols.reshape(channels * np.prod(filter_shape), -1, batch_size)
     cols = cols.transpose(2, 0, 1)
-    np.add.at(X_padded, (slice(None), k, i, j), cols)
+    # Add column content to the images at the indices
+    np.add.at(images_padded, (slice(None), k, i, j), cols)
 
-    return X_padded[:, :, p:height+p, p:width+p]
+    # Return image without padding
+    return images_padded[:, :, p:height+p, p:width+p]
 
 def convolution_shape(input_shape, filter_shape, stride, padding):
     """Calculate output height and width for a convolution layer."""

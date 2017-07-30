@@ -46,19 +46,23 @@ class NeuralNetwork():
         self.errors = {"training": [], "validation": []}
         self.loss_function = loss()
         self.batch_size = batch_size
-        self.X_val = self.y_val = np.empty([])
+        self.X_val = np.empty([])
+        self.y_val = np.empty([])
         if validation_data:
             self.X_val, self.y_val = validation_data
             self.y_val = categorical_to_binary(self.y_val.astype("int"))
 
     def add(self, layer):
-
+        # If the first layer has been added set the input shape
+        # as the output shape of the previous layer
         if self.layers:
-            layer.set_input_shape(shape=self.layers[-1].shape())
+            layer.set_input_shape(shape=self.layers[-1].output_shape())
 
+        # If the layer has weights that needs to be initialized 
         if hasattr(layer, 'initialize'):
             layer.initialize(optimizer=self.optimizer)
 
+        # Add layer to network
         self.layers.append(layer)
 
     def fit(self, X, y):
@@ -90,13 +94,13 @@ class NeuralNetwork():
                 # Backprop. Update weights
                 self._backward_pass(loss_grad=loss_grad)
 
-            batch_t_error /= n_batches
-            self.errors["training"].append(batch_t_error)
+            # Save the epoch mean error
+            self.errors["training"].append(batch_t_error / n_batches)
             if self.X_val.any():
                 # Calculate the validation error
                 y_val_p = self._forward_pass(self.X_val)
-                loss = np.mean(self.loss_function.loss(self.y_val, y_val_p))
-                self.errors["validation"].append(loss)
+                validation_loss = np.mean(self.loss_function.loss(self.y_val, y_val_p))
+                self.errors["validation"].append(validation_loss)
 
     def _forward_pass(self, X, training=True):
         # Calculate the output of the NN. The output of layer l1 becomes the
@@ -138,9 +142,6 @@ class NeuralNetwork():
 
 
 def main():
-
-    from sklearn.datasets import fetch_mldata
-    # data = fetch_mldata('MNIST original')
 
     data = datasets.load_digits()
     X = data.data
@@ -192,8 +193,8 @@ def main():
     X_train = X_train.reshape((-1,1,8,8))
     X_test = X_test.reshape((-1,1,8,8))
 
-    clf = NeuralNetwork(n_iterations=50,
-                            batch_size=256,
+    clf = NeuralNetwork(n_iterations=30,
+                            batch_size=128,
                             optimizer=optimizer,
                             loss=CrossEntropy,
                             validation_data=(X_test, y_test))
