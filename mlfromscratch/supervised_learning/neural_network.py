@@ -95,7 +95,6 @@ class NeuralNetwork():
                 self._backward_pass(loss_grad=loss_grad)
 
             # Save the epoch mean error
-            print (batch_t_error / n_batches)
             self.errors["training"].append(batch_t_error / n_batches)
             if self.X_val.any():
                 # Calculate the validation error

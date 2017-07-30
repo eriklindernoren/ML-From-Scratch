@@ -147,8 +147,10 @@ class Conv2D(Layer):
         return acc_grad
 
     def output_shape(self):
-        height, width = convolution_shape(self.input_shape, self.filter_shape, self.stride, self.padding)
-        return self.n_filters, height, width
+        channels, height, width = self.input_shape
+        output_height = (height + 2 * self.padding - self.filter_shape[0]) / self.stride + 1
+        output_width = (width + 2 * self.padding - self.filter_shape[1]) / self.stride + 1
+        return self.n_filters, int(output_height), int(output_width)
 
 
 
@@ -340,12 +342,3 @@ def column_to_image(cols, images_shape, filter_shape, stride, padding):
     # Return image without padding
     return images_padded[:, :, p:height+p, p:width+p]
 
-
-
-def convolution_shape(input_shape, filter_shape, stride, padding):
-    """Calculate output height and width for a convolution layer."""
-    _, img_height, img_width = input_shape
-    height = (img_height + 2 * padding - filter_shape[0]) / float(stride) + 1
-    width = (img_width + 2 * padding - filter_shape[1]) / float(stride) + 1
-
-    return int(height), int(width)
