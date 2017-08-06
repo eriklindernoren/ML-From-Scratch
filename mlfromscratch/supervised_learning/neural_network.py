@@ -96,7 +96,6 @@ class NeuralNetwork():
 
             # Save the epoch mean error
             self.errors["training"].append(batch_t_error / n_batches)
-            print (batch_t_error / n_batches)
             if self.X_val.any():
                 # Calculate the validation error
                 y_val_p = self._forward_pass(self.X_val)
