@@ -10,7 +10,7 @@ import numpy as np
 import progressbar
 
 # Import helper functions
-from mlfromscratch.utils.data_manipulation import train_test_split, categorical_to_binary, normalize, binary_to_categorical
+from mlfromscratch.utils.data_manipulation import train_test_split, to_categorical, normalize
 from mlfromscratch.utils.data_manipulation import get_random_subsets, shuffle_data, normalize
 from mlfromscratch.utils.data_operation import accuracy_score
 from mlfromscratch.utils.optimizers import GradientDescent, Adam, RMSprop, Adagrad, Adadelta
@@ -50,7 +50,7 @@ class NeuralNetwork():
         self.y_val = np.empty([])
         if validation_data:
             self.X_val, self.y_val = validation_data
-            self.y_val = categorical_to_binary(self.y_val.astype("int"))
+            self.y_val = to_categorical(self.y_val.astype("int"))
 
     def add(self, layer):
         # If the first layer has been added set the input shape
@@ -67,7 +67,7 @@ class NeuralNetwork():
 
     def fit(self, X, y):
         # Convert the categorical data to binary
-        y = categorical_to_binary(y.astype("int"))
+        y = to_categorical(y.astype("int"))
 
         n_samples = np.shape(X)[0]
         n_batches = int(n_samples / self.batch_size)

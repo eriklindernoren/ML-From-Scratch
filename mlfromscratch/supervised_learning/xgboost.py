@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import progressbar
 
 # Import helper functions
-from mlfromscratch.utils.data_manipulation import train_test_split, standardize, categorical_to_binary, normalize
+from mlfromscratch.utils.data_manipulation import train_test_split, standardize, to_categorical, normalize
 from mlfromscratch.utils.data_operation import mean_squared_error, accuracy_score
 from mlfromscratch.supervised_learning import XGBoostRegressionTree
 from mlfromscratch.utils.loss_functions import LogisticLoss
@@ -63,7 +63,7 @@ class XGBoost(object):
             self.trees.append(tree)
 
     def fit(self, X, y):
-        y = categorical_to_binary(y)
+        y = to_categorical(y)
 
         y_pred = np.zeros(np.shape(y))
 

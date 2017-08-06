@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 # Import helper functions
-from mlfromscratch.utils.data_manipulation import train_test_split, categorical_to_binary, normalize, binary_to_categorical
+from mlfromscratch.utils.data_manipulation import train_test_split, to_categorical, normalize
 from mlfromscratch.utils.data_operation import accuracy_score
 from mlfromscratch.utils.activation_functions import Sigmoid, ReLU, SoftPlus, LeakyReLU, TanH, ELU
 from mlfromscratch.utils.optimizers import GradientDescent
@@ -40,7 +40,7 @@ class Perceptron():
         y_train = y
 
         # One-hot encoding of nominal y-values
-        y_train = categorical_to_binary(y_train)
+        y_train = to_categorical(y_train)
 
         n_samples, n_features = np.shape(X_train)
         n_outputs = np.shape(y_train)[1]

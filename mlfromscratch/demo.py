@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-from mlfromscratch.utils.data_manipulation import train_test_split, normalize, categorical_to_binary
+from mlfromscratch.utils.data_manipulation import train_test_split, normalize
 from mlfromscratch.utils.data_operation import accuracy_score
 from mlfromscratch.utils.optimizers import GradientDescent, Adam
 from mlfromscratch.utils.loss_functions import CrossEntropy

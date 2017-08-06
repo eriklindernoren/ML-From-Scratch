@@ -8,7 +8,7 @@ from scipy.optimize import line_search
 import progressbar
 
 # Import helper functions
-from mlfromscratch.utils.data_manipulation import train_test_split, standardize, categorical_to_binary
+from mlfromscratch.utils.data_manipulation import train_test_split, standardize, to_categorical
 from mlfromscratch.utils.data_operation import mean_squared_error, accuracy_score
 from mlfromscratch.utils.loss_functions import SquareLoss, LogisticLoss
 from mlfromscratch.supervised_learning.decision_tree import RegressionTree
@@ -122,7 +122,7 @@ class GradientBoostingClassifier(GradientBoosting):
             debug=debug)
 
     def fit(self, X, y):
-        y = categorical_to_binary(y)
+        y = to_categorical(y)
         super(GradientBoostingClassifier, self).fit(X, y)
 
 

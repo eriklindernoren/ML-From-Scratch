@@ -135,8 +135,8 @@ def k_fold_cross_validation_sets(X, y, k, shuffle=True):
     return np.array(sets)
 
 
-# Making an array of nominal values into a binarized matrix
-def categorical_to_binary(x):
+# One-hot encoding of nominal values
+def to_categorical(x):
     n_col = np.amax(x) + 1
     binarized = np.zeros((len(x), n_col))
     for i in range(len(x)):
@@ -145,8 +145,8 @@ def categorical_to_binary(x):
     return binarized
 
 
-# Converting from binary vectors to nominal values
-def binary_to_categorical(x):
+# Conversion from one-hot encoding to nominal
+def to_nominal(x):
     categorical = []
     for i in range(len(x)):
         if not 1 in x[i]:
