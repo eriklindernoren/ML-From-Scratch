@@ -32,7 +32,7 @@ Feel free to [reach out](mailto:eriklindernoren@gmail.com) if you can think of w
     $ python mlfromscratch/supervised_learning/regression.py
 
 <p align="center">
-    <img src="http://eriklindernoren.se/images/prr.png" width="640"\>
+    <img src="http://eriklindernoren.se/images/mlfs_prr.png" width="640"\>
 </p>
 <p align="center">
     Figure: Polynomial ridge regression of temperature data measured in <br> 
@@ -43,7 +43,7 @@ Feel free to [reach out](mailto:eriklindernoren@gmail.com) if you can think of w
     $ python mlfromscratch/supervised_learning/neural_network.py
 
 <p align="center">
-    <img src="http://eriklindernoren.se/images/cnn.png" width="640">
+    <img src="http://eriklindernoren.se/images/mlfs_cnn.png" width="640">
 </p>
 <p align="center">
     Figure: Classification of the digit dataset using CNN.
@@ -53,7 +53,7 @@ Feel free to [reach out](mailto:eriklindernoren@gmail.com) if you can think of w
     $ python mlfromscratch/unsupervised_learning/dbscan.py
    
 <p align="center">
-    <img src="http://eriklindernoren.se/images/dbscan3.png" width="640">
+    <img src="http://eriklindernoren.se/images/mlfs_dbscan.png" width="640">
 </p>
 <p align="center">
     Figure: Clustering of the moons dataset using DBSCAN.
@@ -86,15 +86,25 @@ Feel free to [reach out](mailto:eriklindernoren@gmail.com) if you can think of w
 ### Supervised Learning
 - [Adaboost](mlfromscratch/supervised_learning/adaboost.py)
 - [Bayesian Regression](mlfromscratch/supervised_learning/bayesian_regression.py)
-- [Convolutional Neural Network](mlfromscratch/supervised_learning/neural_network.py)
 - [Decision Tree](mlfromscratch/supervised_learning/decision_tree.py)
+- [Deep Learning](mlfromscratch/supervised_learning/neural_network.py)
+  + [Layers](mlfromscratch/utils/layers.py)
+    * Activation Layer
+    * Average Pooling Layer
+    * Convolutional Layer
+    * Dropout Layer
+    * Flatten Layer
+    * Fully-Connected (Dense) Layer
+    * Max Pooling Layer
+  + [Model Types](mlfromscratch/supervised_learning/neural_network.py)
+    * Convolutional Neural Network
+    * Multilayer Perceptron
 - [Gradient Boosting](mlfromscratch/supervised_learning/gradient_boosting.py)
 - [K Nearest Neighbors](mlfromscratch/supervised_learning/k_nearest_neighbors.py)
 - [Linear Discriminant Analysis](mlfromscratch/supervised_learning/linear_discriminant_analysis.py)
 - [Linear Regression](mlfromscratch/supervised_learning/regression.py)
 - [Logistic Regression](mlfromscratch/supervised_learning/logistic_regression.py)
 - [Multi-class Linear Discriminant Analysis](mlfromscratch/supervised_learning/multi_class_lda.py)
-- [Multilayer Perceptron](mlfromscratch/supervised_learning/neural_network.py)
 - [Naive Bayes](mlfromscratch/supervised_learning/naive_bayes.py)
 - [Perceptron](mlfromscratch/supervised_learning/perceptron.py)
 - [Polynomial Regression](mlfromscratch/supervised_learning/regression.py)
