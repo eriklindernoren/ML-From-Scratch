@@ -153,9 +153,8 @@ class Conv2D(Layer):
         return self.n_filters, int(output_height), int(output_width)
 
 
-
-class MaxPooling2D(Layer):
-    """A 2D MaxPooling layer.
+class PoolingLayer(Layer):
+    """A parent class of MaxPooling2D and AveragePooling2D
     """
     def __init__(self, pool_shape=(2, 2), stride=1, padding=0):
         self.pool_shape = pool_shape
@@ -172,8 +171,9 @@ class MaxPooling2D(Layer):
         X = X.reshape(batch_size*channels, 1, height, width)
         X_col = image_to_column(X, self.pool_shape, self.stride, self.padding)
         
-        self.arg_max = np.argmax(X_col, axis=0).flatten()
-        output = X_col[self.arg_max, range(self.arg_max.size)]
+        # MaxPool or AveragePool specific method
+        output = self._pool_forward(X_col)
+
         output = output.reshape(out_height, out_width, batch_size, channels)
         output = output.transpose(2, 3, 0, 1)
 
@@ -182,13 +182,12 @@ class MaxPooling2D(Layer):
     def backward_pass(self, acc_grad):
         batch_size, _, _, _ = acc_grad.shape
         channels, height, width = self.input_shape
-
-        dX_col = np.zeros((np.prod(self.pool_shape), acc_grad.size))
         acc_grad = acc_grad.transpose(2, 3, 0, 1).ravel()
 
-        dX_col[self.arg_max, range(acc_grad.size)] = acc_grad
+        # MaxPool or AveragePool specific method
+        acc_grad_col = self._pool_backward(acc_grad)
 
-        acc_grad = column_to_image(dX_col, (batch_size * channels, 1, height, width), self.pool_shape, self.stride, 0)
+        acc_grad = column_to_image(acc_grad_col, (batch_size * channels, 1, height, width), self.pool_shape, self.stride, 0)
         acc_grad = acc_grad.reshape((batch_size,) + self.input_shape)
 
         return acc_grad
@@ -201,6 +200,29 @@ class MaxPooling2D(Layer):
         assert out_width % 1 == 0
         return channels, int(out_height), int(out_width)
 
+
+class MaxPooling2D(PoolingLayer):
+    def _pool_forward(self, X_col):
+        arg_max = np.argmax(X_col, axis=0).flatten()
+        output = X_col[arg_max, range(arg_max.size)]
+        self.cache = arg_max
+        return output
+
+    def _pool_backward(self, acc_grad):
+        acc_grad_col = np.zeros((np.prod(self.pool_shape), acc_grad.size))
+        arg_max = self.cache
+        acc_grad_col[arg_max, range(acc_grad.size)] = acc_grad
+        return acc_grad_col
+
+class AveragePooling2D(PoolingLayer):
+    def _pool_forward(self, X_col):
+        output = np.mean(X_col, axis=0)
+        return output
+
+    def _pool_backward(self, acc_grad):
+        acc_grad_col = np.zeros((np.prod(self.pool_shape), acc_grad.size))
+        acc_grad_col[:, range(acc_grad.size)] = 1. / acc_grad_col.shape[0] * acc_grad
+        return acc_grad_col
 
 class Flatten(Layer):
     """ Turns a multidimensional matrix into two-dimensional """
