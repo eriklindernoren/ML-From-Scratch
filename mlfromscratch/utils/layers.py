@@ -227,9 +227,9 @@ class ConstantPadding2D(Layer):
     """ Add constant value to borders of image shaped input (batch_size, channels, height, width) """
     def __init__(self, padding, padding_value=0):
         self.padding = padding
-        if isinstance(padding[0], int):
+        if not isinstance(padding[0], tuple):
             self.padding = ((padding[0], padding[0]), padding[1])
-        if isinstance(padding[1], int):
+        if not isinstance(padding[1], tuple):
             self.padding = (self.padding[0], (padding[1], padding[1]))
         self.padding_value = padding_value
 
