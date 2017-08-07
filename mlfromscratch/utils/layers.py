@@ -241,9 +241,9 @@ class ConstantPadding2D(Layer):
         return output
 
     def backward_pass(self, acc_grad):
-        height = self.input_shape[1]
-        width = self.input_shape[2]
-        acc_grad = acc_grad[:, :, self.padding[0][0]:height+self.padding[0][1], self.padding[1][0]:width+self.padding[1][1]]
+        pad_top, pad_left = self.padding[0][0], self.padding[1][0]
+        height, width = self.input_shape[1], self.input_shape[2]
+        acc_grad = acc_grad[:, :, pad_top:pad_top+height, pad_left:pad_left+width]
         return acc_grad
 
     def output_shape(self):
