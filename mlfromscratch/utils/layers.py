@@ -234,29 +234,21 @@ class ConstantPadding2D(Layer):
         self.padding_value = padding_value
 
     def forward_pass(self, X, training=True):
-        #print ("forward")
-        #print (X.shape)
         output = np.pad(X, 
             pad_width=((0,0), (0,0), self.padding[0], self.padding[1]), 
             mode="constant",
             constant_values=self.padding_value)
-        #print (output.shape)
         return output
 
     def backward_pass(self, acc_grad):
-        #print ("backward")
-        #print (acc_grad.shape)
         height = self.input_shape[1]
         width = self.input_shape[2]
         acc_grad = acc_grad[:, :, self.padding[0][0]:height+self.padding[0][1], self.padding[1][0]:width+self.padding[1][1]]
-        #print (acc_grad.shape)
         return acc_grad
 
     def output_shape(self):
-        #print ("Shape")
         new_height = self.input_shape[1] + np.sum(self.padding[0])
         new_width = self.input_shape[2] + np.sum(self.padding[1])
-        #print (((self.input_shape[0], new_height, new_width)))
         return (self.input_shape[0], new_height, new_width)
 
 class ZeroPadding2D(ConstantPadding2D):
