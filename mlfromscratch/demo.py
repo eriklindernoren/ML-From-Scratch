@@ -129,7 +129,6 @@ y_pred["XGBoost"] = xgboost.predict(X_test)
 # ..........
 #  ACCURACY
 # ..........
-
 print ("Accuracy:")
 for clf in y_pred:
     # Rescaled {-1 1}

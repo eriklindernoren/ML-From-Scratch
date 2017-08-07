@@ -18,7 +18,7 @@ from mlfromscratch.utils.loss_functions import CrossEntropy, SquareLoss
 from mlfromscratch.unsupervised_learning import PCA
 from mlfromscratch.utils.misc import bar_widgets
 from mlfromscratch.utils import Plot
-from mlfromscratch.utils.layers import Dense, Dropout, Conv2D, Flatten, Activation, MaxPooling2D, AveragePooling2D
+from mlfromscratch.utils.layers import Dense, Dropout, Conv2D, Flatten, Activation, MaxPooling2D, AveragePooling2D, ZeroPadding2D
 
 
 
@@ -96,6 +96,7 @@ class NeuralNetwork():
 
             # Save the epoch mean error
             self.errors["training"].append(batch_t_error / n_batches)
+            print (batch_t_error / n_batches)
             if self.X_val.any():
                 # Calculate the validation error
                 y_val_p = self._forward_pass(self.X_val)

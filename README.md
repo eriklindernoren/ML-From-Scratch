@@ -91,11 +91,13 @@ Feel free to [reach out](mailto:eriklindernoren@gmail.com) if you can think of w
   + [Layers](mlfromscratch/utils/layers.py)
     * Activation Layer
     * Average Pooling Layer
+    * Constant Padding Layer
     * Convolutional Layer
     * Dropout Layer
     * Flatten Layer
     * Fully-Connected (Dense) Layer
     * Max Pooling Layer
+    * Zero Padding Layer
   + [Model Types](mlfromscratch/supervised_learning/neural_network.py)
     * Convolutional Neural Network
     * Multilayer Perceptron
