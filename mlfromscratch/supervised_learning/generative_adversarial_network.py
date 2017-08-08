@@ -80,6 +80,7 @@ class GAN():
         # Rescale -1 to 1
         X = (X.astype(np.float32) - 127.5) / 127.5
         X = np.expand_dims(X, axis=1)
+        X = X.reshape((-1,) + self.img_shape)
 
         half_batch = int(batch_size / 2)
 
