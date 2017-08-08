@@ -97,10 +97,12 @@ Feel free to [reach out](mailto:eriklindernoren@gmail.com) if you can think of w
     * Flatten Layer
     * Fully-Connected (Dense) Layer
     * Max Pooling Layer
+    * Reshape Layer
     * Zero Padding Layer
-  + [Model Types](mlfromscratch/supervised_learning/neural_network.py)
-    * Convolutional Neural Network
-    * Multilayer Perceptron
+  + Model Types
+    * [Convolutional Neural Network](mlfromscratch/supervised_learning/neural_network.py)
+    * [Generative Adversarial Network](mlfromscratch/supervised_learning/generative_adversarial_network.py)
+    * [Multilayer Perceptron](mlfromscratch/supervised_learning/neural_network.py)
 - [Gradient Boosting](mlfromscratch/supervised_learning/gradient_boosting.py)
 - [K Nearest Neighbors](mlfromscratch/supervised_learning/k_nearest_neighbors.py)
 - [Linear Discriminant Analysis](mlfromscratch/supervised_learning/linear_discriminant_analysis.py)

@@ -27,10 +27,6 @@ class NeuralNetwork():
 
     Parameters:
     -----------
-    n_iterations: float
-        The number of training iterations the algorithm will tune the weights for.
-    batch_size: int
-        The size of the batches that the model will train on at a time.
     optimizer: class
         The weight optimizer that will be used to tune the weights in order of minimizing
         the loss.
@@ -39,18 +35,21 @@ class NeuralNetwork():
     validation: tuple
         A tuple containing validation data and labels
     """
-    def __init__(self, n_iterations, batch_size, optimizer, loss, validation_data=None):
-        self.n_iterations = n_iterations
+    def __init__(self, optimizer, loss, validation_data=None):
         self.optimizer = optimizer
         self.layers = []
         self.errors = {"training": [], "validation": []}
         self.loss_function = loss()
-        self.batch_size = batch_size
         self.X_val = np.empty([])
         self.y_val = np.empty([])
         if validation_data:
             self.X_val, self.y_val = validation_data
             self.y_val = to_categorical(self.y_val.astype("int"))
+
+    # Method which freezes the weights of the network's layers.
+    def set_trainable(self, trainable):
+        for i in range(len(self.layers)):
+            self.layers[i].trainable = trainable
 
     def add(self, layer):
         # If the first layer has been added set the input shape
@@ -65,34 +64,44 @@ class NeuralNetwork():
         # Add layer to network
         self.layers.append(layer)
 
-    def fit(self, X, y):
+    def train_on_batch(self, X, y):
+
+        # Calculate output
+        y_pred = self._forward_pass(X)
+
+        # Calculate the training loss
+        loss = np.mean(self.loss_function.loss(y, y_pred))
+        # Calculate the accuracy of the predictions
+        acc = self.loss_function.acc(y, y_pred)
+
+        # Calculate the gradient of the loss function wrt y_pred
+        loss_grad = self.loss_function.gradient(y, y_pred)
+
+        # Backprop. Update weights
+        self._backward_pass(loss_grad=loss_grad)
+
+        return loss, acc
+
+
+    def fit(self, X, y, n_iterations, batch_size):
+
         # Convert the categorical data to binary
         y = to_categorical(y.astype("int"))
 
         n_samples = np.shape(X)[0]
-        n_batches = int(n_samples / self.batch_size)
+        n_batches = int(n_samples / batch_size)
 
         bar = progressbar.ProgressBar(widgets=bar_widgets)
-        for _ in bar(range(self.n_iterations)):
+        for _ in bar(range(n_iterations)):
             idx = range(n_samples)
             np.random.shuffle(idx)
 
             batch_t_error = 0   # Mean batch training error
             for i in range(n_batches):
-                X_batch = X[idx[i*self.batch_size:(i+1)*self.batch_size]]
-                y_batch = y[idx[i*self.batch_size:(i+1)*self.batch_size]]
-
-                # Calculate output
-                y_pred = self._forward_pass(X_batch)
-
-                # Calculate the training loss
-                loss = np.mean(self.loss_function.loss(y_batch, y_pred))
+                X_batch = X[idx[i*batch_size:(i+1)*batch_size]]
+                y_batch = y[idx[i*batch_size:(i+1)*batch_size]]
+                loss, _ = self.train_on_batch(X_batch, y_batch)
                 batch_t_error += loss
-
-                loss_grad = self.loss_function.gradient(y_batch, y_pred)
-
-                # Backprop. Update weights
-                self._backward_pass(loss_grad=loss_grad)
 
             # Save the epoch mean error
             self.errors["training"].append(batch_t_error / n_batches)
@@ -136,9 +145,7 @@ class NeuralNetwork():
 
     # Use the trained model to predict labels of X
     def predict(self, X):
-        output = self._forward_pass(X, training=False)
-        # Return the sample with the highest output
-        return np.argmax(output, axis=1)
+        return self._forward_pass(X, training=False)
 
 
 def main():
@@ -193,11 +200,9 @@ def main():
     X_train = X_train.reshape((-1,1,8,8))
     X_test = X_test.reshape((-1,1,8,8))
 
-    clf = NeuralNetwork(n_iterations=50,
-                            batch_size=128,
-                            optimizer=optimizer,
-                            loss=CrossEntropy,
-                            validation_data=(X_test, y_test))
+    clf = NeuralNetwork(optimizer=optimizer,
+                        loss=CrossEntropy,
+                        validation_data=(X_test, y_test))
 
     clf.add(Conv2D(n_filters=16, filter_shape=(3,3), padding=1, input_shape=(1,8,8)))
     clf.add(Activation('relu'))
@@ -209,10 +214,10 @@ def main():
     clf.add(Dense(10))
     clf.add(Activation('softmax'))
     
-    clf.fit(X_train, y_train)
+    clf.fit(X_train, y_train, n_iterations=50, batch_size=128)
     clf.plot_errors()
 
-    y_pred = clf.predict(X_test)
+    y_pred = np.argmax(clf.predict(X_test), axis=1)
 
     accuracy = accuracy_score(y_test, y_pred)
     print ("Accuracy:", accuracy)

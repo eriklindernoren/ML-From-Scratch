@@ -9,6 +9,7 @@ from mlfromscratch.utils.activation_functions import Sigmoid, ReLU, SoftPlus, Le
 
 
 class Layer(object):
+
     def set_input_shape(self, shape):
         self.input_shape = shape
 
@@ -40,6 +41,7 @@ class Dense(Layer):
         self.input_shape, self.n_units = input_shape, n_units
         self.W = None
         self.wb = None
+        self.trainable = True
 
     def initialize(self, optimizer):
         # Initialize the weights
@@ -55,13 +57,14 @@ class Dense(Layer):
         return X.dot(self.W) + self.wb
 
     def backward_pass(self, acc_grad):
-        # Calculate gradient w.r.t layer weights
-        grad_w = self.layer_input.T.dot(acc_grad)
-        grad_wb = np.sum(acc_grad, axis=0, keepdims=True)
+        if self.trainable:
+            # Calculate gradient w.r.t layer weights
+            grad_w = self.layer_input.T.dot(acc_grad)
+            grad_wb = np.sum(acc_grad, axis=0, keepdims=True)
 
-        # Update the layer weights
-        self.W = self.W_opt.update(self.W, grad_w)
-        self.wb = self.wb_opt.update(self.wb, grad_wb)
+            # Update the layer weights
+            self.W = self.W_opt.update(self.W, grad_w)
+            self.wb = self.wb_opt.update(self.wb, grad_wb)
 
         # Return accumulated gradient for next layer
         acc_grad = acc_grad.dot(self.W.T)
@@ -95,6 +98,7 @@ class Conv2D(Layer):
         self.padding = padding
         self.stride = stride
         self.input_shape = input_shape
+        self.trainable = True
 
     def initialize(self, optimizer):
         # Initialize the weights
@@ -126,16 +130,17 @@ class Conv2D(Layer):
     def backward_pass(self, acc_grad):
         # Reshape accumulated gradient into column shape
         acc_grad = acc_grad.transpose(1, 2, 3, 0).reshape(self.n_filters, -1)
-        
-        # Take dot product between column shaped accum. gradient and column shape
-        # layer input to determine the gradient at the layer with respect to layer weights
-        grad_w = acc_grad.dot(self.X_col.T).reshape(self.W.shape)
-        # The gradient with respect to bias terms is the sum similarly to in Dense layer
-        grad_wb = np.sum(acc_grad, axis=1, keepdims=True)
 
-        # Update the layers weights
-        self.W = self.W_opt.update(self.W, grad_w)
-        self.wb = self.wb_opt.update(self.wb, grad_wb)
+        if self.trainable:
+            # Take dot product between column shaped accum. gradient and column shape
+            # layer input to determine the gradient at the layer with respect to layer weights
+            grad_w = acc_grad.dot(self.X_col.T).reshape(self.W.shape)
+            # The gradient with respect to bias terms is the sum similarly to in Dense layer
+            grad_wb = np.sum(acc_grad, axis=1, keepdims=True)
+
+            # Update the layers weights
+            self.W = self.W_opt.update(self.W, grad_w)
+            self.wb = self.wb_opt.update(self.wb, grad_wb)
 
         # Recalculate the gradient which will be propogated back to prev. layer
         acc_grad = self.W_col.T.dot(acc_grad)
@@ -158,6 +163,7 @@ class PoolingLayer(Layer):
         self.pool_shape = pool_shape
         self.stride = stride
         self.padding = padding
+        self.trainable = True
 
     def forward_pass(self, X, training=True):
         self.layer_input = X
@@ -224,9 +230,22 @@ class AveragePooling2D(PoolingLayer):
 
 
 class ConstantPadding2D(Layer):
-    """ Add constant value to borders of image shaped input (batch_size, channels, height, width) """
+    """Adds rows and columns of constant values to the input.
+    Expects the input to be of shape (batch_size, channels, height, width)
+
+    Parameters:
+    -----------
+    padding: tuple
+        The amount of padding along the height and width dimension of the input.
+        If (pad_h, pad_w) the same symmetric padding is applied along height and width dimension.
+        If ((pad_h0, pad_h1), (pad_w0, pad_w1)) the specified padding is added to beginning and end of 
+        the height and width dimension.
+    padding_value: int or tuple
+        The value the is added as padding.
+    """
     def __init__(self, padding, padding_value=0):
         self.padding = padding
+        self.trainable = True
         if not isinstance(padding[0], tuple):
             self.padding = ((padding[0], padding[0]), padding[1])
         if not isinstance(padding[1], tuple):
@@ -251,8 +270,19 @@ class ConstantPadding2D(Layer):
         new_width = self.input_shape[2] + np.sum(self.padding[1])
         return (self.input_shape[0], new_height, new_width)
 
+
 class ZeroPadding2D(ConstantPadding2D):
-    """ Add zeros to borders of image shaped input (batch_size, channels, height, width) """
+    """Adds rows and columns of zero values to the input.
+    Expects the input to be of shape (batch_size, channels, height, width)
+
+    Parameters:
+    -----------
+    padding: tuple
+        The amount of padding along the height and width dimension of the input.
+        If (pad_h, pad_w) the same symmetric padding is applied along height and width dimension.
+        If ((pad_h0, pad_h1), (pad_w0, pad_w1)) the specified padding is added to beginning and end of 
+        the height and width dimension.
+    """
     def __init__(self, padding):
         self.padding = padding
         if isinstance(padding[0], int):
@@ -261,10 +291,13 @@ class ZeroPadding2D(ConstantPadding2D):
             self.padding = (self.padding[0], (padding[1], padding[1]))
         self.padding_value = 0
 
+
 class Flatten(Layer):
     """ Turns a multidimensional matrix into two-dimensional """
-    def __init__(self):
+    def __init__(self, input_shape=None):
         self.prev_shape = None
+        self.trainable = True
+        self.input_shape = input_shape
 
     def forward_pass(self, X, training=True):
         self.prev_shape = X.shape
@@ -276,6 +309,23 @@ class Flatten(Layer):
     def output_shape(self):
         return (np.prod(self.input_shape),)
 
+class Reshape(Layer):
+    """ Reshapes the input tensor into specified shape """
+    def __init__(self, shape, input_shape=None):
+        self.prev_shape = None
+        self.trainable = True
+        self.shape = shape
+        self.input_shape = input_shape
+
+    def forward_pass(self, X, training=True):
+        self.prev_shape = X.shape
+        return X.reshape((X.shape[0], ) + self.shape)
+
+    def backward_pass(self, acc_grad):
+        return acc_grad.reshape(self.prev_shape)
+
+    def output_shape(self):
+        return self.shape
 
 
 class Dropout(Layer):
@@ -293,6 +343,7 @@ class Dropout(Layer):
         self.input_shape = None
         self.n_units = None
         self.pass_through = True
+        self.trainable = True
 
     def forward_pass(self, X, training=True):
         c = (1 - self.p)
@@ -308,10 +359,14 @@ class Dropout(Layer):
         return self.input_shape
 
 
-
-
 class Activation(Layer):
+    """A layer that applies an activation operation to the input.
 
+    Parameters:
+    -----------
+    name: string
+        The name of the activation function that will be used. 
+    """
     activation_functions = {
         'relu': ReLU,
         'sigmoid': Sigmoid,
@@ -325,6 +380,7 @@ class Activation(Layer):
 
     def __init__(self, name):
         self.activation = self.activation_functions[name]()
+        self.trainable = True
 
     def forward_pass(self, X, training=True):
         self.layer_input = X

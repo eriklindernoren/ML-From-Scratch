@@ -6,3 +6,4 @@ dist/
 *__pycache__/
 *.py[cod]
 *eggs*
+*\.png

@@ -1,5 +1,6 @@
 from __future__ import division
 import numpy as np
+from data_operation import accuracy_score
 from activation_functions import Sigmoid
 
 
@@ -28,6 +29,9 @@ class CrossEntropy():
         # Avoid division by zero
         p = np.clip(p, 1e-15, 1 - 1e-15)
         return - y * np.log(p) - (1 - y) * np.log(1 - p)
+
+    def acc(self, y, p):
+        return accuracy_score(np.argmax(y, axis=1), np.argmax(p, axis=1))
 
     def gradient(self, y, p):
         # Avoid division by zero
