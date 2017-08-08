@@ -46,10 +46,10 @@ class NeuralNetwork():
             self.X_val, self.y_val = validation_data
             self.y_val = to_categorical(self.y_val.astype("int"))
 
-    # Method which freezes the weights of the network's layers.
+    # Method which enables freezing of the weights of the network's layers.
     def set_trainable(self, trainable):
-        for i in range(len(self.layers)):
-            self.layers[i].trainable = trainable
+        for layer in self.layers:
+            layer.trainable = trainable
 
     def add(self, layer):
         # If the first layer has been added set the input shape

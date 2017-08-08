@@ -99,10 +99,9 @@ Feel free to [reach out](mailto:eriklindernoren@gmail.com) if you can think of w
     * Max Pooling Layer
     * Reshape Layer
     * Zero Padding Layer
-  + Model Types
-    * [Convolutional Neural Network](mlfromscratch/supervised_learning/neural_network.py)
-    * [Generative Adversarial Network](mlfromscratch/supervised_learning/generative_adversarial_network.py)
-    * [Multilayer Perceptron](mlfromscratch/supervised_learning/neural_network.py)
+  + [Model Types](mlfromscratch/supervised_learning/neural_network.py)
+    * Convolutional Neural Network
+    * Multilayer Perceptron
 - [Gradient Boosting](mlfromscratch/supervised_learning/gradient_boosting.py)
 - [K Nearest Neighbors](mlfromscratch/supervised_learning/k_nearest_neighbors.py)
 - [Linear Discriminant Analysis](mlfromscratch/supervised_learning/linear_discriminant_analysis.py)
@@ -122,6 +121,7 @@ Feel free to [reach out](mailto:eriklindernoren@gmail.com) if you can think of w
 - [DBSCAN](mlfromscratch/unsupervised_learning/dbscan.py)
 - [FP-Growth](mlfromscratch/unsupervised_learning/fp_growth.py)
 - [Gaussian Mixture Model](mlfromscratch/unsupervised_learning/gaussian_mixture_model.py)
+- [Generative Adversarial Network](mlfromscratch/unsupervised_learning/generative_adversarial_network.py)
 - [K-Means](mlfromscratch/unsupervised_learning/k_means.py)
 - [Partitioning Around Medoids](mlfromscratch/unsupervised_learning/partitioning_around_medoids.py)
 - [Principal Component Analysis](mlfromscratch/unsupervised_learning/principal_component_analysis.py)
