@@ -1,5 +1,5 @@
 
-from __future__ import print_function
+from __future__ import print_function, division
 import sys
 import os
 import math
@@ -162,7 +162,7 @@ class BatchNormalization(Layer):
     def __init__(self, momentum=0.99):
         self.momentum = momentum
         self.trainable = True
-        self.eps = 0.01
+        self.eps = 0.001
         self.running_mean = 0
         self.running_var = 0
 
@@ -176,23 +176,23 @@ class BatchNormalization(Layer):
 
     def forward_pass(self, X, training=True):
         if training:
-            self.mean = np.mean(X, axis=0)
-            self.var = np.var(X, axis=0)
-
-            self.X_centered = (X - self.mean)
-            X_norm = self.X_centered / np.sqrt(self.var + self.eps)
-            output = self.gamma * X_norm + self.beta
-
-            self.running_mean = self.momentum * self.running_mean + self.mean
-            self.running_var = self.momentum * self.running_var + self.var
+            mean = np.mean(X, axis=0)
+            var = np.var(X, axis=0)
+            self.X_centered = X - mean
+            self.running_mean = self.momentum * self.running_mean + (1 - self.momentum) * self.mean
+            self.running_var = self.momentum * self.running_var + (1 - self.momentum) * self.var
         else:
-            X_norm = (X - self.running_mean) / np.sqrt(self.running_var + self.eps)
-            output = self.gamma * X_norm + self.beta
+            mean = self.running_mean
+            var = self.running_var
+
+        X_norm = (X - mean) / np.sqrt(var + self.eps)
+        output = self.gamma * X_norm + self.beta
 
         return output
 
     def backward_pass(self, acc_grad):
 
+        # If the layer is trainable the parameters are updated
         if self.trainable:
             X_norm = self.X_centered / np.sqrt(self.var + self.eps)
             grad_gamma = np.sum(acc_grad * X_norm, axis=0)
@@ -202,15 +202,14 @@ class BatchNormalization(Layer):
             self.beta = self.beta_opt.update(self.beta, grad_beta)
 
         batch_size = acc_grad.shape[0]
-
         stddev_inv = 1 / np.sqrt(self.var + self.eps)
 
-        weighted_grad = acc_grad * self.gamma
-
-        grad_var = np.sum(weighted_grad * self.X_centered, axis=0) * -0.5 * stddev_inv**3
-        grad_mean = np.sum(weighted_grad * -stddev_inv, axis=0) + grad_var * np.mean(-2*self.X_centered, axis=0)
-
-        acc_grad = weighted_grad * stddev_inv + grad_var * 2 * self.X_centered / batch_size + (grad_mean / batch_size)
+        # The gradient of the loss with respect to the layer inputs
+        acc_grad = (1 / batch_size) * self.gamma * stddev_inv * (
+            batch_size * acc_grad 
+            - np.sum(acc_grad, axis=0)
+            - self.X_centered * stddev_inv**2 * np.sum(acc_grad * self.X_centered, axis=0)
+            )
 
         return acc_grad
 
