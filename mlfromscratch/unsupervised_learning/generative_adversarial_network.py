@@ -65,8 +65,10 @@ class GAN():
         model.add(Flatten(input_shape=self.img_shape))
         model.add(Dense(512))
         model.add(Activation('leaky_relu'))
+        model.add(Dropout(0.5))
         model.add(Dense(256))
         model.add(Activation('leaky_relu'))
+        model.add(Dropout(0.5))
         model.add(Dense(2))
         model.add(Activation('softmax'))
 
@@ -99,7 +101,7 @@ class GAN():
 
             noise = np.random.normal(0, 1, (half_batch, 100))
 
-            # Generate a half batch of new images
+            # Generate a half batch of images
             gen_imgs = self.generator.predict(noise)
 
             valid = np.concatenate((np.ones((half_batch, 1)), np.zeros((half_batch, 1))), axis=1)

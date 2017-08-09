@@ -161,11 +161,9 @@ def main():
     # MLP
     #-----
 
-    # clf = NeuralNetwork(n_iterations=50,
-    #                         batch_size=128,
-    #                         optimizer=optimizer,
-    #                         loss=CrossEntropy,
-    #                         validation_data=(X_test, y_test))
+    # clf = NeuralNetwork(optimizer=optimizer,
+    #                     loss=CrossEntropy,
+    #                     validation_data=(X_test, y_test))
 
     # clf.add(Dense(n_hidden, input_shape=(8*8,)))
     # clf.add(Activation('leaky_relu'))
@@ -181,10 +179,10 @@ def main():
     # clf.add(Dense(10))
     # clf.add(Activation('softmax'))
     
-    # clf.fit(X_train, y_train)
+    # clf.fit(X_train, y_train, n_iterations=50, batch_size=256)
     # clf.plot_errors()
 
-    # y_pred = clf.predict(X_test)
+    # y_pred = np.argmax(clf.predict(X_test), axis=1)
 
     # accuracy = accuracy_score(y_test, y_pred)
     # print ("Accuracy:", accuracy)
@@ -210,7 +208,7 @@ def main():
     clf.add(Dense(10))
     clf.add(Activation('softmax'))
     
-    clf.fit(X_train, y_train, n_iterations=50, batch_size=128)
+    clf.fit(X_train, y_train, n_iterations=50, batch_size=256)
     clf.plot_errors()
 
     y_pred = np.argmax(clf.predict(X_test), axis=1)

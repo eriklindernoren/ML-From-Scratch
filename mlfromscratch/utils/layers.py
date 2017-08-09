@@ -57,6 +57,10 @@ class Dense(Layer):
         return X.dot(self.W) + self.wb
 
     def backward_pass(self, acc_grad):
+        
+        # Save weights used during forwards pass
+        W = self.W
+
         if self.trainable:
             # Calculate gradient w.r.t layer weights
             grad_w = self.layer_input.T.dot(acc_grad)
@@ -67,7 +71,8 @@ class Dense(Layer):
             self.wb = self.wb_opt.update(self.wb, grad_wb)
 
         # Return accumulated gradient for next layer
-        acc_grad = acc_grad.dot(self.W.T)
+        # Calculated based on the weights used during the forward pass
+        acc_grad = acc_grad.dot(W.T)
         return acc_grad
 
     def output_shape(self):
@@ -157,12 +162,12 @@ class Conv2D(Layer):
 
 
 class BatchNormalization(Layer):
-    """Batch normalization. Ensures zero mean and unit variance.
+    """Batch normalization.
     """
     def __init__(self, momentum=0.99):
         self.momentum = momentum
         self.trainable = True
-        self.eps = 0.001
+        self.eps = 0.01
         self.running_mean = 0
         self.running_var = 0
 
@@ -179,8 +184,9 @@ class BatchNormalization(Layer):
             mean = np.mean(X, axis=0)
             var = np.var(X, axis=0)
             self.X_centered = X - mean
-            self.running_mean = self.momentum * self.running_mean + (1 - self.momentum) * self.mean
-            self.running_var = self.momentum * self.running_var + (1 - self.momentum) * self.var
+            self.stddev_inv = 1 / np.sqrt(var + self.eps)
+            self.running_mean = self.momentum * self.running_mean + (1 - self.momentum) * mean
+            self.running_var = self.momentum * self.running_var + (1 - self.momentum) * var
         else:
             mean = self.running_mean
             var = self.running_var
@@ -192,9 +198,12 @@ class BatchNormalization(Layer):
 
     def backward_pass(self, acc_grad):
 
+        # Save weights used during the forward pass
+        gamma = self.gamma
+
         # If the layer is trainable the parameters are updated
         if self.trainable:
-            X_norm = self.X_centered / np.sqrt(self.var + self.eps)
+            X_norm = self.X_centered * self.stddev_inv
             grad_gamma = np.sum(acc_grad * X_norm, axis=0)
             grad_beta = np.sum(acc_grad, axis=0)
 
@@ -202,13 +211,12 @@ class BatchNormalization(Layer):
             self.beta = self.beta_opt.update(self.beta, grad_beta)
 
         batch_size = acc_grad.shape[0]
-        stddev_inv = 1 / np.sqrt(self.var + self.eps)
 
-        # The gradient of the loss with respect to the layer inputs
-        acc_grad = (1 / batch_size) * self.gamma * stddev_inv * (
+        # The gradient of the loss with respect to the layer inputs (use weights from forward pass)
+        acc_grad = (1 / batch_size) * gamma * self.stddev_inv * (
             batch_size * acc_grad 
             - np.sum(acc_grad, axis=0)
-            - self.X_centered * stddev_inv**2 * np.sum(acc_grad * self.X_centered, axis=0)
+            - self.X_centered * self.stddev_inv**2 * np.sum(acc_grad * self.X_centered, axis=0)
             )
 
         return acc_grad
@@ -462,8 +470,8 @@ def get_im2col_indices(images_shape, filter_shape, padding=1, stride=1):
   filter_height, filter_width = filter_shape
   assert (height + 2 * padding - filter_height) % stride == 0
   assert (width + 2 * padding - filter_height) % stride == 0
-  out_height = (height + 2 * padding - filter_height) / stride + 1
-  out_width = (width + 2 * padding - filter_width) / stride + 1
+  out_height = int((height + 2 * padding - filter_height) / stride + 1)
+  out_width = int((width + 2 * padding - filter_width) / stride + 1)
 
   i0 = np.repeat(np.arange(filter_height), filter_width)
   i0 = np.tile(i0, channels)

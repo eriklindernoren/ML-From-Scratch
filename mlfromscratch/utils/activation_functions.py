@@ -43,7 +43,7 @@ class ReLU():
         return np.where(x >= 0, 1, 0)
 
 class LeakyReLU():
-    def __init__(self, alpha=0.01):
+    def __init__(self, alpha=0.2):
         self.alpha = alpha
 
     def function(self, x):
