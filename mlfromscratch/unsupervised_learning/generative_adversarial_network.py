@@ -14,7 +14,7 @@ from sklearn.datasets import fetch_mldata
 # Import helper functions
 from mlfromscratch.utils.optimizers import Adam
 from mlfromscratch.utils.loss_functions import CrossEntropy
-from mlfromscratch.utils.layers import Dense, Dropout, Flatten, Activation, Reshape
+from mlfromscratch.utils.layers import Dense, Dropout, Flatten, Activation, Reshape, BatchNormalization
 from mlfromscratch.supervised_learning import NeuralNetwork
 
 
@@ -45,10 +45,13 @@ class GAN():
 
         model.add(Dense(256, input_shape=(100,)))
         model.add(Activation('leaky_relu'))
+        model.add(BatchNormalization(momentum=0.8))
         model.add(Dense(512))
         model.add(Activation('leaky_relu'))
+        model.add(BatchNormalization(momentum=0.8))
         model.add(Dense(1024))
         model.add(Activation('leaky_relu'))
+        model.add(BatchNormalization(momentum=0.8))
         model.add(Dense(np.prod(self.img_shape)))
         model.add(Activation('tanh'))
         model.add(Reshape(self.img_shape))
@@ -79,7 +82,6 @@ class GAN():
 
         # Rescale -1 to 1
         X = (X.astype(np.float32) - 127.5) / 127.5
-        X = np.expand_dims(X, axis=1)
 
         half_batch = int(batch_size / 2)
 
@@ -106,20 +108,21 @@ class GAN():
             # Train the discriminator
             d_loss_real, d_acc_real = self.discriminator.train_on_batch(imgs, valid)
             d_loss_fake, d_acc_fake = self.discriminator.train_on_batch(gen_imgs, fake)
-            d_loss = 0.5 * np.add(d_loss_real, d_loss_fake)
-            d_acc = 0.5 * np.add(d_acc_real, d_acc_fake)
+            d_loss = 0.5 * (d_loss_real + d_loss_fake)
+            d_acc = 0.5 * (d_acc_real + d_acc_fake)
 
 
             # ---------------------
             #  Train Generator
             # ---------------------
 
+            # We only want to train the generator for the combined model
             self.discriminator.set_trainable(False)
 
+            # Sample noise and use as generator input
             noise = np.random.normal(0, 1, (batch_size, 100))
 
-            # The generator wants the discriminator to label the generated samples
-            # as valid
+            # The generator wants the discriminator to label the generated samples as valid
             valid = np.concatenate((np.ones((batch_size, 1)), np.zeros((batch_size, 1))), axis=1)
 
             # Train the generator
@@ -141,6 +144,7 @@ class GAN():
         gen_imgs = 0.5 * gen_imgs + 0.5
 
         fig, axs = plt.subplots(r, c)
+        plt.suptitle("Generative Adversarial Network")
         cnt = 0
         for i in range(r):
             for j in range(c):
@@ -153,6 +157,6 @@ class GAN():
 
 if __name__ == '__main__':
     gan = GAN()
-    gan.train(epochs=30000, batch_size=32, save_interval=400)
+    gan.train(epochs=50000, batch_size=32, save_interval=400)
 
 

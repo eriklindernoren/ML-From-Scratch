@@ -65,18 +65,14 @@ class NeuralNetwork():
         self.layers.append(layer)
 
     def train_on_batch(self, X, y):
-
         # Calculate output
         y_pred = self._forward_pass(X)
-
         # Calculate the training loss
         loss = np.mean(self.loss_function.loss(y, y_pred))
-        # Calculate the accuracy of the predictions
+        # Calculate the accuracy of the prediction
         acc = self.loss_function.acc(y, y_pred)
-
         # Calculate the gradient of the loss function wrt y_pred
         loss_grad = self.loss_function.gradient(y, y_pred)
-
         # Backprop. Update weights
         self._backward_pass(loss_grad=loss_grad)
 
@@ -85,7 +81,7 @@ class NeuralNetwork():
 
     def fit(self, X, y, n_iterations, batch_size):
 
-        # Convert the categorical data to binary
+        # Convert to one-hot encoding
         y = to_categorical(y.astype("int"))
 
         n_samples = np.shape(X)[0]

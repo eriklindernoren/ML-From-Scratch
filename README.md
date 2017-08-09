@@ -91,6 +91,7 @@ Feel free to [reach out](mailto:eriklindernoren@gmail.com) if you can think of w
   + [Layers](mlfromscratch/utils/layers.py)
     * Activation Layer
     * Average Pooling Layer
+    * Batch Normalization Layer
     * Constant Padding Layer
     * Convolutional Layer
     * Dropout Layer

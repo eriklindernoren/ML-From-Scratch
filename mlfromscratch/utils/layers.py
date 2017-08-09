@@ -156,6 +156,68 @@ class Conv2D(Layer):
         return self.n_filters, int(output_height), int(output_width)
 
 
+class BatchNormalization(Layer):
+    """Batch normalization. Ensures zero mean and unit variance.
+    """
+    def __init__(self, momentum=0.99):
+        self.momentum = momentum
+        self.trainable = True
+        self.eps = 0.01
+        self.running_mean = 0
+        self.running_var = 0
+
+    def initialize(self, optimizer):
+        # Initialize the parameters
+        self.gamma  = np.ones(self.input_shape)
+        self.beta = np.zeros(self.input_shape)
+        # parameter optimizers
+        self.gamma_opt  = copy.copy(optimizer)
+        self.beta_opt = copy.copy(optimizer)
+
+    def forward_pass(self, X, training=True):
+        if training:
+            self.mean = np.mean(X, axis=0)
+            self.var = np.var(X, axis=0)
+
+            self.X_centered = (X - self.mean)
+            X_norm = self.X_centered / np.sqrt(self.var + self.eps)
+            output = self.gamma * X_norm + self.beta
+
+            self.running_mean = self.momentum * self.running_mean + self.mean
+            self.running_var = self.momentum * self.running_var + self.var
+        else:
+            X_norm = (X - self.running_mean) / np.sqrt(self.running_var + self.eps)
+            output = self.gamma * X_norm + self.beta
+
+        return output
+
+    def backward_pass(self, acc_grad):
+
+        if self.trainable:
+            X_norm = self.X_centered / np.sqrt(self.var + self.eps)
+            grad_gamma = np.sum(acc_grad * X_norm, axis=0)
+            grad_beta = np.sum(acc_grad, axis=0)
+
+            self.gamma = self.gamma_opt.update(self.gamma, grad_gamma)
+            self.beta = self.beta_opt.update(self.beta, grad_beta)
+
+        batch_size = acc_grad.shape[0]
+
+        stddev_inv = 1 / np.sqrt(self.var + self.eps)
+
+        weighted_grad = acc_grad * self.gamma
+
+        grad_var = np.sum(weighted_grad * self.X_centered, axis=0) * -0.5 * stddev_inv**3
+        grad_mean = np.sum(weighted_grad * -stddev_inv, axis=0) + grad_var * np.mean(-2*self.X_centered, axis=0)
+
+        acc_grad = weighted_grad * stddev_inv + grad_var * 2 * self.X_centered / batch_size + (grad_mean / batch_size)
+
+        return acc_grad
+
+    def output_shape(self):
+        return self.input_shape
+
+
 class PoolingLayer(Layer):
     """A parent class of MaxPooling2D and AveragePooling2D
     """
