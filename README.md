@@ -18,7 +18,7 @@ Feel free to [reach out](mailto:eriklindernoren@gmail.com) if you can think of w
     + [Regression](#regression)
     + [Classification](#classification)
     + [Clustering](#clustering)
-    + [Generating Images](#generating-images)
+    + [Generating Handwritten Digits](#generating-handwritten-digits)
     + [Association Analysis](#association-analysis)
   * [Implementations](#implementations)
     + [Supervised Learning](#supervised-learning)
@@ -60,7 +60,7 @@ Feel free to [reach out](mailto:eriklindernoren@gmail.com) if you can think of w
     Figure: Clustering of the moons dataset using DBSCAN.
 </p>
 
-### Generating Images
+### Generating Handwritten Digits
     $ python mlfromscratch/unsupervised_learning/generative_adversarial_network.py
    
 <p align="center">
