@@ -14,11 +14,11 @@ from sklearn.datasets import fetch_mldata
 # Import helper functions
 from mlfromscratch.utils.optimizers import Adam
 from mlfromscratch.utils.loss_functions import CrossEntropy
-from mlfromscratch.utils.layers import Dense, Dropout, Flatten, Activation, Reshape, BatchNormalization
+from mlfromscratch.utils.layers import Conv2D, Dense, Dropout, Flatten, Activation, Reshape, BatchNormalization, UpSampling2D
 from mlfromscratch.supervised_learning import NeuralNetwork
 
 
-class GAN():
+class DCGAN():
     def __init__(self):
         self.img_rows = 28 
         self.img_cols = 28
@@ -43,18 +43,20 @@ class GAN():
         
         model = NeuralNetwork(optimizer=optimizer, loss=loss_function)
 
-        model.add(Dense(256, input_shape=(100,)))
+        model.add(Dense(128 * 7 * 7, input_shape=(100,)))
         model.add(Activation('leaky_relu'))
+        model.add(Reshape((128, 7, 7)))
         model.add(BatchNormalization(momentum=0.8))
-        model.add(Dense(512))
-        model.add(Activation('leaky_relu'))
+        model.add(UpSampling2D())
+        model.add(Conv2D(128, filter_shape=(3,3), padding=1))
+        model.add(Activation("leaky_relu"))
+        model.add(BatchNormalization(momentum=0.8)) 
+        model.add(UpSampling2D())
+        model.add(Conv2D(64, filter_shape=(3,3), padding=1))
+        model.add(Activation("leaky_relu"))
         model.add(BatchNormalization(momentum=0.8))
-        model.add(Dense(1024))
-        model.add(Activation('leaky_relu'))
-        model.add(BatchNormalization(momentum=0.8))
-        model.add(Dense(np.prod(self.img_shape)))
-        model.add(Activation('tanh'))
-        model.add(Reshape(self.img_shape))
+        model.add(Conv2D(1, filter_shape=(3,3), padding=1))
+        model.add(Activation("tanh"))
 
         return model
 
@@ -62,13 +64,18 @@ class GAN():
         
         model = NeuralNetwork(optimizer=optimizer, loss=loss_function)
 
-        model.add(Flatten(input_shape=self.img_shape))
-        model.add(Dense(512))
+        model.add(Conv2D(32, filter_shape=(4,4), stride=2, input_shape=self.img_shape, padding=1))
         model.add(Activation('leaky_relu'))
-        model.add(Dropout(0.5))
-        model.add(Dense(256))
+        model.add(Dropout(0.25))
+        model.add(BatchNormalization(momentum=0.8))
+        model.add(Conv2D(64, filter_shape=(4,4), stride=2, padding=1))
         model.add(Activation('leaky_relu'))
-        model.add(Dropout(0.5))
+        model.add(Dropout(0.25))
+        model.add(BatchNormalization(momentum=0.8))
+        model.add(Conv2D(128, filter_shape=(4,4), stride=1, padding=1))
+        model.add(Activation('leaky_relu'))
+        model.add(Dropout(0.25))
+        model.add(Flatten())
         model.add(Dense(2))
         model.add(Activation('softmax'))
 
@@ -146,7 +153,7 @@ class GAN():
         gen_imgs = 0.5 * gen_imgs + 0.5
 
         fig, axs = plt.subplots(r, c)
-        plt.suptitle("Generative Adversarial Network")
+        plt.suptitle("Dense Convolutional Generative Adversarial Network")
         cnt = 0
         for i in range(r):
             for j in range(c):
@@ -158,7 +165,7 @@ class GAN():
 
 
 if __name__ == '__main__':
-    gan = GAN()
-    gan.train(epochs=80000, batch_size=64, save_interval=400)
+    dcgan = DCGAN()
+    dcgan.train(epochs=80000, batch_size=32, save_interval=50)
 
 

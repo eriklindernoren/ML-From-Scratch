@@ -198,7 +198,7 @@ class BatchNormalization(Layer):
 
     def backward_pass(self, acc_grad):
 
-        # Save weights used during the forward pass
+        # Save parameters used during the forward pass
         gamma = self.gamma
 
         # If the layer is trainable the parameters are updated
@@ -378,6 +378,38 @@ class Flatten(Layer):
     def output_shape(self):
         return (np.prod(self.input_shape),)
 
+
+class UpSampling2D(Layer):
+    """ Up sampling of the input. Repeats the rows and columns of the data by 
+    size[0] and size[1] respectively.
+
+    Parameters:
+    -----------
+    size: tuple
+        (size_y, size_x) - The number of times each axis will be repeated. 
+    """
+    def __init__(self, size=(2,2), input_shape=None):
+        self.prev_shape = None
+        self.trainable = True
+        self.size = size
+        self.input_shape = input_shape
+
+    def forward_pass(self, X, training=True):
+        self.prev_shape = X.shape
+        # Repeat each axis as specified by size
+        X_new = X.repeat(self.size[0], axis=2).repeat(self.size[1], axis=3)
+        return X_new
+
+    def backward_pass(self, acc_grad):
+        # Down samples input to previous shape
+        acc_grad = acc_grad[:, :, ::self.size[0], ::self.size[1]]
+        return acc_grad
+
+    def output_shape(self):
+        channels, height, width = self.input_shape
+        return channels, self.size[0] * height, self.size[1] * width
+
+
 class Reshape(Layer):
     """ Reshapes the input tensor into specified shape """
     def __init__(self, shape, input_shape=None):
@@ -469,7 +501,7 @@ def get_im2col_indices(images_shape, filter_shape, padding=1, stride=1):
   batch_size, channels, height, width = images_shape
   filter_height, filter_width = filter_shape
   assert (height + 2 * padding - filter_height) % stride == 0
-  assert (width + 2 * padding - filter_height) % stride == 0
+  assert (width + 2 * padding - filter_width) % stride == 0
   out_height = int((height + 2 * padding - filter_height) / stride + 1)
   out_width = int((width + 2 * padding - filter_width) / stride + 1)
 
