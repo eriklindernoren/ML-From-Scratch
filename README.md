@@ -67,7 +67,8 @@ Feel free to [reach out](mailto:eriklindernoren@gmail.com) if you can think of w
     <img src="http://eriklindernoren.se/images/gan_mnist1.gif" width="640">
 </p>
 <p align="center">
-    Figure: Training progress of a Generative Adversarial Network which generates handwritten digits.
+    Figure: Training progress of a Generative Adversarial Network which <br>
+    generates handwritten digits.
 </p>
 
 ### Association Analysis
