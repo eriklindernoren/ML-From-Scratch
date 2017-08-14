@@ -170,8 +170,8 @@ class BatchNormalization(Layer):
         self.momentum = momentum
         self.trainable = True
         self.eps = 0.01
-        self.running_mean = 0
-        self.running_var = 0
+        self.running_mean = None
+        self.running_var = None
 
     def initialize(self, optimizer):
         # Initialize the parameters
@@ -182,6 +182,12 @@ class BatchNormalization(Layer):
         self.beta_opt = copy.copy(optimizer)
 
     def forward_pass(self, X, training=True):
+
+        # Initialize running mean and variance if first run
+        if self.running_mean is None:
+            self.running_mean = np.mean(X, axis=0)
+            self.running_var = np.var(X, axis=0)
+
         if training:
             mean = np.mean(X, axis=0)
             var = np.var(X, axis=0)
@@ -509,10 +515,14 @@ def determine_padding(filter_shape, output_shape="same"):
     # No padding
     if output_shape == "valid":
         return (0, 0), (0, 0)
-    # Pad so that the output shape is the same as input shape
+    # Pad so that the output shape is the same as input shape (given that stride=1)
     elif output_shape == "same":
         filter_height, filter_width = filter_shape
 
+        # Derived from:
+        # output_height = (height + pad_h - filter_height) / stride + 1
+        # In this case output_height = height and stride = 1. This gives the
+        # expression for the padding below.
         pad_h1 = int(math.floor((filter_height - 1)/2))
         pad_h2 = int(math.ceil((filter_height - 1)/2))
         pad_w1 = int(math.floor((filter_width - 1)/2))
