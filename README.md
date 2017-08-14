@@ -132,7 +132,6 @@ Feel free to [reach out](mailto:eriklindernoren@gmail.com) if you can think of w
 ### Unsupervised Learning
 - [Apriori](mlfromscratch/unsupervised_learning/apriori.py)
 - [DBSCAN](mlfromscratch/unsupervised_learning/dbscan.py)
-- [Deep Convolutional Generative Adversarial Network](mlfromscratch/unsupervised_learning/dcgan.py)
 - [FP-Growth](mlfromscratch/unsupervised_learning/fp_growth.py)
 - [Gaussian Mixture Model](mlfromscratch/unsupervised_learning/gaussian_mixture_model.py)
 - [Generative Adversarial Network](mlfromscratch/unsupervised_learning/generative_adversarial_network.py)
