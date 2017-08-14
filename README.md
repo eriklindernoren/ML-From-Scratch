@@ -67,7 +67,8 @@ Feel free to [reach out](mailto:eriklindernoren@gmail.com) if you can think of w
     <img src="http://eriklindernoren.se/images/gan_mnist1.gif" width="640">
 </p>
 <p align="center">
-    Figure: Training progress of a Generative Adversarial Network which generates handwritten digits.
+    Figure: Training progress of a Generative Adversarial Network which <br>
+    generates handwritten digits.
 </p>
 
 ### Association Analysis
@@ -132,7 +133,6 @@ Feel free to [reach out](mailto:eriklindernoren@gmail.com) if you can think of w
 ### Unsupervised Learning
 - [Apriori](mlfromscratch/unsupervised_learning/apriori.py)
 - [DBSCAN](mlfromscratch/unsupervised_learning/dbscan.py)
-- [Deep Convolutional Generative Adversarial Network](mlfromscratch/unsupervised_learning/dcgan.py)
 - [FP-Growth](mlfromscratch/unsupervised_learning/fp_growth.py)
 - [Gaussian Mixture Model](mlfromscratch/unsupervised_learning/gaussian_mixture_model.py)
 - [Generative Adversarial Network](mlfromscratch/unsupervised_learning/generative_adversarial_network.py)
