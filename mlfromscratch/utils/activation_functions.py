@@ -25,12 +25,16 @@ class Softmax():
         return p * (1 - p)
 
 class TanH():
-    def __init__(self): pass 
+    def __init__(self): pass
 
     def function(self, x):
+        # Avoid overflow for large inputs
+        #x = np.clip(-100, 100, x)
         return 2 / (1 + np.exp(-2*x)) - 1
 
     def gradient(self, x):
+        # Avoid overflow for large inputs
+        #x = np.clip(-100, 100, x)
         return 1 - np.power(self.function(x), 2)
 
 class ReLU():

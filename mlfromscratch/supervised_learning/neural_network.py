@@ -198,9 +198,9 @@ def main():
                         loss=CrossEntropy,
                         validation_data=(X_test, y_test))
 
-    clf.add(Conv2D(n_filters=16, filter_shape=(3,3), padding=1, input_shape=(1,8,8)))
+    clf.add(Conv2D(n_filters=16, filter_shape=(3,3), input_shape=(1,8,8), padding='same'))
     clf.add(Activation('relu'))
-    clf.add(Conv2D(n_filters=32, filter_shape=(3,3), padding=1))
+    clf.add(Conv2D(n_filters=32, filter_shape=(3,3), padding='same'))
     clf.add(Activation('relu'))
     clf.add(Flatten())
     clf.add(Dense(128))
