@@ -27,9 +27,7 @@ Feel free to [reach out](mailto:eriklindernoren@gmail.com) if you can think of w
 ## Usage
 ### Installation
     $ git clone https://github.com/eriklindernoren/ML-From-Scratch
-    
     $ cd ML-From-Scratch
-    
     $ python setup.py install
 
 
