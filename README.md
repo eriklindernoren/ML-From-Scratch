@@ -66,7 +66,7 @@ Feel free to [reach out](mailto:eriklindernoren@gmail.com) if you can think of w
     $ python mlfromscratch/unsupervised_learning/generative_adversarial_network.py
    
 <p align="center">
-    <img src="http://eriklindernoren.se/images/gan_mnist4.gif" width="640">
+    <img src="http://eriklindernoren.se/images/gan_mnist5.gif" width="640">
 </p>
 <p align="center">
     Figure: Training progress of a MNIST Generative Adversarial Network.
