@@ -88,6 +88,41 @@ Feel free to [reach out](mailto:eriklindernoren@gmail.com) if you can think of w
 
 ### Generating Handwritten Digits
     $ python mlfromscratch/unsupervised_learning/generative_adversarial_network.py
+    +-------------+
+    |  Generator  |
+    +-------------+
+    Layer Type                 Parameters                 Output Shape               
+    ----------                 ----------                 ------------               
+    Dense                      25856                      (256,)                     
+    Activation (leaky_relu)    0                          (256,)                     
+    BatchNormalization         512                        (256,)                     
+    Dense                      131584                     (512,)                     
+    Activation (leaky_relu)    0                          (512,)                     
+    BatchNormalization         1024                       (512,)                     
+    Dense                      525312                     (1024,)                    
+    Activation (leaky_relu)    0                          (1024,)                    
+    BatchNormalization         2048                       (1024,)                    
+    Dense                      803600                     (784,)                     
+    Activation (tanh)          0                          (784,)                     
+    Reshape                    0                          (1, 28, 28)                
+    ----------
+    Number of Parameters: 1489936
+    +-----------------+
+    |  Discriminator  |
+    +-----------------+
+    Layer Type                 Parameters                 Output Shape               
+    ----------                 ----------                 ------------               
+    Flatten                    0                          (784,)                     
+    Dense                      401920                     (512,)                     
+    Activation (leaky_relu)    0                          (512,)                     
+    Dropout                    0                          (512,)                     
+    Dense                      131328                     (256,)                     
+    Activation (leaky_relu)    0                          (256,)                     
+    Dropout                    0                          (256,)                     
+    Dense                      514                        (2,)                       
+    Activation (softmax)       0                          (2,)                       
+    ----------
+    Number of Parameters: 533762
    
 <p align="center">
     <img src="http://eriklindernoren.se/images/gan_mnist5.gif" width="640">

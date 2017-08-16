@@ -126,13 +126,20 @@ class NeuralNetwork():
         for layer in reversed(self.layers):
             acc_grad = layer.backward_pass(acc_grad)
 
-    def summary(self):
-        print ("+-----------------+")
-        print ("|  Model Summary  |")
-        print ("+-----------------+")
-        col_width = max(len(layer.__class__.__name__) for layer in self.layers) + 4  # padding
+    def summary(self, name="Model Summary"):
+        # Print model name
+        model_print = "|  %s  |" % name
+        border = "+" + (len(model_print)-2) * "-" + "+"
+        print (border)
+        print (model_print)
+        print (border)
+
+        # Calculate the width of the columns as the longest name of the layers
+        col_width = max(len(layer.layer_name()) for layer in self.layers) + 4
+        # Print headers
         print ("".join(col.ljust(col_width) for col in ["Layer Type", "Parameters", "Output Shape"]))
         print ("".join(col.ljust(col_width) for col in ["----------", "----------", "------------"]))
+        # Print the each layer's configuration
         tot_params = 0
         for layer in self.layers:
             name = layer.layer_name()
@@ -142,7 +149,7 @@ class NeuralNetwork():
 
             tot_params += params
         print ("----------")
-        print ("Total Parameters: %d" % tot_params)
+        print ("Number of Parameters: %d" % tot_params)
 
 
     # Use the trained model to predict labels of X

@@ -34,6 +34,10 @@ class GAN():
         # Build the generator
         self.generator = self.build_generator(optimizer, loss_function)
 
+        self.generator.summary(name="Generator")
+        self.discriminator.summary(name="Discriminator")
+        print ()
+
         # Build the combined model
         self.combined = NeuralNetwork(optimizer=optimizer, loss=loss_function)
         self.combined.layers += self.generator.layers[:]
