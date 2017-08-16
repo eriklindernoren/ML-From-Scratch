@@ -149,7 +149,7 @@ class NeuralNetwork():
 
             tot_params += params
         print ("----------")
-        print ("Number of Parameters: %d" % tot_params)
+        print ("Total Parameters: %d" % tot_params)
 
 
     # Use the trained model to predict labels of X

@@ -106,7 +106,7 @@ Feel free to [reach out](mailto:eriklindernoren@gmail.com) if you can think of w
     Activation (tanh)          0                          (784,)                     
     Reshape                    0                          (1, 28, 28)                
     ----------
-    Number of Parameters: 1489936
+    Total Parameters: 1489936
     +-----------------+
     |  Discriminator  |
     +-----------------+
@@ -122,7 +122,7 @@ Feel free to [reach out](mailto:eriklindernoren@gmail.com) if you can think of w
     Dense                      514                        (2,)                       
     Activation (softmax)       0                          (2,)                       
     ----------
-    Number of Parameters: 533762
+    Total Parameters: 533762
    
 <p align="center">
     <img src="http://eriklindernoren.se/images/gan_mnist5.gif" width="640">
