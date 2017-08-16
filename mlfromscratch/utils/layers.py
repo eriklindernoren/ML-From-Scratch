@@ -13,6 +13,12 @@ class Layer(object):
     def set_input_shape(self, shape):
         self.input_shape = shape
 
+    def layer_name(self):
+        return self.__class__.__name__
+
+    def parameters(self):
+        raise NotImplementedError()
+
     def forward_pass(self, X, training):
         raise NotImplementedError()
 
@@ -51,6 +57,9 @@ class Dense(Layer):
         # Weight optimizers
         self.W_opt  = copy.copy(optimizer)
         self.wb_opt = copy.copy(optimizer)
+
+    def parameters(self):
+        return np.prod(self.W.shape) + np.prod(self.wb.shape)
 
     def forward_pass(self, X, training=True):
         self.layer_input = X
@@ -117,6 +126,9 @@ class Conv2D(Layer):
         self.W_opt  = copy.copy(optimizer)
         self.wb_opt = copy.copy(optimizer)
 
+    def parameters(self):
+        return np.prod(self.W.shape) + np.prod(self.wb.shape)
+
     def forward_pass(self, X, training=True):
         batch_size, channels, height, width = X.shape
         self.layer_input = X
@@ -181,6 +193,9 @@ class BatchNormalization(Layer):
         self.gamma_opt  = copy.copy(optimizer)
         self.beta_opt = copy.copy(optimizer)
 
+    def parameters(self):
+        return np.prod(self.gamma.shape) + np.prod(self.beta.shape)
+
     def forward_pass(self, X, training=True):
 
         # Initialize running mean and variance if first run
@@ -241,6 +256,9 @@ class PoolingLayer(Layer):
         self.stride = stride
         self.padding = padding
         self.trainable = True
+
+    def parameters(self):
+        return 0
 
     def forward_pass(self, X, training=True):
         self.layer_input = X
@@ -329,6 +347,9 @@ class ConstantPadding2D(Layer):
             self.padding = (self.padding[0], (padding[1], padding[1]))
         self.padding_value = padding_value
 
+    def parameters(self):
+        return 0
+
     def forward_pass(self, X, training=True):
         output = np.pad(X, 
             pad_width=((0,0), (0,0), self.padding[0], self.padding[1]), 
@@ -376,6 +397,9 @@ class Flatten(Layer):
         self.trainable = True
         self.input_shape = input_shape
 
+    def parameters(self):
+        return 0
+
     def forward_pass(self, X, training=True):
         self.prev_shape = X.shape
         return X.reshape((X.shape[0], -1))
@@ -402,6 +426,9 @@ class UpSampling2D(Layer):
         self.size = size
         self.input_shape = input_shape
 
+    def parameters(self):
+        return 0
+
     def forward_pass(self, X, training=True):
         self.prev_shape = X.shape
         # Repeat each axis as specified by size
@@ -409,7 +436,7 @@ class UpSampling2D(Layer):
         return X_new
 
     def backward_pass(self, acc_grad):
-        # Down samples input to previous shape
+        # Down sample input to previous shape
         acc_grad = acc_grad[:, :, ::self.size[0], ::self.size[1]]
         return acc_grad
 
@@ -431,6 +458,9 @@ class Reshape(Layer):
         self.trainable = True
         self.shape = shape
         self.input_shape = input_shape
+
+    def parameters(self):
+        return 0
 
     def forward_pass(self, X, training=True):
         self.prev_shape = X.shape
@@ -459,6 +489,9 @@ class Dropout(Layer):
         self.n_units = None
         self.pass_through = True
         self.trainable = True
+
+    def parameters(self):
+        return 0
 
     def forward_pass(self, X, training=True):
         c = (1 - self.p)
@@ -494,8 +527,15 @@ class Activation(Layer):
     }
 
     def __init__(self, name):
+        self.activation_name = name
         self.activation = self.activation_functions[name]()
         self.trainable = True
+
+    def layer_name(self):
+        return "%s (%s)" % (self.__class__.__name__, self.activation_name)
+
+    def parameters(self):
+        return 0
 
     def forward_pass(self, X, training=True):
         self.layer_input = X
@@ -509,7 +549,7 @@ class Activation(Layer):
 
 
 # Method which calculates the padding based on the specified output shape and the
-# size of the filters
+# shape of the filters
 def determine_padding(filter_shape, output_shape="same"):
 
     # No padding
@@ -528,7 +568,7 @@ def determine_padding(filter_shape, output_shape="same"):
         pad_w1 = int(math.floor((filter_width - 1)/2))
         pad_w2 = int(math.ceil((filter_width - 1)/2))
 
-        return ((pad_h1, pad_h2), (pad_w1, pad_w2))
+        return (pad_h1, pad_h2), (pad_w1, pad_w2)
 
 
 # Reference: CS231n Stanford
@@ -553,7 +593,7 @@ def get_im2col_indices(images_shape, filter_shape, padding, stride=1):
     return (k, i, j)
 
 
-# Method which turns the image shaped input to a column shape.
+# Method which turns the image shaped input to column shape.
 # Used during the forward pass.
 # Reference: CS231n Stanford
 def image_to_column(images, filter_shape, stride, output_shape='same'):
@@ -564,7 +604,7 @@ def image_to_column(images, filter_shape, stride, output_shape='same'):
     # Add padding to the image
     images_padded = np.pad(images, ((0, 0), (0, 0), pad_h, pad_w), mode='constant')
     
-    # Calculate the indices where the dot products are applied between weights
+    # Calculate the indices where the dot products are to be applied between weights
     # and the image
     k, i, j = get_im2col_indices(images.shape, filter_shape, (pad_h, pad_w), stride)
 
@@ -577,7 +617,7 @@ def image_to_column(images, filter_shape, stride, output_shape='same'):
 
 
 
-# Method which turns the column shaped input to a image shape.
+# Method which turns the column shaped input to image shape.
 # Used during the backward pass.
 # Reference: CS231n Stanford
 def column_to_image(cols, images_shape, filter_shape, stride, output_shape='same'):

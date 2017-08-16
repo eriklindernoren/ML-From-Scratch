@@ -159,6 +159,6 @@ class GAN():
 
 if __name__ == '__main__':
     gan = GAN()
-    gan.train(epochs=80000, batch_size=64, save_interval=400)
+    gan.train(epochs=200000, batch_size=64, save_interval=400)
 
 

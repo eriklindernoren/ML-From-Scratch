@@ -18,7 +18,8 @@ from mlfromscratch.utils.loss_functions import CrossEntropy, SquareLoss
 from mlfromscratch.unsupervised_learning import PCA
 from mlfromscratch.utils.misc import bar_widgets
 from mlfromscratch.utils import Plot
-from mlfromscratch.utils.layers import Dense, Dropout, Conv2D, Flatten, Activation, MaxPooling2D, AveragePooling2D, ZeroPadding2D
+from mlfromscratch.utils.layers import Dense, Dropout, Conv2D, Flatten, Activation, MaxPooling2D
+from mlfromscratch.utils.layers import AveragePooling2D, ZeroPadding2D, BatchNormalization
 
 
 
@@ -51,6 +52,7 @@ class NeuralNetwork():
         for layer in self.layers:
             layer.trainable = trainable
 
+    # Method which adds a layer to the neural network
     def add(self, layer):
         # If the first layer has been added set the input shape
         # as the output shape of the previous layer
@@ -77,7 +79,6 @@ class NeuralNetwork():
         self._backward_pass(loss_grad=loss_grad)
 
         return loss, acc
-
 
     def fit(self, X, y, n_iterations, batch_size):
 
@@ -107,6 +108,8 @@ class NeuralNetwork():
                 validation_loss = np.mean(self.loss_function.loss(self.y_val, y_val_p))
                 self.errors["validation"].append(validation_loss)
 
+        return self.errors["training"], self.errors["validation"]
+
     def _forward_pass(self, X, training=True):
         # Calculate the output of the NN. The output of layer l1 becomes the
         # input of the following layer l2
@@ -123,21 +126,24 @@ class NeuralNetwork():
         for layer in reversed(self.layers):
             acc_grad = layer.backward_pass(acc_grad)
 
-    def plot_errors(self):
-        if self.errors["training"]:
-            n = len(self.errors["training"])
-            if self.errors["validation"]:
-                # Training and validation error plot
-                training, = plt.plot(range(n), self.errors["training"], label="Training Error")
-                validation, = plt.plot(range(n), self.errors["validation"], label="Validation Error")
-                plt.legend(handles=[training, validation])
-            else:
-                training, = plt.plot(range(n), self.errors["training"], label="Training Error")
-                plt.legend(handles=[training])
-            plt.title("Error Plot")
-            plt.ylabel('Error')
-            plt.xlabel('Iterations')
-            plt.show()
+    def summary(self):
+        print ("+-----------------+")
+        print ("|  Model Summary  |")
+        print ("+-----------------+")
+        col_width = max(len(layer.__class__.__name__) for layer in self.layers) + 4  # padding
+        print ("".join(col.ljust(col_width) for col in ["Layer Type", "Parameters", "Output Shape"]))
+        print ("".join(col.ljust(col_width) for col in ["----------", "----------", "------------"]))
+        tot_params = 0
+        for layer in self.layers:
+            name = layer.layer_name()
+            params = layer.parameters()
+            out_shape = layer.output_shape()
+            print ("".join(col.ljust(col_width) for col in [name, str(params), str(out_shape)]))
+
+            tot_params += params
+        print ("----------")
+        print ("Total Parameters: %d" % tot_params)
+
 
     # Use the trained model to predict labels of X
     def predict(self, X):
@@ -200,17 +206,35 @@ def main():
 
     clf.add(Conv2D(n_filters=16, filter_shape=(3,3), input_shape=(1,8,8), padding='same'))
     clf.add(Activation('relu'))
+    clf.add(Dropout(0.25))
+    clf.add(BatchNormalization())
     clf.add(Conv2D(n_filters=32, filter_shape=(3,3), padding='same'))
     clf.add(Activation('relu'))
+    clf.add(Dropout(0.25))
+    clf.add(BatchNormalization())
     clf.add(Flatten())
-    clf.add(Dense(128))
+    clf.add(Dense(256))
     clf.add(Activation('relu'))
+    clf.add(Dropout(0.5))
+    clf.add(BatchNormalization())
     clf.add(Dense(10))
     clf.add(Activation('softmax'))
-    
-    clf.fit(X_train, y_train, n_iterations=50, batch_size=256)
-    clf.plot_errors()
 
+    clf.summary()
+    
+    train_err, val_err = clf.fit(X_train, y_train, n_iterations=50, batch_size=256)
+    
+    # Training and validation error plot
+    n = len(train_err)
+    training, = plt.plot(range(n), train_err, label="Training Error")
+    validation, = plt.plot(range(n), val_err, label="Validation Error")
+    plt.legend(handles=[training, validation])
+    plt.title("Error Plot")
+    plt.ylabel('Error')
+    plt.xlabel('Iterations')
+    plt.show()
+
+    # Make a prediction of the test set
     y_pred = np.argmax(clf.predict(X_test), axis=1)
 
     accuracy = accuracy_score(y_test, y_pred)
@@ -218,7 +242,7 @@ def main():
 
     X_test = X_test.reshape(-1, 8*8)
 
-    # Reduce dimension to two using PCA and plot the results
+    # Reduce dimension to 2D using PCA and plot the results
     Plot().plot_in_2d(X_test, y_pred, title="Convolutional Neural Network", accuracy=accuracy, legend_labels=np.unique(y))
 
 if __name__ == "__main__":

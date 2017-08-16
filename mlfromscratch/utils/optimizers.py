@@ -127,16 +127,14 @@ class Adam():
         self.b2 = b2
 
     def update(self, w, grad_wrt_w):
-        # Gradient clipping to avoid exploding grads
-        grad_at_w = grad_wrt_w
 
         # If not initialized
         if not self.m.any():
-            self.m = np.zeros(np.shape(grad_at_w))
-            self.v = np.zeros(np.shape(grad_at_w))
+            self.m = np.zeros(np.shape(grad_wrt_w))
+            self.v = np.zeros(np.shape(grad_wrt_w))
         
-        self.m = self.b1 * self.m + (1 - self.b1) * grad_at_w
-        self.v = self.b2 * self.v + (1 - self.b2) * np.power(grad_at_w, 2)
+        self.m = self.b1 * self.m + (1 - self.b1) * grad_wrt_w
+        self.v = self.b2 * self.v + (1 - self.b2) * np.power(grad_wrt_w, 2)
 
         m_hat = self.m / (1 - self.b1)
         v_hat = self.v / (1 - self.b2)
