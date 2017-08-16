@@ -44,9 +44,33 @@ Feel free to [reach out](mailto:eriklindernoren@gmail.com) if you can think of w
 
 ### Classification
     $ python mlfromscratch/supervised_learning/neural_network.py
+    +-----------------+
+    |  Model Summary  |
+    +-----------------+
+    Layer Type            Parameters            Output Shape          
+    ----------            ----------            ------------          
+    Conv2D                160                   (16, 8, 8)            
+    Activation (relu)     0                     (16, 8, 8)            
+    Dropout               0                     (16, 8, 8)            
+    BatchNormalization    2048                  (16, 8, 8)            
+    Conv2D                4640                  (32, 8, 8)            
+    Activation (relu)     0                     (32, 8, 8)            
+    Dropout               0                     (32, 8, 8)            
+    BatchNormalization    4096                  (32, 8, 8)            
+    Flatten               0                     (2048,)               
+    Dense                 524544                (256,)                
+    Activation (relu)     0                     (256,)                
+    Dropout               0                     (256,)                
+    BatchNormalization    512                   (256,)                
+    Dense                 2570                  (10,)                 
+    Activation (softmax)  0                     (10,)                 
+    ----------
+    Total Parameters: 538570
+    Training: 100% [------------------------------------------------------------------------] Time: 0:01:52
+    Accuracy: 0.987465181058
 
 <p align="center">
-    <img src="http://eriklindernoren.se/images/mlfs_cnn.png" width="640">
+    <img src="http://eriklindernoren.se/images/mlfs_cnn1.png" width="640">
 </p>
 <p align="center">
     Figure: Classification of the digit dataset using CNN.
