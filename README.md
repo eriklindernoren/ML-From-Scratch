@@ -13,8 +13,8 @@ Feel free to [reach out](mailto:eriklindernoren@gmail.com) if you can think of w
 - [Machine Learning From Scratch](#machine-learning-from-scratch)
   * [About](#about)
   * [Table of Contents](#table-of-contents)
-  * [Usage](#usage)
-    + [Installation](#installation)
+  * [Installation](#installation)
+  * [Example Usage](#example-usage)
     + [Regression](#regression)
     + [Classification](#classification)
     + [Clustering](#clustering)
@@ -24,13 +24,12 @@ Feel free to [reach out](mailto:eriklindernoren@gmail.com) if you can think of w
     + [Supervised Learning](#supervised-learning)
     + [Unsupervised Learning](#unsupervised-learning)
     
-## Usage
-### Installation
+## Installation
     $ git clone https://github.com/eriklindernoren/ML-From-Scratch
     $ cd ML-From-Scratch
     $ python setup.py install
-
-
+    
+## Example Usage
 ### Regression
     $ python mlfromscratch/supervised_learning/regression.py
 
