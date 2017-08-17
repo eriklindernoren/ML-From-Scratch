@@ -17,7 +17,7 @@ class Layer(object):
         return self.__class__.__name__
 
     def parameters(self):
-        raise NotImplementedError()
+        return 0
 
     def forward_pass(self, X, training):
         raise NotImplementedError()
@@ -257,9 +257,6 @@ class PoolingLayer(Layer):
         self.padding = padding
         self.trainable = True
 
-    def parameters(self):
-        return 0
-
     def forward_pass(self, X, training=True):
         self.layer_input = X
 
@@ -347,9 +344,6 @@ class ConstantPadding2D(Layer):
             self.padding = (self.padding[0], (padding[1], padding[1]))
         self.padding_value = padding_value
 
-    def parameters(self):
-        return 0
-
     def forward_pass(self, X, training=True):
         output = np.pad(X, 
             pad_width=((0,0), (0,0), self.padding[0], self.padding[1]), 
@@ -397,9 +391,6 @@ class Flatten(Layer):
         self.trainable = True
         self.input_shape = input_shape
 
-    def parameters(self):
-        return 0
-
     def forward_pass(self, X, training=True):
         self.prev_shape = X.shape
         return X.reshape((X.shape[0], -1))
@@ -425,9 +416,6 @@ class UpSampling2D(Layer):
         self.trainable = True
         self.size = size
         self.input_shape = input_shape
-
-    def parameters(self):
-        return 0
 
     def forward_pass(self, X, training=True):
         self.prev_shape = X.shape
@@ -459,9 +447,6 @@ class Reshape(Layer):
         self.shape = shape
         self.input_shape = input_shape
 
-    def parameters(self):
-        return 0
-
     def forward_pass(self, X, training=True):
         self.prev_shape = X.shape
         return X.reshape((X.shape[0], ) + self.shape)
@@ -489,9 +474,6 @@ class Dropout(Layer):
         self.n_units = None
         self.pass_through = True
         self.trainable = True
-
-    def parameters(self):
-        return 0
 
     def forward_pass(self, X, training=True):
         c = (1 - self.p)
@@ -533,9 +515,6 @@ class Activation(Layer):
 
     def layer_name(self):
         return "%s (%s)" % (self.__class__.__name__, self.activation_name)
-
-    def parameters(self):
-        return 0
 
     def forward_pass(self, X, training=True):
         self.layer_input = X

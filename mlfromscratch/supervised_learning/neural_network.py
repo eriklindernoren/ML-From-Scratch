@@ -127,29 +127,29 @@ class NeuralNetwork():
             acc_grad = layer.backward_pass(acc_grad)
 
     def summary(self, name="Model Summary"):
-        # Print model name
-        model_print = "|  %s  |" % name
-        border = "+" + (len(model_print)-2) * "-" + "+"
-        print (border)
-        print (model_print)
-        print (border)
+        from terminaltables import AsciiTable
 
-        # Calculate the width of the columns as the longest name of the layers
-        col_width = max(len(layer.layer_name()) for layer in self.layers) + 4
-        # Print headers
-        print ("".join(col.ljust(col_width) for col in ["Layer Type", "Parameters", "Output Shape"]))
-        print ("".join(col.ljust(col_width) for col in ["----------", "----------", "------------"]))
+        print ()
+        # Print model name
+        print (AsciiTable([[name]]).table)
+
+        print ("Input Shape: %s" % str(self.layers[0].input_shape))
+
         # Print the each layer's configuration
+        table_data = [["Layer Type", "Parameters", "Output Shape"]]
         tot_params = 0
         for layer in self.layers:
-            name = layer.layer_name()
+            layer_name = layer.layer_name()
             params = layer.parameters()
             out_shape = layer.output_shape()
-            print ("".join(col.ljust(col_width) for col in [name, str(params), str(out_shape)]))
+            table_data.append([layer_name, str(params), str(out_shape)])
 
             tot_params += params
-        print ("----------")
+        print (AsciiTable(table_data).table)
+
         print ("Total Parameters: %d" % tot_params)
+        print ()
+
 
 
     # Use the trained model to predict labels of X
@@ -227,7 +227,7 @@ def main():
     clf.add(Dense(10))
     clf.add(Activation('softmax'))
 
-    clf.summary()
+    clf.summary(name="ConvNet")
     
     train_err, val_err = clf.fit(X_train, y_train, n_iterations=50, batch_size=256)
     
