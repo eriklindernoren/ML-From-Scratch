@@ -133,7 +133,6 @@ Feel free to [reach out](mailto:eriklindernoren@gmail.com) if you can think of w
     +-------------------------+------------+--------------+
     Total Parameters: 533762
 
-
    
 <p align="center">
     <img src="http://eriklindernoren.se/images/gan_mnist5.gif" width="640">
