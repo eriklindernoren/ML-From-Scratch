@@ -35,7 +35,7 @@ class DeepQLearning():
     min_epsilon: float
         The value which epsilon will approach as the training progresses.
     """
-    def __init__(self, env_name='CartPole-v0', epsilon=1, gamma=0.9, decay_rate=0.005, min_epsilon=0.1):
+    def __init__(self, env_name='CartPole-v1', epsilon=1, gamma=0.9, decay_rate=0.005, min_epsilon=0.1):
         self.epsilon = epsilon
         self.gamma = gamma
         self.decay_rate = decay_rate
@@ -123,7 +123,7 @@ class DeepQLearning():
         print ("Training Finished")
 
     def play(self, n_epochs):
-        # self.env = gym.wrappers.Monitor(self.env, '/tmp/cartpole-experiment-1', force=True)
+        self.env = gym.wrappers.Monitor(self.env, '/tmp/cartpole-experiment-1', force=True)
         for epoch in range(n_epochs):
             state = self.env.reset()
             total_reward = 0
@@ -142,9 +142,7 @@ def main():
     # Model builder
     def model(n_inputs, n_outputs):    
         clf = NeuralNetwork(optimizer=Adam(), loss=SquareLoss)
-        clf.add(Dense(32, input_shape=(n_inputs,)))
-        clf.add(Activation('relu'))
-        clf.add(Dense(32))
+        clf.add(Dense(64, input_shape=(n_inputs,)))
         clf.add(Activation('relu'))
         clf.add(Dense(n_outputs))
 
@@ -155,7 +153,7 @@ def main():
     print ()
     dql.model.summary(name="Deep Q-Learning Model")
 
-    dql.train(n_epochs=300)
+    dql.train(n_epochs=500)
     dql.play(n_epochs=100)
 
 if __name__ == "__main__":

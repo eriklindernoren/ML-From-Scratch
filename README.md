@@ -143,7 +143,7 @@ Feel free to [reach out](mailto:eriklindernoren@gmail.com) if you can think of w
 
 ### Deep Reinforcement Learning
     $ python mlfromscratch/reinforcement_learning/deep_q_learning.py
-
+   
     +-----------------------+
     | Deep Q-Learning Model |
     +-----------------------+
@@ -151,20 +151,17 @@ Feel free to [reach out](mailto:eriklindernoren@gmail.com) if you can think of w
     +-------------------+------------+--------------+
     | Layer Type        | Parameters | Output Shape |
     +-------------------+------------+--------------+
-    | Dense             | 160        | (32,)        |
-    | Activation (ReLU) | 0          | (32,)        |
-    | Dense             | 1056       | (32,)        |
-    | Activation (ReLU) | 0          | (32,)        |
-    | Dense             | 66         | (2,)         |
+    | Dense             | 320        | (64,)        |
+    | Activation (ReLU) | 0          | (64,)        |
+    | Dense             | 130        | (2,)         |
     +-------------------+------------+--------------+
-    Total Parameters: 1282
-
+    Total Parameters: 450
 
 <p align="center">
-    <img src="http://eriklindernoren.se/images/mlfs_dql.gif" width="640">
+    <img src="http://eriklindernoren.se/images/mlfs_dql1.gif" width="640">
 </p>
 <p align="center">
-    Figure: Deep Q-Learning solution to the CartPole-v0 environment in OpenAI gym.
+    Figure: Deep Q-Learning solution to the CartPole-v1 environment in OpenAI gym.
 </p>
 
 ### Association Analysis
