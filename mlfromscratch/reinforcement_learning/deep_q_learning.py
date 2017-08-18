@@ -40,6 +40,7 @@ class DeepQLearning():
             state = self.env.reset()
             total_reward = 0
 
+            epoch_loss = []
             while True:
 
                 # Choose action randomly
@@ -70,31 +71,36 @@ class DeepQLearning():
                 # Construct training data
                 for i in range(_batch_size):
                     state_r, action_r, reward_r, new_state_r, done_r = replay_batch[i]
+                    
                     target = Q[i]
-
                     target[action_r] = reward_r
                     # If we're done the utility is simply the accumulated reward,
-                    # otherwise we add the expected future maximum reward as well
+                    # otherwise we add the expected maximum future reward as well
                     if not done_r:
                         target[action_r] += self.gamma * np.amax(Q_new[i])
 
                     X[i] = state_r
                     y[i] = target
 
-                self.model.train_on_batch(X, y)
+                loss = self.model.train_on_batch(X, y)
+                epoch_loss.append(loss)
 
                 total_reward += reward
                 state = new_state
 
                 if done: break
             
+            epoch_loss = np.mean(epoch_loss)
+            # If memory limit is exceeded remove the oldest entry
             if len(replay_history) > memory_limit:
                 replay_history.pop(0)
 
+            # Reduce the epsilon parameter
             self.epsilon = self.min_epsilon + (1.0 - self.min_epsilon) * np.exp(-self.decay_rate * epoch)
+            
             max_reward = max(max_reward, total_reward)
 
-            print ("%d [Reward: %s, Epsilon: %s, Max Reward: %s]" % (epoch, total_reward, self.epsilon, max_reward))
+            print ("%d [Loss: %.4f, Reward: %s, Epsilon: %.4f, Max Reward: %s]" % (epoch, epoch_loss, total_reward, self.epsilon, max_reward))
 
         print ("Training Finished")
 
@@ -131,7 +137,7 @@ def main():
     print ()
     dql.model.summary(name="Deep Q-Learning Model")
 
-    dql.train(n_epochs=400)
+    dql.train(n_epochs=300)
     dql.play(n_epochs=100)
 
 if __name__ == "__main__":
