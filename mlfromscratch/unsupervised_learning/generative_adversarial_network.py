@@ -76,8 +76,7 @@ class GAN():
 
         return model
 
-
-    def train(self, epochs, batch_size=128, save_interval=50):
+    def train(self, n_epochs, batch_size=128, save_interval=50):
 
         mnist = fetch_mldata('MNIST original')
 
@@ -89,7 +88,7 @@ class GAN():
 
         half_batch = int(batch_size / 2)
 
-        for epoch in range(epochs):
+        for epoch in range(n_epochs):
 
             # ---------------------
             #  Train Discriminator
@@ -164,6 +163,6 @@ class GAN():
 
 if __name__ == '__main__':
     gan = GAN()
-    gan.train(epochs=200000, batch_size=64, save_interval=400)
+    gan.train(n_epochs=200000, batch_size=64, save_interval=400)
 
 

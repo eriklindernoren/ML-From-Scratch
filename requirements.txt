@@ -6,3 +6,4 @@ cvxopt
 scipy
 progressbar
 terminaltables
+gym

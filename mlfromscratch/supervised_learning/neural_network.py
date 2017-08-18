@@ -72,16 +72,19 @@ class NeuralNetwork():
         y_pred = self._forward_pass(X)
         # Calculate the training loss
         loss = np.mean(self.loss_function.loss(y, y_pred))
-        # Calculate the accuracy of the prediction
-        acc = self.loss_function.acc(y, y_pred)
         # Calculate the gradient of the loss function wrt y_pred
         loss_grad = self.loss_function.gradient(y, y_pred)
         # Backprop. Update weights
         self._backward_pass(loss_grad=loss_grad)
 
-        return loss, acc
+        if hasattr(self.loss_function, 'acc'):
+            # Calculate the accuracy of the prediction
+            acc = self.loss_function.acc(y, y_pred)
+            return loss, acc
 
-    def fit(self, X, y, n_iterations, batch_size):
+        return loss
+
+    def fit(self, X, y, n_epochs, batch_size):
 
         # Convert to one-hot encoding
         y = to_categorical(y.astype("int"))
@@ -90,7 +93,7 @@ class NeuralNetwork():
         n_batches = int(n_samples / batch_size)
 
         bar = progressbar.ProgressBar(widgets=bar_widgets)
-        for _ in bar(range(n_iterations)):
+        for _ in bar(range(n_epochs)):
             idx = range(n_samples)
             np.random.shuffle(idx)
 
@@ -98,7 +101,10 @@ class NeuralNetwork():
             for i in range(n_batches):
                 X_batch = X[idx[i*batch_size:(i+1)*batch_size]]
                 y_batch = y[idx[i*batch_size:(i+1)*batch_size]]
-                loss, _ = self.train_on_batch(X_batch, y_batch)
+                if hasattr(self.loss_function, 'acc'):
+                    loss, _ = self.train_on_batch(X_batch, y_batch)
+                else:
+                    loss = self.train_on_batch(X_batch, y_batch)
                 batch_t_error += loss
 
             # Save the epoch mean error
@@ -192,7 +198,7 @@ def main():
     # print ()
     # clf.summary(name="MLP")
     
-    # clf.fit(X_train, y_train, n_iterations=50, batch_size=256)
+    # clf.fit(X_train, y_train, n_epochs=50, batch_size=256)
     # clf.plot_errors()
 
     # y_pred = np.argmax(clf.predict(X_test), axis=1)
@@ -230,7 +236,7 @@ def main():
     print ()
     clf.summary(name="ConvNet")
 
-    train_err, val_err = clf.fit(X_train, y_train, n_iterations=50, batch_size=256)
+    train_err, val_err = clf.fit(X_train, y_train, n_epochs=50, batch_size=256)
     
     # Training and validation error plot
     n = len(train_err)

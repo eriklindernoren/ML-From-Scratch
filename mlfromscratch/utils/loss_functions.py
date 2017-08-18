@@ -3,23 +3,24 @@ import numpy as np
 from data_operation import accuracy_score
 from activation_functions import Sigmoid
 
-
 class SquareLoss():
-    def __init__(self, grad_wrt_theta=True):
-        if grad_wrt_theta:
-            self.gradient = self._grad_wrt_theta
-        if not grad_wrt_theta:
-            self.gradient = self._grad_wrt_pred
+    def __init__(self): pass
 
     def loss(self, y_true, y_pred):
         return 0.5 * np.power((y_true - y_pred), 2)
 
-    def _grad_wrt_pred(self, y, y_pred):
-        return -(y - y_pred)
-
-    def _grad_wrt_theta(self, y, X, theta):
+    def gradient(self, y, X, theta):
         y_pred = X.dot(theta)
         return -(y - y_pred).dot(X)
+
+class SquareLoss():
+    def __init__(self): pass
+
+    def loss(self, y_true, y_pred):
+        return 0.5 * np.power((y_true - y_pred), 2)
+
+    def gradient(self, y, y_pred):
+        return -(y - y_pred)
 
 
 class CrossEntropy():

@@ -19,10 +19,12 @@ Feel free to [reach out](mailto:eriklindernoren@gmail.com) if you can think of w
     + [Classification](#classification)
     + [Clustering](#clustering)
     + [Generating Handwritten Digits](#generating-handwritten-digits)
+    + [Deep Reinforcement Learning](#deep-reinforcement-learning)
     + [Association Analysis](#association-analysis)
   * [Implementations](#implementations)
     + [Supervised Learning](#supervised-learning)
     + [Unsupervised Learning](#unsupervised-learning)
+    + [Reinforcement Learning](#reinforcement-learning)
     
 ## Installation
     $ git clone https://github.com/eriklindernoren/ML-From-Scratch
@@ -139,6 +141,32 @@ Feel free to [reach out](mailto:eriklindernoren@gmail.com) if you can think of w
     Figure: Training progress of a MNIST Generative Adversarial Network.
 </p>
 
+### Deep Reinforcement Learning
+    $ python mlfromscratch/reinforcement_learning/deep_q_learning.py
+
+    +-----------------------+
+    | Deep Q-Learning Model |
+    +-----------------------+
+    Input Shape: (4,)
+    +-------------------+------------+--------------+
+    | Layer Type        | Parameters | Output Shape |
+    +-------------------+------------+--------------+
+    | Dense             | 160        | (32,)        |
+    | Activation (ReLU) | 0          | (32,)        |
+    | Dense             | 1056       | (32,)        |
+    | Activation (ReLU) | 0          | (32,)        |
+    | Dense             | 66         | (2,)         |
+    +-------------------+------------+--------------+
+    Total Parameters: 1282
+
+
+<p align="center">
+    <img src="http://eriklindernoren.se/images/mlfs_dql.gif" width="640">
+</p>
+<p align="center">
+    Figure: Deep Q-Learning solution to the CartPole-v0 problem in OpenAI gym.
+</p>
+
 ### Association Analysis
     $ python mlfromscratch/unsupervised_learning/apriori.py 
     +-------------+
@@ -207,3 +235,6 @@ Feel free to [reach out](mailto:eriklindernoren@gmail.com) if you can think of w
 - [K-Means](mlfromscratch/unsupervised_learning/k_means.py)
 - [Partitioning Around Medoids](mlfromscratch/unsupervised_learning/partitioning_around_medoids.py)
 - [Principal Component Analysis](mlfromscratch/unsupervised_learning/principal_component_analysis.py)
+
+### Reinforcement Learning
+- [Deep Q-Learning](mlfromscratch/reinforcement_learning/deep_q_learning.py)
