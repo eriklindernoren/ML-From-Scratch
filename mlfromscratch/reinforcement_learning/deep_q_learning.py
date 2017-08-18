@@ -17,6 +17,24 @@ from mlfromscratch.utils.layers import Dense, Dropout, Flatten, Activation, Resh
 from mlfromscratch.supervised_learning import NeuralNetwork
 
 class DeepQLearning():
+    """Deep Q-Learning Class. Uses a deep neural network model to predict the expected utility
+    (Q-value) of executing an action in a given state. 
+
+    Parameters:
+    -----------
+    env_name: string
+        The environment that the agent will explore. 
+        Check: https://gym.openai.com/envs
+    epsilon: float
+        The epsilon-greedy value. The probability that the agent should select a random action instead of
+        the action that will maximize the expected utility. 
+    gamma: float
+        Determines how much the agent should consider future rewards. 
+    decay_rate: float
+        The rate of decay for the epsilon value after each epoch.
+    min_epsilon: float
+        The value which epsilon will approach as the training progresses.
+    """
     def __init__(self, env_name='CartPole-v0', epsilon=1, gamma=0.9, decay_rate=0.005, min_epsilon=0.1):
         self.epsilon = epsilon
         self.gamma = gamma
@@ -33,8 +51,8 @@ class DeepQLearning():
 
     def train(self, n_epochs=500, batch_size=32):
         max_reward = 0
-        memory_limit = 500
-        replay_history = []
+        memory_limit = 500  # Number of replays that will be saved
+        replay_history = [] # Previous results
 
         for epoch in range(n_epochs):
             state = self.env.reset()
