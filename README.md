@@ -52,20 +52,20 @@ Feel free to [reach out](mailto:eriklindernoren@gmail.com) if you can think of w
     | Layer Type           | Parameters | Output Shape |
     +----------------------+------------+--------------+
     | Conv2D               | 160        | (16, 8, 8)   |
-    | Activation (relu)    | 0          | (16, 8, 8)   |
+    | Activation (ReLU)    | 0          | (16, 8, 8)   |
     | Dropout              | 0          | (16, 8, 8)   |
     | BatchNormalization   | 2048       | (16, 8, 8)   |
     | Conv2D               | 4640       | (32, 8, 8)   |
-    | Activation (relu)    | 0          | (32, 8, 8)   |
+    | Activation (ReLU)    | 0          | (32, 8, 8)   |
     | Dropout              | 0          | (32, 8, 8)   |
     | BatchNormalization   | 4096       | (32, 8, 8)   |
     | Flatten              | 0          | (2048,)      |
     | Dense                | 524544     | (256,)       |
-    | Activation (relu)    | 0          | (256,)       |
+    | Activation (ReLU)    | 0          | (256,)       |
     | Dropout              | 0          | (256,)       |
     | BatchNormalization   | 512        | (256,)       |
     | Dense                | 2570       | (10,)        |
-    | Activation (softmax) | 0          | (10,)        |
+    | Activation (Softmax) | 0          | (10,)        |
     +----------------------+------------+--------------+
     Total Parameters: 538570
 
@@ -96,39 +96,39 @@ Feel free to [reach out](mailto:eriklindernoren@gmail.com) if you can think of w
     | Generator |
     +-----------+
     Input Shape: (100,)
-    +-------------------------+------------+--------------+
-    | Layer Type              | Parameters | Output Shape |
-    +-------------------------+------------+--------------+
-    | Dense                   | 25856      | (256,)       |
-    | Activation (leaky_relu) | 0          | (256,)       |
-    | BatchNormalization      | 512        | (256,)       |
-    | Dense                   | 131584     | (512,)       |
-    | Activation (leaky_relu) | 0          | (512,)       |
-    | BatchNormalization      | 1024       | (512,)       |
-    | Dense                   | 525312     | (1024,)      |
-    | Activation (leaky_relu) | 0          | (1024,)      |
-    | BatchNormalization      | 2048       | (1024,)      |
-    | Dense                   | 803600     | (784,)       |
-    | Activation (tanh)       | 0          | (784,)       |
-    +-------------------------+------------+--------------+
+    +------------------------+------------+--------------+
+    | Layer Type             | Parameters | Output Shape |
+    +------------------------+------------+--------------+
+    | Dense                  | 25856      | (256,)       |
+    | Activation (LeakyReLU) | 0          | (256,)       |
+    | BatchNormalization     | 512        | (256,)       |
+    | Dense                  | 131584     | (512,)       |
+    | Activation (LeakyReLU) | 0          | (512,)       |
+    | BatchNormalization     | 1024       | (512,)       |
+    | Dense                  | 525312     | (1024,)      |
+    | Activation (LeakyReLU) | 0          | (1024,)      |
+    | BatchNormalization     | 2048       | (1024,)      |
+    | Dense                  | 803600     | (784,)       |
+    | Activation (TanH)      | 0          | (784,)       |
+    +------------------------+------------+--------------+
     Total Parameters: 1489936
 
     +---------------+
     | Discriminator |
     +---------------+
     Input Shape: (784,)
-    +-------------------------+------------+--------------+
-    | Layer Type              | Parameters | Output Shape |
-    +-------------------------+------------+--------------+
-    | Dense                   | 401920     | (512,)       |
-    | Activation (leaky_relu) | 0          | (512,)       |
-    | Dropout                 | 0          | (512,)       |
-    | Dense                   | 131328     | (256,)       |
-    | Activation (leaky_relu) | 0          | (256,)       |
-    | Dropout                 | 0          | (256,)       |
-    | Dense                   | 514        | (2,)         |
-    | Activation (softmax)    | 0          | (2,)         |
-    +-------------------------+------------+--------------+
+    +------------------------+------------+--------------+
+    | Layer Type             | Parameters | Output Shape |
+    +------------------------+------------+--------------+
+    | Dense                  | 401920     | (512,)       |
+    | Activation (LeakyReLU) | 0          | (512,)       |
+    | Dropout                | 0          | (512,)       |
+    | Dense                  | 131328     | (256,)       |
+    | Activation (LeakyReLU) | 0          | (256,)       |
+    | Dropout                | 0          | (256,)       |
+    | Dense                  | 514        | (2,)         |
+    | Activation (Softmax)   | 0          | (2,)         |
+    +------------------------+------------+--------------+
     Total Parameters: 533762
 
    

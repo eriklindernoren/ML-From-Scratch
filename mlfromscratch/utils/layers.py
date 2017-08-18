@@ -514,7 +514,7 @@ class Activation(Layer):
         self.trainable = True
 
     def layer_name(self):
-        return "%s (%s)" % (self.__class__.__name__, self.activation_name)
+        return "%s (%s)" % (self.__class__.__name__, self.activation.__class__.__name__)
 
     def forward_pass(self, X, training=True):
         self.layer_input = X
