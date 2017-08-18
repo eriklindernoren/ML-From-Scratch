@@ -110,18 +110,16 @@ Feel free to [reach out](mailto:eriklindernoren@gmail.com) if you can think of w
     | BatchNormalization      | 2048       | (1024,)      |
     | Dense                   | 803600     | (784,)       |
     | Activation (tanh)       | 0          | (784,)       |
-    | Reshape                 | 0          | (1, 28, 28)  |
     +-------------------------+------------+--------------+
     Total Parameters: 1489936
 
     +---------------+
     | Discriminator |
     +---------------+
-    Input Shape: (1, 28, 28)
+    Input Shape: (784,)
     +-------------------------+------------+--------------+
     | Layer Type              | Parameters | Output Shape |
     +-------------------------+------------+--------------+
-    | Flatten                 | 0          | (784,)       |
     | Dense                   | 401920     | (512,)       |
     | Activation (leaky_relu) | 0          | (512,)       |
     | Dropout                 | 0          | (512,)       |

@@ -1,5 +1,6 @@
 from __future__ import print_function
 from sklearn import datasets
+from terminaltables import AsciiTable
 import sys
 import os
 import math
@@ -127,9 +128,7 @@ class NeuralNetwork():
             acc_grad = layer.backward_pass(acc_grad)
 
     def summary(self, name="Model Summary"):
-        from terminaltables import AsciiTable
 
-        print ()
         # Print model name
         print (AsciiTable([[name]]).table)
 
@@ -147,9 +146,7 @@ class NeuralNetwork():
             tot_params += params
         print (AsciiTable(table_data).table)
 
-        print ("Total Parameters: %d" % tot_params)
-        print ()
-
+        print ("Total Parameters: %d\n" % tot_params)
 
 
     # Use the trained model to predict labels of X
@@ -191,6 +188,9 @@ def main():
     # clf.add(Dropout(0.25))
     # clf.add(Dense(10))
     # clf.add(Activation('softmax'))
+
+    # print ()
+    # clf.summary(name="MLP")
     
     # clf.fit(X_train, y_train, n_iterations=50, batch_size=256)
     # clf.plot_errors()
@@ -227,8 +227,9 @@ def main():
     clf.add(Dense(10))
     clf.add(Activation('softmax'))
 
+    print ()
     clf.summary(name="ConvNet")
-    
+
     train_err, val_err = clf.fit(X_train, y_train, n_iterations=50, batch_size=256)
     
     # Training and validation error plot

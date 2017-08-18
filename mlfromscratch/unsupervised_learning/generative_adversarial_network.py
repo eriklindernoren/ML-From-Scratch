@@ -22,8 +22,8 @@ class GAN():
     def __init__(self):
         self.img_rows = 28 
         self.img_cols = 28
-        self.channels = 1
-        self.img_shape = (self.channels, self.img_rows, self.img_cols)
+        self.img_dim = self.img_rows * self.img_cols
+        self.latent_dim = 100
 
         optimizer = Adam(learning_rate=0.0002, b1=0.5)
         loss_function = CrossEntropy
@@ -39,6 +39,7 @@ class GAN():
         self.combined.layers += self.generator.layers[:]
         self.combined.layers += self.discriminator.layers[:]
 
+        print ()
         self.generator.summary(name="Generator")
         self.discriminator.summary(name="Discriminator")
 
@@ -46,7 +47,7 @@ class GAN():
         
         model = NeuralNetwork(optimizer=optimizer, loss=loss_function)
 
-        model.add(Dense(256, input_shape=(100,)))
+        model.add(Dense(256, input_shape=(self.latent_dim,)))
         model.add(Activation('leaky_relu'))
         model.add(BatchNormalization(momentum=0.8))
         model.add(Dense(512))
@@ -55,9 +56,8 @@ class GAN():
         model.add(Dense(1024))
         model.add(Activation('leaky_relu'))
         model.add(BatchNormalization(momentum=0.8))
-        model.add(Dense(np.prod(self.img_shape)))
+        model.add(Dense(self.img_dim))
         model.add(Activation('tanh'))
-        model.add(Reshape(self.img_shape))
 
         return model
 
@@ -65,8 +65,7 @@ class GAN():
         
         model = NeuralNetwork(optimizer=optimizer, loss=loss_function)
 
-        model.add(Flatten(input_shape=self.img_shape))
-        model.add(Dense(512))
+        model.add(Dense(512, input_shape=(self.img_dim,)))
         model.add(Activation('leaky_relu'))
         model.add(Dropout(0.5))
         model.add(Dense(256))
@@ -82,7 +81,7 @@ class GAN():
 
         mnist = fetch_mldata('MNIST original')
 
-        X = mnist.data.reshape((-1,) + self.img_shape)
+        X = mnist.data
         y = mnist.target
 
         # Rescale -1 to 1
@@ -102,11 +101,13 @@ class GAN():
             idx = np.random.randint(0, X.shape[0], half_batch)
             imgs = X[idx]
 
-            noise = np.random.normal(0, 1, (half_batch, 100))
+            # Sample noise to use as generator input
+            noise = np.random.normal(0, 1, (half_batch, self.latent_dim))
 
             # Generate a half batch of images
             gen_imgs = self.generator.predict(noise)
 
+            # Valid = [1, 0], Fake = [0, 1]
             valid = np.concatenate((np.ones((half_batch, 1)), np.zeros((half_batch, 1))), axis=1)
             fake = np.concatenate((np.zeros((half_batch, 1)), np.ones((half_batch, 1))), axis=1)
 
@@ -125,7 +126,7 @@ class GAN():
             self.discriminator.set_trainable(False)
 
             # Sample noise and use as generator input
-            noise = np.random.normal(0, 1, (batch_size, 100))
+            noise = np.random.normal(0, 1, (batch_size, self.latent_dim))
 
             # The generator wants the discriminator to label the generated samples as valid
             valid = np.concatenate((np.ones((batch_size, 1)), np.zeros((batch_size, 1))), axis=1)
@@ -141,9 +142,10 @@ class GAN():
                 self.save_imgs(epoch)
 
     def save_imgs(self, epoch):
-        r, c = 5, 5
-        noise = np.random.normal(0, 1, (r * c, 100))
-        gen_imgs = self.generator.predict(noise)
+        r, c = 5, 5 # Grid size
+        noise = np.random.normal(0, 1, (r * c, self.latent_dim))
+        # Generate images and reshape to image shape
+        gen_imgs = self.generator.predict(noise).reshape((-1, self.img_rows, self.img_cols))
 
         # Rescale images 0 - 1
         gen_imgs = 0.5 * gen_imgs + 0.5
@@ -153,7 +155,7 @@ class GAN():
         cnt = 0
         for i in range(r):
             for j in range(c):
-                axs[i,j].imshow(gen_imgs[cnt,0,:,:], cmap='gray')
+                axs[i,j].imshow(gen_imgs[cnt,:,:], cmap='gray')
                 axs[i,j].axis('off')
                 cnt += 1
         fig.savefig("mnist_%d.png" % epoch)
