@@ -164,7 +164,7 @@ Feel free to [reach out](mailto:eriklindernoren@gmail.com) if you can think of w
     <img src="http://eriklindernoren.se/images/mlfs_dql.gif" width="640">
 </p>
 <p align="center">
-    Figure: Deep Q-Learning solution to the CartPole-v0 problem in OpenAI gym.
+    Figure: Deep Q-Learning solution to the CartPole-v0 environment in OpenAI gym.
 </p>
 
 ### Association Analysis
