@@ -74,15 +74,13 @@ class NeuralNetwork():
         loss = np.mean(self.loss_function.loss(y, y_pred))
         # Calculate the gradient of the loss function wrt y_pred
         loss_grad = self.loss_function.gradient(y, y_pred)
+        # Calculate the accuracy of the prediction
+        acc = self.loss_function.acc(y, y_pred)
         # Backprop. Update weights
         self._backward_pass(loss_grad=loss_grad)
 
-        if hasattr(self.loss_function, 'acc'):
-            # Calculate the accuracy of the prediction
-            acc = self.loss_function.acc(y, y_pred)
-            return loss, acc
+        return loss, acc
 
-        return loss
 
     def fit(self, X, y, n_epochs, batch_size):
 
@@ -101,10 +99,7 @@ class NeuralNetwork():
             for i in range(n_batches):
                 X_batch = X[idx[i*batch_size:(i+1)*batch_size]]
                 y_batch = y[idx[i*batch_size:(i+1)*batch_size]]
-                if hasattr(self.loss_function, 'acc'):
-                    loss, _ = self.train_on_batch(X_batch, y_batch)
-                else:
-                    loss = self.train_on_batch(X_batch, y_batch)
+                loss, _ = self.train_on_batch(X_batch, y_batch)
                 batch_t_error += loss
 
             # Save the epoch mean error

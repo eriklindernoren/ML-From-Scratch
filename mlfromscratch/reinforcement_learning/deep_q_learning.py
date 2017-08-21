@@ -123,7 +123,7 @@ class DeepQLearning():
         print ("Training Finished")
 
     def play(self, n_epochs):
-        self.env = gym.wrappers.Monitor(self.env, '/tmp/cartpole-experiment-1', force=True)
+        # self.env = gym.wrappers.Monitor(self.env, '/tmp/cartpole-experiment-1', force=True)
         for epoch in range(n_epochs):
             state = self.env.reset()
             total_reward = 0

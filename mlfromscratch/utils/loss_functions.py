@@ -3,27 +3,28 @@ import numpy as np
 from data_operation import accuracy_score
 from activation_functions import Sigmoid
 
-class SquareLoss():
-    def __init__(self): pass
+class Loss(object):
 
     def loss(self, y_true, y_pred):
-        return 0.5 * np.power((y_true - y_pred), 2)
+        return NotImplementedError()
 
-    def gradient(self, y, X, theta):
-        y_pred = X.dot(theta)
-        return -(y - y_pred).dot(X)
+    def gradient(self, y, y_pred):
+        raise NotImplementedError()
 
-class SquareLoss():
+    def acc(self, y, y_pred):
+        return 0
+
+class SquareLoss(Loss):
     def __init__(self): pass
 
-    def loss(self, y_true, y_pred):
-        return 0.5 * np.power((y_true - y_pred), 2)
+    def loss(self, y, y_pred):
+        return 0.5 * np.power((y - y_pred), 2)
 
     def gradient(self, y, y_pred):
         return -(y - y_pred)
 
 
-class CrossEntropy():
+class CrossEntropy(Loss):
     def __init__(self): pass
 
     def loss(self, y, p):
@@ -38,6 +39,18 @@ class CrossEntropy():
         # Avoid division by zero
         p = np.clip(p, 1e-15, 1 - 1e-15)
         return - (y / p) + (1 - y) / (1 - p)
+
+
+class SquareLoss_():
+    def __init__(self): pass
+
+    def loss(self, y_true, y_pred):
+        return 0.5 * np.power((y_true - y_pred), 2)
+
+    def gradient(self, y, X, theta):
+        y_pred = X.dot(theta)
+        return -(y - y_pred).dot(X)
+
 
 class LogisticLoss():
     def __init__(self, grad_wrt_theta=True):
