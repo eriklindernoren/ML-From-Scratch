@@ -11,11 +11,9 @@ import matplotlib.pyplot as plt
 from mlfromscratch.utils.data_manipulation import make_diagonal, normalize, train_test_split
 from mlfromscratch.utils.data_operation import accuracy_score
 from mlfromscratch.utils.activation_functions import Sigmoid
-from mlfromscratch.utils.loss_functions import LogisticLoss
 from mlfromscratch.utils.optimizers import GradientDescent
 from mlfromscratch.unsupervised_learning import PCA
 from mlfromscratch.utils import Plot
-
 
 class LogisticRegression():
     """The Logistic Regression classifier. 
@@ -33,7 +31,6 @@ class LogisticRegression():
         self.learning_rate = learning_rate
         self.gradient_descent = gradient_descent
         self.sigmoid = Sigmoid()
-        self.log_loss = LogisticLoss()
 
 
     def fit(self, X, y, n_iterations=4000):
@@ -55,7 +52,7 @@ class LogisticRegression():
             if self.gradient_descent:
                 # Move against the gradient of the loss function with 
                 # respect to the parameters to minimize the loss
-                self.param -= self.learning_rate * self.log_loss.gradient(y, X, self.param)
+                self.param -= self.learning_rate * - (y - y_pred).dot(X)
             else:
                 # Make a diagonal matrix of the sigmoid gradient column vector
                 diag_gradient = make_diagonal(self.sigmoid.gradient(X.dot(self.param)))

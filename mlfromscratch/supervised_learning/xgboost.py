@@ -10,10 +10,32 @@ import progressbar
 from mlfromscratch.utils.data_manipulation import train_test_split, standardize, to_categorical, normalize
 from mlfromscratch.utils.data_operation import mean_squared_error, accuracy_score
 from mlfromscratch.supervised_learning import XGBoostRegressionTree
-from mlfromscratch.utils.loss_functions import LogisticLoss
 from mlfromscratch.unsupervised_learning import PCA
+from mlfromscratch.utils.activation_functions import Sigmoid
 from mlfromscratch.utils.misc import bar_widgets
 from mlfromscratch.utils import Plot
+
+
+class LogisticLoss():
+    def __init__(self):
+        sigmoid = Sigmoid()
+        self.log_func = sigmoid.function
+        self.log_grad = sigmoid.gradient
+
+    def loss(self, y, y_pred):
+        y_pred = np.clip(y_pred, 1e-15, 1 - 1e-15)
+        p = self.log_func(y_pred)
+        return y * np.log(p) + (1 - y) * np.log(1 - p)
+
+    # gradient w.r.t y_pred
+    def gradient(self, y, y_pred):
+        p = self.log_func(y_pred)
+        return -(y - p)
+
+    # w.r.t y_pred
+    def hess(self, y, y_pred):
+        p = self.log_func(y_pred)
+        return p * (1 - p)
 
 
 class XGBoost(object):
@@ -49,7 +71,7 @@ class XGBoost(object):
         self.bar = progressbar.ProgressBar(widgets=bar_widgets)
         
         # Log loss for classification
-        self.loss = LogisticLoss(grad_wrt_theta=False)
+        self.loss = LogisticLoss()
 
         # Initialize regression trees
         self.trees = []
