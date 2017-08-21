@@ -143,10 +143,10 @@ Feel free to [reach out](mailto:eriklindernoren@gmail.com) if you can think of w
 
 ### Deep Reinforcement Learning
     $ python mlfromscratch/reinforcement_learning/deep_q_learning.py
-   
-    +-----------------------+
-    | Deep Q-Learning Model |
-    +-----------------------+
+
+    +----------------+
+    | Deep Q-Network |
+    +----------------+
     Input Shape: (4,)
     +-------------------+------------+--------------+
     | Layer Type        | Parameters | Output Shape |
@@ -161,7 +161,7 @@ Feel free to [reach out](mailto:eriklindernoren@gmail.com) if you can think of w
     <img src="http://eriklindernoren.se/images/mlfs_dql1.gif" width="640">
 </p>
 <p align="center">
-    Figure: Deep Q-Learning solution to the CartPole-v1 environment in OpenAI gym.
+    Figure: Deep Q-Network solution to the CartPole-v1 environment in OpenAI gym.
 </p>
 
 ### Association Analysis
@@ -234,4 +234,4 @@ Feel free to [reach out](mailto:eriklindernoren@gmail.com) if you can think of w
 - [Principal Component Analysis](mlfromscratch/unsupervised_learning/principal_component_analysis.py)
 
 ### Reinforcement Learning
-- [Deep Q-Learning](mlfromscratch/reinforcement_learning/deep_q_learning.py)
+- [Deep Q-Network](mlfromscratch/reinforcement_learning/deep_q_network.py)

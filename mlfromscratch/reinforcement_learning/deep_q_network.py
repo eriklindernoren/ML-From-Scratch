@@ -6,6 +6,7 @@ import random
 import numpy as np
 import progressbar
 import gym
+from collections import deque
 
 from sklearn.datasets import fetch_mldata
 
@@ -16,10 +17,11 @@ from mlfromscratch.utils.loss_functions import SquareLoss
 from mlfromscratch.utils.layers import Dense, Dropout, Flatten, Activation, Reshape, BatchNormalization
 from mlfromscratch.supervised_learning import NeuralNetwork
 
-class DeepQLearning():
-    """Deep Q-Learning Class. Uses a deep neural network model to predict the expected utility
-    (Q-value) of executing an action in a given state. 
+class DeepQNetwork():
+    """Q-Learning with deep neural network to learn the control policy. 
+    Uses a deep neural network model to predict the expected utility (Q-value) of executing an action in a given state. 
 
+    Reference: https://arxiv.org/abs/1312.5602
     Parameters:
     -----------
     env_name: string
@@ -40,6 +42,8 @@ class DeepQLearning():
         self.gamma = gamma
         self.decay_rate = decay_rate
         self.min_epsilon = min_epsilon
+        self.memory_size = 500
+        self.memory = []
 
         # Initialize the environment
         self.env = gym.make(env_name)
@@ -51,8 +55,6 @@ class DeepQLearning():
 
     def train(self, n_epochs=500, batch_size=32):
         max_reward = 0
-        memory_limit = 500  # Number of replays that will be saved
-        replay_history = [] # Previous results
 
         for epoch in range(n_epochs):
             state = self.env.reset()
@@ -70,14 +72,19 @@ class DeepQLearning():
 
                 # Take a step
                 new_state, reward, done, _ = self.env.step(action)
-                replay_history.append([state, action, reward, new_state, done])
+                self.memory.append((state, action, reward, new_state, done))
 
-                # Sample batch from replay
-                _batch_size = min(len(replay_history), batch_size)
-                replay_batch = np.array(random.sample(replay_history, _batch_size))
+                # Make sure we restrict memory size to specified limit
+                if len(self.memory) > self.memory_size:
+                    self.memory.pop(0)
 
-                states = np.array([a[0] for a in replay_batch])
-                new_states = np.array([a[3] for a in replay_batch])
+                # Sample replay batch from memory
+                _batch_size = min(len(self.memory), batch_size)
+                replay = random.sample(self.memory, _batch_size)
+
+                # Select states and new states from replay
+                states = np.array([a[0] for a in replay])
+                new_states = np.array([a[3] for a in replay])
 
                 # Predict the expected utility of current state and new state
                 Q = self.model.predict(states)
@@ -85,15 +92,15 @@ class DeepQLearning():
 
                 X = np.empty((_batch_size, self.n_states))
                 y = np.empty((_batch_size, self.n_actions))
-
+                
                 # Construct training data
                 for i in range(_batch_size):
-                    state_r, action_r, reward_r, new_state_r, done_r = replay_batch[i]
-                    
+                    state_r, action_r, reward_r, new_state_r, done_r = replay[i]
+
                     target = Q[i]
                     target[action_r] = reward_r
-                    # If we're done the utility is simply the accumulated reward,
-                    # otherwise we add the expected maximum future reward as well
+                    # If we're done the utility is simply the reward of executing action a in
+                    # state s, otherwise we add the expected maximum future reward as well
                     if not done_r:
                         target[action_r] += self.gamma * np.amax(Q_new[i])
 
@@ -109,9 +116,6 @@ class DeepQLearning():
                 if done: break
             
             epoch_loss = np.mean(epoch_loss)
-            # If memory limit is exceeded remove the oldest entry
-            if len(replay_history) > memory_limit:
-                replay_history.pop(0)
 
             # Reduce the epsilon parameter
             self.epsilon = self.min_epsilon + (1.0 - self.min_epsilon) * np.exp(-self.decay_rate * epoch)
@@ -137,7 +141,11 @@ class DeepQLearning():
 
 
 def main():
-    dql = DeepQLearning()
+    dqn = DeepQNetwork(env_name='CartPole-v1',
+                        epsilon=1, 
+                        gamma=0.8, 
+                        decay_rate=0.005, 
+                        min_epsilon=0.1)
 
     # Model builder
     def model(n_inputs, n_outputs):    
@@ -148,13 +156,13 @@ def main():
 
         return clf
 
-    dql.set_model(model)
+    dqn.set_model(model)
 
     print ()
-    dql.model.summary(name="Deep Q-Learning Model")
+    dqn.model.summary(name="Deep Q-Network")
 
-    dql.train(n_epochs=500)
-    dql.play(n_epochs=100)
+    dqn.train(n_epochs=2000)
+    dqn.play(n_epochs=100)
 
 if __name__ == "__main__":
     main()
