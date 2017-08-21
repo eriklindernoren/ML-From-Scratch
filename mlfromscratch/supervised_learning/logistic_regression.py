@@ -37,13 +37,11 @@ class LogisticRegression():
         # Add dummy ones for bias weights
         X = np.insert(X, 0, 1, axis=1)
 
-
         n_samples, n_features = np.shape(X)
 
         # Initial parameters between [-1/sqrt(N), 1/sqrt(N)]
-        a = -1 / math.sqrt(n_features)
-        b = -a
-        self.param = (b - a) * np.random.random((n_features,)) + a
+        limit = 1 / math.sqrt(n_features)
+        self.param = np.random.uniform(-limit, limit, (n_features,))
 
         # Tune parameters for n iterations
         for i in range(n_iterations):

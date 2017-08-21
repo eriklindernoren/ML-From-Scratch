@@ -10,7 +10,6 @@ import math
 from mlfromscratch.utils.data_manipulation import k_fold_cross_validation_sets, normalize
 from mlfromscratch.utils.data_manipulation import train_test_split, polynomial_features
 from mlfromscratch.utils.data_operation import mean_squared_error
-from mlfromscratch.utils.loss_functions import SquareLoss
 from mlfromscratch.utils import Plot
 
 
@@ -36,7 +35,6 @@ class Regression(object):
         self.learning_rate = learning_rate
         self.gradient_descent = gradient_descent
         self.reg_factor = reg_factor
-        self.square_loss = SquareLoss()
 
     def fit(self, X, y):
         # Insert constant ones as first column (for bias weights)
@@ -46,12 +44,15 @@ class Regression(object):
 
         # Get weights by gradient descent opt.
         if self.gradient_descent:
-            # Initial weights randomly [0, 1]
-            self.w = np.random.random((n_features, ))
+            # Initial weights randomly [-1/N, 1/N]
+            limit = 1 / np.sqrt(n_features)
+            self.w = np.random.uniform(-limit, limit, (n_features, ))
             # Do gradient descent for n_iterations
             for _ in range(self.n_iterations):
-                grad_w = self.square_loss.gradient(y, X, self.w) + self.reg_factor * self.w
-
+                y_pred = X.dot(self.w)
+                # Gradient of l2 loss w.r.t w
+                grad_w = - (y - y_pred).dot(X) + self.reg_factor * self.w
+                # Update the weights
                 self.w -= self.learning_rate * grad_w
         # Get weights by least squares (by pseudoinverse)
         else:
@@ -176,7 +177,7 @@ def main():
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4)
 
-    poly_degree = 11
+    poly_degree = 15
 
     # Finding regularization constant using cross validation
     lowest_error = float("inf")

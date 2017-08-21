@@ -46,7 +46,7 @@ class Perceptron():
         n_outputs = np.shape(y_train)[1]
 
         # Initialize weights between [-1/sqrt(N), 1/sqrt(N)]
-        limit = -1 / math.sqrt(n_features)
+        limit = 1 / math.sqrt(n_features)
         self.W = np.random.uniform(-limit, limit, (n_features, n_outputs))
         self.w0 = np.zeros((1, n_outputs))
 
