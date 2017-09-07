@@ -4,6 +4,6 @@ sklearn
 pandas
 cvxopt
 scipy
-progressbar
+progressbar33
 terminaltables
 gym
