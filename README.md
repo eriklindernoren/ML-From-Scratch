@@ -20,7 +20,7 @@ Feel free to [reach out](mailto:eriklindernoren@gmail.com) if you can think of w
     + [Clustering](#clustering)
     + [Generating Handwritten Digits](#generating-handwritten-digits)
     + [Deep Reinforcement Learning](#deep-reinforcement-learning)
-    + [Genetic Algorithm](#genetic_algorithm)
+    + [Genetic Algorithm](#genetic-algorithm)
     + [Association Analysis](#association-analysis)
   * [Implementations](#implementations)
     + [Supervised Learning](#supervised-learning)
