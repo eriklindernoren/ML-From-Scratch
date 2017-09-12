@@ -20,6 +20,7 @@ Feel free to [reach out](mailto:eriklindernoren@gmail.com) if you can think of w
     + [Clustering](#clustering)
     + [Generating Handwritten Digits](#generating-handwritten-digits)
     + [Deep Reinforcement Learning](#deep-reinforcement-learning)
+    + [Genetic Algorithm](#genetic_algorithm)
     + [Association Analysis](#association-analysis)
   * [Implementations](#implementations)
     + [Supervised Learning](#supervised-learning)
@@ -164,6 +165,25 @@ Feel free to [reach out](mailto:eriklindernoren@gmail.com) if you can think of w
     Figure: Deep Q-Network solution to the CartPole-v1 environment in OpenAI gym.
 </p>
 
+### Genetic Algorithm
+    $ python mlfromscratch/unsupervised_learning/genetic_algorithm.py
+
+    +--------+
+    |   GA   |
+    +--------+
+    Target String: Genetic Algorithm
+    Population Size: 100
+    Mutation Rate: 0.05
+
+    [0 Best Candidate: HfHwhuabDCkLPaGyD, Fitness: 0.01]
+    [1 Best Candidate: eeDiz aqfd jPlpyP, Fitness: 0.00]
+    [2 Best Candidate: jSbhnCqvCtgtClrgq, Fitness: 0.01]
+    ...
+    [325 Best Candidate: Geneuic Algorithm, Fitness: 1.00]
+    [326 Best Candidate: Geneuic Algorithm, Fitness: 1.00]
+    [327 Best Candidate: Geneuic Algorithm, Fitness: 1.00]
+    Answer: Genetic Algorithm
+
 ### Association Analysis
     $ python mlfromscratch/unsupervised_learning/apriori.py 
     +-------------+
@@ -229,6 +249,7 @@ Feel free to [reach out](mailto:eriklindernoren@gmail.com) if you can think of w
 - [FP-Growth](mlfromscratch/unsupervised_learning/fp_growth.py)
 - [Gaussian Mixture Model](mlfromscratch/unsupervised_learning/gaussian_mixture_model.py)
 - [Generative Adversarial Network](mlfromscratch/unsupervised_learning/generative_adversarial_network.py)
+- [Genetic Algorithm](mlfromscratch/unsupervised_learning/genetic_algorithm.py)
 - [K-Means](mlfromscratch/unsupervised_learning/k_means.py)
 - [Partitioning Around Medoids](mlfromscratch/unsupervised_learning/partitioning_around_medoids.py)
 - [Principal Component Analysis](mlfromscratch/unsupervised_learning/principal_component_analysis.py)

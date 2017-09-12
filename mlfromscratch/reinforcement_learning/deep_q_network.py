@@ -42,7 +42,7 @@ class DeepQNetwork():
         self.gamma = gamma
         self.decay_rate = decay_rate
         self.min_epsilon = min_epsilon
-        self.memory_size = 500
+        self.memory_size = 300
         self.memory = []
 
         # Initialize the environment
@@ -51,7 +51,52 @@ class DeepQNetwork():
         self.n_actions = self.env.action_space.n
     
     def set_model(self, model):
-        self.model = model(self.n_states, self.n_actions)
+        self.model = model(n_inputs=self.n_states, n_outputs=self.n_actions)
+
+    def _select_action(self, state):
+        if np.random.rand() < self.epsilon:
+            # Choose action randomly
+            action = np.random.randint(self.n_actions)
+        else:
+            # Take action with highest predicted utility given state
+            action = np.argmax(self.model.predict(state), axis=1)[0]
+
+        return action
+
+    def _memorize(self, state, action, reward, new_state, done):
+        self.memory.append((state, action, reward, new_state, done))
+        # Make sure we restrict memory size to specified limit
+        if len(self.memory) > self.memory_size:
+            self.memory.pop(0)
+
+    def _construct_training_set(self, replay):
+        # Select states and new states from replay
+        states = np.array([a[0] for a in replay])
+        new_states = np.array([a[3] for a in replay])
+
+        # Predict the expected utility of current state and new state
+        Q = self.model.predict(states)
+        Q_new = self.model.predict(new_states)
+
+        replay_size = len(replay)
+        X = np.empty((replay_size, self.n_states))
+        y = np.empty((replay_size, self.n_actions))
+        
+        # Construct training set
+        for i in range(replay_size):
+            state_r, action_r, reward_r, new_state_r, done_r = replay[i]
+
+            target = Q[i]
+            target[action_r] = reward_r
+            # If we're done the utility is simply the reward of executing action a in
+            # state s, otherwise we add the expected maximum future reward as well
+            if not done_r:
+                target[action_r] += self.gamma * np.amax(Q_new[i])
+
+            X[i] = state_r
+            y[i] = target
+
+        return X, y
 
     def train(self, n_epochs=500, batch_size=32):
         max_reward = 0
@@ -63,50 +108,20 @@ class DeepQNetwork():
             epoch_loss = []
             while True:
 
-                # Choose action randomly
-                if np.random.rand() < self.epsilon:
-                    action = np.random.randint(self.n_actions)
-                # Take action with highest predicted utility given state
-                else:
-                    action = np.argmax(self.model.predict(state), axis=1)[0]
-
+                action = self._select_action(state)
                 # Take a step
                 new_state, reward, done, _ = self.env.step(action)
-                self.memory.append((state, action, reward, new_state, done))
 
-                # Make sure we restrict memory size to specified limit
-                if len(self.memory) > self.memory_size:
-                    self.memory.pop(0)
+                self._memorize(state, action, reward, new_state, done)
 
                 # Sample replay batch from memory
                 _batch_size = min(len(self.memory), batch_size)
                 replay = random.sample(self.memory, _batch_size)
 
-                # Select states and new states from replay
-                states = np.array([a[0] for a in replay])
-                new_states = np.array([a[3] for a in replay])
+                # Construct training set from replay
+                X, y = self._construct_training_set(replay)
 
-                # Predict the expected utility of current state and new state
-                Q = self.model.predict(states)
-                Q_new = self.model.predict(new_states)
-
-                X = np.empty((_batch_size, self.n_states))
-                y = np.empty((_batch_size, self.n_actions))
-                
-                # Construct training data
-                for i in range(_batch_size):
-                    state_r, action_r, reward_r, new_state_r, done_r = replay[i]
-
-                    target = Q[i]
-                    target[action_r] = reward_r
-                    # If we're done the utility is simply the reward of executing action a in
-                    # state s, otherwise we add the expected maximum future reward as well
-                    if not done_r:
-                        target[action_r] += self.gamma * np.amax(Q_new[i])
-
-                    X[i] = state_r
-                    y[i] = target
-
+                # Learn control policy
                 loss = self.model.train_on_batch(X, y)
                 epoch_loss.append(loss)
 
@@ -142,10 +157,10 @@ class DeepQNetwork():
 
 def main():
     dqn = DeepQNetwork(env_name='CartPole-v1',
-                        epsilon=1, 
+                        epsilon=0.8, 
                         gamma=0.8, 
                         decay_rate=0.005, 
-                        min_epsilon=0.1)
+                        min_epsilon=0.2)
 
     # Model builder
     def model(n_inputs, n_outputs):    
@@ -161,7 +176,7 @@ def main():
     print ()
     dqn.model.summary(name="Deep Q-Network")
 
-    dqn.train(n_epochs=2000)
+    dqn.train(n_epochs=1500)
     dqn.play(n_epochs=100)
 
 if __name__ == "__main__":
