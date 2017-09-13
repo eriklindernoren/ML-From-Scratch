@@ -87,7 +87,7 @@ class MultiClassLDA():
         x1 = X_transformed[:, 0]
         x2 = X_transformed[:, 1]
         plt.scatter(x1, x2, c=y)
-        if titel: plt.titel(title)
+        if title: plt.title(title)
         plt.show()
 
 
