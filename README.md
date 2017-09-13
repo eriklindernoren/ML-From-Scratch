@@ -171,8 +171,13 @@ Feel free to [reach out](mailto:eriklindernoren@gmail.com) if you can think of w
     +--------+
     |   GA   |
     +--------+
-    Description: Implementation of a Genetic Algorithm which will aim to
-    produce the user specified target string.
+    Description: Implementation of a Genetic Algorithm which aims to produce
+    the user specified target string. This implementation calculates each
+    candidate's fitness based on the aphabetical distance between the candidate
+    and the target. A candidate is selected as a parent with probabilities proportional
+    to the candidate's fitness. Reproduction is implemented as a single-point
+    crossover between pairs of parents. Mutation is done by randomly assigning
+    new characters with uniform probability.
 
     Parameters
     ----------
