@@ -171,18 +171,24 @@ Feel free to [reach out](mailto:eriklindernoren@gmail.com) if you can think of w
     +--------+
     |   GA   |
     +--------+
-    Target String: Genetic Algorithm
+    Description: Implementation of a Genetic Algorithm which will aim to
+    produce the user specified target string.
+
+    Parameters
+    ----------
+    Target String: 'Genetic Algorithm'
     Population Size: 100
     Mutation Rate: 0.05
 
-    [0 Closest Candidate: HLtghnnaFeohhjNvR, Fitness: 0.01]
-    [1 Closest Candidate: HLtghnnaFeohhjPww, Fitness: 0.01]
-    [2 Closest Candidate: HLtghnnaFeohhpvmd, Fitness: 0.01]
-    [3 Closest Candidate: HLtghnnaFeohhpvmd, Fitness: 0.01]
+    [0 Closest Candidate: 'CJqlJguPlqzvpoJmb', Fitness: 0.00]
+    [1 Closest Candidate: 'MCxZxdr nlfiwwGEk', Fitness: 0.01]
+    [2 Closest Candidate: 'MCxZxdm nlfiwwGcx', Fitness: 0.01]
+    [3 Closest Candidate: 'SmdsAklMHn kBIwKn', Fitness: 0.01]
+    [4 Closest Candidate: '  lotneaJOasWfu Z', Fitness: 0.01]
     ...
-    [235 Closest Candidate: GeneticaAlgorithm, Fitness: 1.00]
-    [236 Closest Candidate: GeneticaAlgorithm, Fitness: 1.00]
-    Answer: Genetic Algorithm
+    [292 Closest Candidate: 'GeneticaAlgorithm', Fitness: 1.00]
+    [293 Closest Candidate: 'GeneticaAlgorithm', Fitness: 1.00]
+    Answer: 'Genetic Algorithm'
 
 ### Association Analysis
     $ python mlfromscratch/unsupervised_learning/apriori.py 

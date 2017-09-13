@@ -91,10 +91,10 @@ class GeneticAlgorithm():
                 # Save mutated offspring for next generation
                 new_population += [self._mutate(child1), self._mutate(child2)]
 
-            print ("[%d Closest Candidate: %s, Fitness: %.2f]" % (epoch, fittest_individual, highest_fitness))
+            print ("[%d Closest Candidate: '%s', Fitness: %.2f]" % (epoch, fittest_individual, highest_fitness))
             self.population = new_population
 
-        print ("Answer: %s" % fittest_individual)
+        print ("Answer: '%s'" % fittest_individual)
 
 
 def main():
@@ -109,7 +109,12 @@ def main():
     print ("+--------+")
     print ("|   GA   |")
     print ("+--------+")
-    print ("Target String: %s" % target_string)
+    print ("Description: Implementation of a Genetic Algorithm which will aim to")
+    print ("produce the user specified target string.")
+    print ("")
+    print ("Parameters")
+    print ("----------")
+    print ("Target String: '%s'" % target_string)
     print ("Population Size: %d" % population_size)
     print ("Mutation Rate: %s" % mutation_rate)
     print ("")
