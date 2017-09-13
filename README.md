@@ -175,13 +175,13 @@ Feel free to [reach out](mailto:eriklindernoren@gmail.com) if you can think of w
     Population Size: 100
     Mutation Rate: 0.05
 
-    [0 Best Candidate: HfHwhuabDCkLPaGyD, Fitness: 0.01]
-    [1 Best Candidate: eeDiz aqfd jPlpyP, Fitness: 0.00]
-    [2 Best Candidate: jSbhnCqvCtgtClrgq, Fitness: 0.01]
+    [0 Closest Candidate: HLtghnnaFeohhjNvR, Fitness: 0.01]
+    [1 Closest Candidate: HLtghnnaFeohhjPww, Fitness: 0.01]
+    [2 Closest Candidate: HLtghnnaFeohhpvmd, Fitness: 0.01]
+    [3 Closest Candidate: HLtghnnaFeohhpvmd, Fitness: 0.01]
     ...
-    [325 Best Candidate: Geneuic Algorithm, Fitness: 1.00]
-    [326 Best Candidate: Geneuic Algorithm, Fitness: 1.00]
-    [327 Best Candidate: Geneuic Algorithm, Fitness: 1.00]
+    [235 Closest Candidate: GeneticaAlgorithm, Fitness: 1.00]
+    [236 Closest Candidate: GeneticaAlgorithm, Fitness: 1.00]
     Answer: Genetic Algorithm
 
 ### Association Analysis

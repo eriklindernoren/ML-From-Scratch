@@ -2,7 +2,7 @@ import string
 import numpy as np
 
 class GeneticAlgorithm():
-    """A implementation of a Genetic Algorithm which will try to produce the user
+    """An implementation of a Genetic Algorithm which will try to produce the user
     specified target string.
 
     Parameters:
@@ -19,18 +19,17 @@ class GeneticAlgorithm():
         self.target = target_string
         self.population_size = population_size
         self.mutation_rate = mutation_rate
-        self.eps = 1e-8
         self.letters = [" "] + list(string.letters)
 
     def _initialize(self):
-        # Initialize population with random strings
+        """ Initialize population with random strings """
         self.population = []
         for _ in range(self.population_size):
             # Select random letters as new individual
             individual = "".join(np.random.choice(self.letters, size=len(self.target)))
             self.population.append(individual)
 
-    def _determine_fitness(self):
+    def _calculate_fitness(self):
         """ Calculates the fitness of each individual in the population """
         population_fitness = []
         for individual in self.population:
@@ -41,11 +40,13 @@ class GeneticAlgorithm():
                 letter_i1 = self.letters.index(individual[i])
                 letter_i2 = self.letters.index(self.target[i])
                 loss += abs(letter_i1 - letter_i2)
-            fitness = 1 / (loss + self.eps)
+            fitness = 1 / (loss + 1e-6)
             population_fitness.append(fitness)
         return population_fitness
 
     def _mutate(self, individual):
+        """ Randomly change the individual's characters with probability
+        self.mutation_rate """
         individual = list(individual)
         for j in range(len(individual)):
             # Make change with probability mutation_rate
@@ -55,6 +56,7 @@ class GeneticAlgorithm():
         return "".join(individual)
 
     def _crossover(self, parent1, parent2):
+        """ Create children from parents by crossover """
         # Select random crossover point
         cross_i = np.random.randint(0, len(parent1))
         child1 = parent1[:cross_i] + parent2[cross_i:]
@@ -66,7 +68,7 @@ class GeneticAlgorithm():
         self._initialize()
 
         for epoch in range(iterations):
-            population_fitness = self._determine_fitness()
+            population_fitness = self._calculate_fitness()
 
             fittest_individual = self.population[np.argmax(population_fitness)]
             highest_fitness = max(population_fitness)
@@ -75,8 +77,8 @@ class GeneticAlgorithm():
             if fittest_individual == self.target:
                 break
 
-            # Calculate the probabilities that the individuals should be selected as
-            # parents as the individuals fitness divided by the total population fitness
+            # Set the probabilities that the individuals should be selected as parents
+            # proportionate to the individuals fitness
             parent_probs = [fitness / sum(population_fitness) for fitness in population_fitness]
 
             # Determine the next generation
@@ -89,7 +91,7 @@ class GeneticAlgorithm():
                 # Save mutated offspring for next generation
                 new_population += [self._mutate(child1), self._mutate(child2)]
 
-            print ("[%d Best Candidate: %s, Fitness: %.2f]" % (epoch, fittest_individual, highest_fitness))
+            print ("[%d Closest Candidate: %s, Fitness: %.2f]" % (epoch, fittest_individual, highest_fitness))
             self.population = new_population
 
         print ("Answer: %s" % fittest_individual)
