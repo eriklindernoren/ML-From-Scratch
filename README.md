@@ -5,9 +5,6 @@ Python implementations of some of the fundamental Machine Learning models and al
 
 The purpose of this project is not to produce as optimized and computationally efficient algorithms as possible 
 but rather to present the inner workings of them in a transparent way.
-The reason the project uses scikit-learn is to evaluate the implementations on sklearn.datasets.
-
-Feel free to [reach out](mailto:eriklindernoren@gmail.com) if you can think of ways to expand this project.
 
 ## Table of Contents
 - [Machine Learning From Scratch](#machine-learning-from-scratch)
@@ -26,6 +23,7 @@ Feel free to [reach out](mailto:eriklindernoren@gmail.com) if you can think of w
     + [Supervised Learning](#supervised-learning)
     + [Unsupervised Learning](#unsupervised-learning)
     + [Reinforcement Learning](#reinforcement-learning)
+  * [Contact](#contact)
     
 ## Installation
     $ git clone https://github.com/eriklindernoren/ML-From-Scratch
@@ -267,3 +265,11 @@ Feel free to [reach out](mailto:eriklindernoren@gmail.com) if you can think of w
 
 ### Reinforcement Learning
 - [Deep Q-Network](mlfromscratch/reinforcement_learning/deep_q_network.py)
+
+## Contact
+Feel free to reach out if you there is some implementation you would like to see here, or if you're just
+feeling social.
+
+[eriklindernoren@gmail.com](mailto:eriklindernoren@gmail.com) <br>
+[LinkedIn](https://www.linkedin.com/in/eriklindernoren/)
+
