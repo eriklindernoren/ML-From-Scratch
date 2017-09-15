@@ -53,16 +53,16 @@ def accuracy_score(y_true, y_pred):
     return accuracy
 
 # Calculate the covariance matrix for the dataset X
-def calculate_covariance_matrix(X, Y=np.empty([(0,0)])):
+def calculate_covariance_matrix(X, Y=np.empty([0])):
     if not Y.any():
         Y = X
     n_samples = np.shape(X)[0]
-    covariance_matrix = (1 / (n_samples-1)) * (X - X.mean(0)).T.dot(Y - Y.mean(0))
+    covariance_matrix = (1 / (n_samples-1)) * (X - X.mean(axis=0)).T.dot(Y - Y.mean(axis=0))
 
     return np.array(covariance_matrix, dtype=float)
  
 # Calculate the correlation matrix for the dataset X
-def calculate_correlation_matrix(X, Y=np.empty((0,0))):
+def calculate_correlation_matrix(X, Y=np.empty([0])):
     if not Y.any():
         Y = X
     n_samples = np.shape(X)[0]
