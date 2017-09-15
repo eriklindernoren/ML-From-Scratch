@@ -33,19 +33,21 @@ class NeuralNetwork():
         The weight optimizer that will be used to tune the weights in order of minimizing
         the loss.
     loss: class
-        Loss function used to measure the models performance. SquareLoss or CrossEntropy.
+        Loss function used to measure the model's performance. SquareLoss or CrossEntropy.
     validation: tuple
         A tuple containing validation data and labels
     """
-    def __init__(self, optimizer, loss, validation_data=None):
+    def __init__(self, optimizer, loss=CrossEntropy, validation_data=None):
         self.optimizer = optimizer
         self.layers = []
         self.errors = {"training": [], "validation": []}
         self.loss_function = loss()
-        self.X_val = np.empty([])
-        self.y_val = np.empty([])
+        
+        self.validation_set = False
         if validation_data:
+            self.validation_set = True
             self.X_val, self.y_val = validation_data
+            # One-hot encoding of y
             self.y_val = to_categorical(self.y_val.astype("int"))
 
     # Method which enables freezing of the weights of the network's layers.
@@ -53,10 +55,10 @@ class NeuralNetwork():
         for layer in self.layers:
             layer.trainable = trainable
 
-    # Method which adds a layer to the neural network
     def add(self, layer):
-        # If the first layer has been added set the input shape
-        # as the output shape of the previous layer
+        """ Method which adds a layer to the neural network """
+        # If this is not the first layer added then set the input shape
+        # as the output shape of the last added layer
         if self.layers:
             layer.set_input_shape(shape=self.layers[-1].output_shape())
 
@@ -64,7 +66,7 @@ class NeuralNetwork():
         if hasattr(layer, 'initialize'):
             layer.initialize(optimizer=self.optimizer)
 
-        # Add layer to network
+        # Add layer to the network
         self.layers.append(layer)
 
     def train_on_batch(self, X, y):
@@ -104,8 +106,8 @@ class NeuralNetwork():
 
             # Save the epoch mean error
             self.errors["training"].append(batch_t_error / n_batches)
-            if self.X_val.any():
-                # Calculate the validation error
+            if self.validation_set:
+                # Determine validation error
                 y_val_p = self._forward_pass(self.X_val)
                 validation_loss = np.mean(self.loss_function.loss(self.y_val, y_val_p))
                 self.errors["validation"].append(validation_loss)
@@ -113,8 +115,8 @@ class NeuralNetwork():
         return self.errors["training"], self.errors["validation"]
 
     def _forward_pass(self, X, training=True):
-        # Calculate the output of the NN. The output of layer l1 becomes the
-        # input of the following layer l2
+        """ Calculate the output of the NN. The output of layer l1 becomes the
+        input of the following layer l2 """
         layer_output = X
         for layer in self.layers:
             layer_output = layer.forward_pass(layer_output, training)
@@ -122,8 +124,8 @@ class NeuralNetwork():
         return layer_output
 
     def _backward_pass(self, loss_grad):
-        # Propogate the gradient 'backwards' and update the weights
-        # in each layer
+        """ Propogate the gradient 'backwards' and update the weights
+        in each layer. The output of l2 becomes the input of l1. """
         acc_grad = loss_grad
         for layer in reversed(self.layers):
             acc_grad = layer.backward_pass(acc_grad)
@@ -133,9 +135,10 @@ class NeuralNetwork():
         # Print model name
         print (AsciiTable([[name]]).table)
 
+        # Network input shape (first layer's input shape)
         print ("Input Shape: %s" % str(self.layers[0].input_shape))
 
-        # Print the each layer's configuration
+        # Get each layer's configuration
         table_data = [["Layer Type", "Parameters", "Output Shape"]]
         tot_params = 0
         for layer in self.layers:
@@ -143,15 +146,15 @@ class NeuralNetwork():
             params = layer.parameters()
             out_shape = layer.output_shape()
             table_data.append([layer_name, str(params), str(out_shape)])
-
             tot_params += params
+
+        # Print network configuration table
         print (AsciiTable(table_data).table)
 
         print ("Total Parameters: %d\n" % tot_params)
 
-
-    # Use the trained model to predict labels of X
     def predict(self, X):
+        """ Use the trained model to predict labels of X """
         return self._forward_pass(X, training=False)
 
 
@@ -205,6 +208,7 @@ def main():
     # Conv Net
     #----------
 
+    # Reshape X to (n_samples, channels, height, width)
     X_train = X_train.reshape((-1,1,8,8))
     X_test = X_test.reshape((-1,1,8,8))
 
@@ -243,12 +247,13 @@ def main():
     plt.xlabel('Iterations')
     plt.show()
 
-    # Make a prediction of the test set
+    # Predict labels of the test data
     y_pred = np.argmax(clf.predict(X_test), axis=1)
 
     accuracy = accuracy_score(y_test, y_pred)
     print ("Accuracy:", accuracy)
 
+    # Flatten data set
     X_test = X_test.reshape(-1, 8*8)
 
     # Reduce dimension to 2D using PCA and plot the results

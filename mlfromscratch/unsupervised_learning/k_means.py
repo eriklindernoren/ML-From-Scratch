@@ -30,8 +30,8 @@ class KMeans():
         self.k = k
         self.max_iterations = max_iterations
 
-    # Initialize the centroids as random samples
     def _init_random_centroids(self, X):
+        """ Initialize the centroids as random samples """
         n_samples, n_features = np.shape(X)
         centroids = np.zeros((self.k, n_features))
         for i in range(self.k):
@@ -39,8 +39,8 @@ class KMeans():
             centroids[i] = centroid
         return centroids
 
-    # Return the index of the closest centroid to the sample
     def _closest_centroid(self, sample, centroids):
+        """ Return the index of the closest centroid to the sample """
         closest_i = None
         closest_distance = float("inf")
         for i, centroid in enumerate(centroids):
@@ -50,8 +50,8 @@ class KMeans():
                 closest_distance = distance
         return closest_i
 
-    # Assign the samples to the closest centroids to create clusters
     def _create_clusters(self, centroids, X):
+        """ Assign the samples to the closest centroids to create clusters """
         n_samples = np.shape(X)[0]
         clusters = [[] for _ in range(self.k)]
         for sample_i, sample in enumerate(X):
@@ -59,9 +59,8 @@ class KMeans():
             clusters[centroid_i].append(sample_i)
         return clusters
 
-    # Calculate new centroids as the means of the samples
-    # in each cluster
     def _calculate_centroids(self, clusters, X):
+        """ Calculate new centroids as the means of the samples in each cluster  """
         n_features = np.shape(X)[1]
         centroids = np.zeros((self.k, n_features))
         for i, cluster in enumerate(clusters):
@@ -69,8 +68,8 @@ class KMeans():
             centroids[i] = centroid
         return centroids
 
-    # Classify samples as the index of their clusters
     def _get_cluster_labels(self, clusters, X):
+        """ Classify samples as the index of their clusters """
         # One prediction for each sample
         y_pred = np.zeros(np.shape(X)[0])
         for cluster_i, cluster in enumerate(clusters):
@@ -78,8 +77,9 @@ class KMeans():
                 y_pred[sample_i] = cluster_i
         return y_pred
 
-    # Do K-Means clustering and return cluster indices
     def predict(self, X):
+        """ Do K-Means clustering and return cluster indices """
+
         # Initialize centroids
         centroids = self._init_random_centroids(X)
 

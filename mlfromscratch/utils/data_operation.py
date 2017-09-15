@@ -38,14 +38,14 @@ def calculate_std_dev(X):
     return std_dev
 
 
-# Calculate the distance between two vectors
+# Calculates the l2 distance between two vectors
 def euclidean_distance(x1, x2):
     distance = 0
+    # Squared distance between each coordinate
     for i in range(len(x1)):
         distance += pow((x1[i] - x2[i]), 2)
 
     return math.sqrt(distance)
-
 
 # Compare y_true to y_pred and return the accuracy
 def accuracy_score(y_true, y_pred):
@@ -53,7 +53,7 @@ def accuracy_score(y_true, y_pred):
     return accuracy
 
 # Calculate the covariance matrix for the dataset X
-def calculate_covariance_matrix(X, Y=np.empty((0,0))):
+def calculate_covariance_matrix(X, Y=np.empty([(0,0)])):
     if not Y.any():
         Y = X
     n_samples = np.shape(X)[0]

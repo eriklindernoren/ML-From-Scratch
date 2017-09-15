@@ -46,7 +46,6 @@ class DecisionTree(object):
 
     Parameters:
     -----------
-    
     min_samples_split: int
         The minimum number of samples needed to make a split when building a tree.
     min_impurity: float
@@ -69,18 +68,20 @@ class DecisionTree(object):
         self._impurity_calculation = None
         # Function to determine prediction of y at leaf
         self._leaf_value_calculation = None
-        # If y is nominal
+        # If y is one-hot encoded (multi-dim) or not (one-dim)
         self.one_dim = None
         # If Gradient Boost
         self.loss = loss
 
     def fit(self, X, y, loss=None):
-        # Build tree
+        """ Build decision tree """
         self.one_dim = len(np.shape(y)) == 1
         self.root = self._build_tree(X, y)
         self.loss=None
 
     def _build_tree(self, X, y, current_depth=0):
+        """ Recursive method which builds out the decision tree and splits X and respective y
+        on the feature of X which (based on impurity) best separates the data"""
 
         largest_impurity = 0
         best_criteria = None    # Feature index and threshold
@@ -105,6 +106,8 @@ class DecisionTree(object):
                 # Iterate through all unique values of feature column i and
                 # calculate the impurity
                 for threshold in unique_values:
+                    # Divide X and y depending on if the feature value of X at index feature_i
+                    # meets the threshold
                     Xy1, Xy2 = divide_on_feature(Xy, feature_i, threshold)
                     
                     if len(Xy1) > 0 and len(Xy2) > 0:
@@ -129,6 +132,7 @@ class DecisionTree(object):
                                 }
 
         if largest_impurity > self.min_impurity:
+            # Build subtrees for the right and left branches
             true_branch = self._build_tree(best_sets["leftX"], best_sets["lefty"], current_depth + 1)
             false_branch = self._build_tree(best_sets["rightX"], best_sets["righty"], current_depth + 1)
             return DecisionNode(feature_i=best_criteria["feature_i"], threshold=best_criteria[
@@ -139,9 +143,11 @@ class DecisionTree(object):
 
         return DecisionNode(value=leaf_value)
 
-    # Do a recursive search down the tree and make a predict of the data sample by the
-    # value of the leaf that we end up at
+
     def predict_value(self, x, tree=None):
+        """ Do a recursive search down the tree and make a predict of the data sample by the
+            value of the leaf that we end up at """
+
         if tree is None:
             tree = self.root
 
@@ -163,14 +169,15 @@ class DecisionTree(object):
         # Test subtree
         return self.predict_value(x, branch)
 
-    # Classify samples one by one and return the set of labels
     def predict(self, X):
+        """ Classify samples one by one and return the set of labels """
         y_pred = []
         for x in X:
             y_pred.append(self.predict_value(x))
         return y_pred
 
     def print_tree(self, tree=None, indent=" "):
+        """ Recursively print the decision tree """
         if not tree:
             tree = self.root
 

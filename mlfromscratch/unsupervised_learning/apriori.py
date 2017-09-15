@@ -40,9 +40,10 @@ class Apriori():
         support = count / len(self.transactions)
         return support
 
-    # Prunes the candidates that are not frequent
-    # => returns list with only frequent itemsets
+
     def _get_frequent_itemsets(self, candidates):
+        """ Prunes the candidates that are not frequent => returns list with 
+        only frequent itemsets """
         frequent = []
         # Find frequent items
         for itemset in candidates:
@@ -51,10 +52,10 @@ class Apriori():
                 frequent.append(itemset)
         return frequent
 
-    # True or false depending on the candidate has any
-    # subset with size k - 1 that is not in the frequent
-    # itemset
+
     def _has_infrequent_itemsets(self, candidate):
+        """ True or false depending on the candidate has any
+        subset with size k - 1 that is not in the frequent itemset """
         k = len(candidate)
         # Find all combinations of size k-1 in candidate
         # E.g [1,2,3] => [[1,2],[1,3],[2,3]]
@@ -66,10 +67,11 @@ class Apriori():
                 return True
         return False
 
-    # Joins the elements in the frequent itemset and prunes
-    # resulting sets if they contain subsets that have been determined
-    # to be infrequent.
+
     def _generate_candidates(self, freq_itemset):
+        """ Joins the elements in the frequent itemset and prunes
+        resulting sets if they contain subsets that have been determined
+        to be infrequent. """
         candidates = []
         for itemset1 in freq_itemset:
             for itemset2 in freq_itemset:
@@ -97,9 +99,10 @@ class Apriori():
                         candidates.append(candidate)
         return candidates
 
-    # True or false depending on each item in the itemset is
-    # in the transaction
+
     def _transaction_contains_items(self, transaction, items):
+        """ True or false depending on each item in the itemset is
+        in the transaction """
         # If items is in fact only one item
         if isinstance(items, int):
             return items in transaction
@@ -110,8 +113,8 @@ class Apriori():
                 return False
         return True
 
-    # Returns the set of frequent itemsets in the list of transactions
     def find_frequent_itemsets(self, transactions):
+        """ Returns the set of frequent itemsets in the list of transactions """
         self.transactions = transactions
         # Get all unique items in the transactions
         unique_items = set(item for transaction in self.transactions for item in transaction)
@@ -135,9 +138,10 @@ class Apriori():
             itemset for sublist in self.freq_itemsets for itemset in sublist]
         return frequent_itemsets
 
-    # Recursive function which returns the rules where confidence >= min_confidence
-    # Starts with large itemset and recursively explores rules for subsets
+
     def _rules_from_itemset(self, initial_itemset, itemset):
+        """ Recursive function which returns the rules where confidence >= min_confidence
+        Starts with large itemset and recursively explores rules for subsets """
         rules = []
         k = len(itemset)
         # Get all combinations of sub-itemsets of size k - 1 from itemset

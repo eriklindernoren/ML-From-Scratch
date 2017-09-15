@@ -77,15 +77,15 @@ class GeneticAlgorithm():
             if fittest_individual == self.target:
                 break
 
-            # Set the probabilities that the individuals should be selected as parents
-            # proportionate to the individuals fitness
-            parent_probs = [fitness / sum(population_fitness) for fitness in population_fitness]
+            # Set the probability that the individual should be selected as a parent
+            # proportionate to the individual's fitness.
+            parent_probabilities = [fitness / sum(population_fitness) for fitness in population_fitness]
 
             # Determine the next generation
             new_population = []
             for i in np.arange(0, self.population_size, 2):
                 # Select two parents randomly according to probabilities
-                parents = np.random.choice(self.population, size=2, p=parent_probs, replace=False)
+                parents = np.random.choice(self.population, size=2, p=parent_probabilities, replace=False)
                 # Perform crossover to produce offspring
                 child1, child2 = self._crossover(parents[0], parents[1])
                 # Save mutated offspring for next generation

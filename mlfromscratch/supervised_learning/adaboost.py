@@ -12,7 +12,7 @@ from mlfromscratch.utils.data_manipulation import train_test_split
 from mlfromscratch.utils.data_operation import accuracy_score
 from mlfromscratch.utils import Plot
 
-# Decision stump used as weak classifier in Adaboost
+# Decision stump used as weak classifier in this impl. of Adaboost
 class DecisionStump():
     def __init__(self):
         self.polarity = 1
@@ -32,8 +32,7 @@ class Adaboost():
     """
     def __init__(self, n_clf=5):
         self.n_clf = n_clf
-        # List of weak classifiers
-        self.clfs = []
+        self.clfs = [] # List of weak classifiers
 
     def fit(self, X, y):
 
@@ -63,6 +62,7 @@ class Adaboost():
                     # Error = sum of weights of misclassified samples
                     error = sum(w[y != prediction])
                     
+                    # If the error is over 50% we flip the polarity
                     if error > 0.5:
                         # E.g error = 0.8 => (1 - error) = 0.2
                         # We flip the error and polarity
@@ -76,8 +76,8 @@ class Adaboost():
                         clf.threshold = threshold
                         clf.feature_index = feature_i
                         min_error = error
-            # Calculate the alpha which is used to update the sample weights
-            # and is an approximation of this classifiers proficiency
+            # Calculate the alpha which is used to update the sample weights,
+            # Alpha is also an approximation of this classifier's proficiency
             clf.alpha = 0.5 * math.log((1.0 - min_error) / (min_error + 1e-10))
 
             # Set all predictions to '1' initially
@@ -88,7 +88,7 @@ class Adaboost():
             predictions[negative_idx] = -1
 
             # Calculate new weights 
-            # Missclassified gets larger weights and correctly classified smaller
+            # Missclassified samples gets larger weights and correctly classified samples smaller
             w *= np.exp(-clf.alpha * y * predictions)
             # Normalize to one
             w /= np.sum(w)
@@ -133,13 +133,12 @@ def main():
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5)
 
-    # Adaboost classification
+    # Adaboost classification with 5 weak classifiers
     clf = Adaboost(n_clf=5)
     clf.fit(X_train, y_train)
     y_pred = clf.predict(X_test)
 
     accuracy = accuracy_score(y_test, y_pred)
-
     print ("Accuracy:", accuracy)
 
     # Reduce dimensions to 2d using pca and plot the results

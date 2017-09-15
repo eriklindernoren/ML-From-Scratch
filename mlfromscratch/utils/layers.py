@@ -99,7 +99,7 @@ class Conv2D(Layer):
     filter_shape: tuple
         A tuple (filter_height, filter_width).
     input_shape: tuple
-        The shape of the expected input of the layer. (batch_size, height, width, channels)
+        The shape of the expected input of the layer. (batch_size, channels, height, width)
         Only needs to be specified for first layer in the network.
     padding: string
         Either 'same' or 'valid'. 'same' results in padding being added so that the output height and width
@@ -163,7 +163,11 @@ class Conv2D(Layer):
         # Recalculate the gradient which will be propogated back to prev. layer
         acc_grad = self.W_col.T.dot(acc_grad)
         # Reshape from column shape to image shape
-        acc_grad = column_to_image(acc_grad, self.layer_input.shape, self.filter_shape, stride=self.stride, output_shape=self.padding)
+        acc_grad = column_to_image(acc_grad, 
+                                self.layer_input.shape, 
+                                self.filter_shape, 
+                                stride=self.stride, 
+                                output_shape=self.padding)
 
         return acc_grad
 

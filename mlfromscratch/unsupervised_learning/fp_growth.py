@@ -44,10 +44,11 @@ class FPGrowth():
         support = count
         return support
 
-    # Returns a set of frequent items. An item is determined to
-    # be frequent if there are atleast min_sup transactions that contains
-    # it.
+
     def _get_frequent_items(self, transactions):
+        """ Returns a set of frequent items. An item is determined to
+        be frequent if there are atleast min_sup transactions that contains
+        it. """
         # Get all unique items in the transactions
         unique_items = set(
             item for transaction in transactions for item in transaction)
@@ -62,8 +63,8 @@ class FPGrowth():
         # Only return the items
         return frequent_items
 
-    # Recursive method which adds nodes to the tree.
     def _insert_tree(self, node, children):
+        """ Recursive method which adds nodes to the tree. """
         if not children:
             return
         # Create new node as the first item in children list
@@ -96,8 +97,8 @@ class FPGrowth():
 
         return root
 
-    # Recursive method which prints the FP Growth Tree
     def print_tree(self, node=None, indent_times=0):
+        """ Recursive method which prints the FP Growth Tree """
         if not node:
             node = self.tree_root
         indent = "    " * indent_times
@@ -106,19 +107,20 @@ class FPGrowth():
             child = node.children[child_key]
             self.print_tree(child, indent_times + 1)
 
-    # Makes sure that the first item in itemset
-    # is a child of node and that every following item
-    # in itemset is reachable via that path
+
     def _is_prefix(self, itemset, node):
+        """ Makes sure that the first item in itemset is a child of node 
+        and that every following item in itemset is reachable via that path """
         for item in itemset:
             if not item in node.children:
                 return False
             node = node.children[item]
         return True
 
-    # Recursive method that adds prefixes to the itemset by
-    # traversing the FP Growth Tree
+
     def _determine_prefixes(self, itemset, node, prefixes=None):
+        """ Recursive method that adds prefixes to the itemset by traversing the 
+        FP Growth Tree"""
         if not prefixes:
             prefixes = []
 
@@ -136,9 +138,10 @@ class FPGrowth():
             # prefix.
             self._determine_prefixes(itemset, child, prefixes + [child.item])
 
-    # Determines the look of the hashmap key for self.prefixes
-    # List of more strings than one gets joined by '-'
+
     def _get_itemset_key(self, itemset):
+        """ Determines the look of the hashmap key for self.prefixes
+        List of more strings than one gets joined by '-' """
         if len(itemset) > 1:
             itemset_key = "-".join(itemset)
         else:
@@ -198,6 +201,7 @@ def main():
     # Demo transaction set
     # Example:
     # https://en.wikibooks.org/wiki/Data_Mining_Algorithms_In_R/Frequent_Pattern_Mining/The_FP-Growth_Algorithm
+    
     transactions = np.array([
         ["A", "B", "D", "E"],
         ["B", "C", "E"],

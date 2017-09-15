@@ -17,7 +17,6 @@ from mlfromscratch.utils.misc import bar_widgets
 from mlfromscratch.utils import Plot
 
 
-# Super class to GradientBoostingRegressor and GradientBoostingClassifier
 class GradientBoosting(object):
     """Super class of GradientBoostingClassifier and GradientBoostinRegressor. 
     Uses a collection of regression trees that trains on predicting the gradient

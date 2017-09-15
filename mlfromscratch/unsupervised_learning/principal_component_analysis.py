@@ -22,9 +22,9 @@ class PCA():
     """
     def __init__(self): pass
 
-    # Fit the dataset to the number of principal components
-    # specified in the constructor and return the transformed dataset
     def transform(self, X, n_components):
+        """ Fit the dataset to the number of principal components specified in the 
+        constructor and return the transformed dataset """
         covariance = calculate_covariance_matrix(X)
 
         # Get the eigenvalues and eigenvectors.

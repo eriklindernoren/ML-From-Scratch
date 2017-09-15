@@ -34,6 +34,7 @@ class MultiClassLDA():
 
         # Within class scatter matrix:
         # SW = sum{ (X_for_class - mean_of_X_for_class)^2 }
+        #   <=> (n_samples_X_for_class - 1) * covar(X_for_class)
         SW = np.empty((n_features, n_features))
         for label in labels:
             _X = X[y == label]
@@ -80,9 +81,10 @@ class MultiClassLDA():
 
         return X_transformed
 
-    # Plot the dataset X and the corresponding labels y in 2D using the LDA
-    # transformation.
+
     def plot_in_2d(self, X, y, title=None):
+        """ Plot the dataset X and the corresponding labels y in 2D using the LDA
+        transformation."""
         X_transformed = self.transform(X, y, n_components=2)
         x1 = X_transformed[:, 0]
         x2 = X_transformed[:, 1]

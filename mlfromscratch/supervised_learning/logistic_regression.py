@@ -39,7 +39,7 @@ class LogisticRegression():
 
         n_samples, n_features = np.shape(X)
 
-        # Initial parameters between [-1/sqrt(N), 1/sqrt(N)]
+        # Initialize parameters between [-1/sqrt(N), 1/sqrt(N)]
         limit = 1 / math.sqrt(n_features)
         self.param = np.random.uniform(-limit, limit, (n_features,))
 

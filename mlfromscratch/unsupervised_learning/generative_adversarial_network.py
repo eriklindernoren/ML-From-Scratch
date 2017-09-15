@@ -88,7 +88,7 @@ class GAN():
         X = mnist.data
         y = mnist.target
 
-        # Rescale -1 to 1
+        # Rescale [-1, 1]
         X = (X.astype(np.float32) - 127.5) / 127.5
 
         half_batch = int(batch_size / 2)

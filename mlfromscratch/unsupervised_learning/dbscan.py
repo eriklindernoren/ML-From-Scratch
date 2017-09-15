@@ -34,10 +34,11 @@ class DBSCAN():
         self.neighbors = {}
         self.X = None   # Dataset
 
-    # Return a list of neighboring samples
-    # A sample_2 is considered a neighbor of sample_1 if the distance between
-    # them is smaller than epsilon
+
     def _get_neighbors(self, sample_i):
+        """ Return a list of indexes of neighboring samples
+        A sample_2 is considered a neighbor of sample_1 if the distance between
+        them is smaller than epsilon """
         neighbors = []
         for _sample_i, _sample in enumerate(self.X):
             if _sample_i != sample_i and euclidean_distance(
@@ -45,9 +46,10 @@ class DBSCAN():
                 neighbors.append(_sample_i)
         return np.array(neighbors)
 
-    # Recursive method which expands the cluster until we have reached the border
-    # of the dense area (density determined by eps and min_samples)
+
     def _expand_cluster(self, sample_i, neighbors):
+        """ Recursive method which expands the cluster until we have reached the border
+        of the dense area (density determined by eps and min_samples) """
         cluster = [sample_i]
         # Iterate through neighbors
         for neighbor_i in neighbors:
@@ -66,9 +68,10 @@ class DBSCAN():
                 cluster.append(neighbor_i)
         return cluster
 
-    # Return the samples labels as the index of the cluster in which they are
-    # contained
+
     def _get_cluster_labels(self):
+        """ Return the samples labels as the index of the cluster in which they are
+        contained """
         # Set default value to number of clusters
         # Will make sure all outliers have same cluster label
         labels = len(self.clusters) * np.ones(np.shape(self.X)[0])
