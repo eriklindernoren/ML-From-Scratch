@@ -141,7 +141,7 @@ but rather to present the inner workings of them in a transparent way.
 </p>
 
 ### Deep Reinforcement Learning
-    $ python mlfromscratch/reinforcement_learning/deep_q_learning.py
+    $ python mlfromscratch/reinforcement_learning/deep_q_network.py
 
     +----------------+
     | Deep Q-Network |
@@ -171,7 +171,7 @@ but rather to present the inner workings of them in a transparent way.
     +--------+
     Description: Implementation of a Genetic Algorithm which aims to produce
     the user specified target string. This implementation calculates each
-    candidate's fitness based on the aphabetical distance between the candidate
+    candidate's fitness based on the alphabetical distance between the candidate
     and the target. A candidate is selected as a parent with probabilities proportional
     to the candidate's fitness. Reproduction is implemented as a single-point
     crossover between pairs of parents. Mutation is done by randomly assigning
@@ -191,7 +191,7 @@ but rather to present the inner workings of them in a transparent way.
     ...
     [292 Closest Candidate: 'GeneticaAlgorithm', Fitness: 1.00]
     [293 Closest Candidate: 'GeneticaAlgorithm', Fitness: 1.00]
-    Answer: 'Genetic Algorithm'
+    [294 Answer: 'Genetic Algorithm']
 
 ### Association Analysis
     $ python mlfromscratch/unsupervised_learning/apriori.py 

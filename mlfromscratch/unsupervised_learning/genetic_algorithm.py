@@ -94,7 +94,7 @@ class GeneticAlgorithm():
             print ("[%d Closest Candidate: '%s', Fitness: %.2f]" % (epoch, fittest_individual, highest_fitness))
             self.population = new_population
 
-        print ("Answer: '%s'" % fittest_individual)
+        print ("[%d Answer: '%s']" % (epoch, fittest_individual))
 
 
 def main():
@@ -111,7 +111,7 @@ def main():
     print ("+--------+")
     print ("Description: Implementation of a Genetic Algorithm which aims to produce")
     print ("the user specified target string. This implementation calculates each")
-    print ("candidate's fitness based on the aphabetical distance between the candidate")
+    print ("candidate's fitness based on the alphabetical distance between the candidate")
     print ("and the target. A candidate is selected as a parent with probabilities proportional")
     print ("to the candidate's fitness. Reproduction is implemented as a single-point")
     print ("crossover between pairs of parents. Mutation is done by randomly assigning")
