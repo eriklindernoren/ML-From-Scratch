@@ -267,8 +267,8 @@ but rather to present the inner workings of them in a transparent way.
 - [Deep Q-Network](mlfromscratch/reinforcement_learning/deep_q_network.py)
 
 ## Contact
-Feel free to reach out if there's some implementation you would like to see here, or if you're just
-feeling social.
+If there's some implementation you would like to see here or if you're just
+feeling social, feel free to email me or connect with me on LinkedIn.
 
 [eriklindernoren@gmail.com](mailto:eriklindernoren@gmail.com) <br>
 [LinkedIn](https://www.linkedin.com/in/eriklindernoren/)
