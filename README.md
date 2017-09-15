@@ -141,7 +141,7 @@ but rather to present the inner workings of them in a transparent way.
 </p>
 
 ### Deep Reinforcement Learning
-    $ python mlfromscratch/reinforcement_learning/deep_q_learning.py
+    $ python mlfromscratch/reinforcement_learning/deep_q_network.py
 
     +----------------+
     | Deep Q-Network |
