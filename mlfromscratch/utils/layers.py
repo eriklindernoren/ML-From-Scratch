@@ -186,7 +186,7 @@ class RNN(Layer):
 
             # If trainable => update gradient w.r.t V at time step t
             if self.trainable:
-                grad_v = grad_t.T.dot(self.states[:, t])
+                grad_v += grad_t.T.dot(self.states[:, t])
 
             # Calculate the gradient w.r.t the state input
             grad_wrt_state = grad_t.dot(self.V) * self.activation.gradient(self.state_input[:, t])
