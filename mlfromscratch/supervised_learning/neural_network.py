@@ -20,7 +20,7 @@ from mlfromscratch.unsupervised_learning import PCA
 from mlfromscratch.utils.misc import bar_widgets
 from mlfromscratch.utils import Plot
 from mlfromscratch.utils.layers import Dense, Dropout, Conv2D, Flatten, Activation, MaxPooling2D
-from mlfromscratch.utils.layers import AveragePooling2D, ZeroPadding2D, BatchNormalization
+from mlfromscratch.utils.layers import AveragePooling2D, ZeroPadding2D, BatchNormalization, RNN
 
 
 
@@ -47,11 +47,9 @@ class NeuralNetwork():
         if validation_data:
             self.validation_set = True
             self.X_val, self.y_val = validation_data
-            # One-hot encoding of y
-            self.y_val = to_categorical(self.y_val.astype("int"))
 
-    # Method which enables freezing of the weights of the network's layers.
     def set_trainable(self, trainable):
+        """ Method which enables freezing of the weights of the network's layers. """
         for layer in self.layers:
             layer.trainable = trainable
 
@@ -85,9 +83,6 @@ class NeuralNetwork():
 
 
     def fit(self, X, y, n_epochs, batch_size):
-
-        # Convert to one-hot encoding
-        y = to_categorical(y.astype("int"))
 
         n_samples = np.shape(X)[0]
         n_batches = int(n_samples / batch_size)
@@ -160,20 +155,93 @@ class NeuralNetwork():
 
 def main():
 
-    data = datasets.load_digits()
-    X = data.data
-    y = data.target
-
-    n_samples = np.shape(X)
-    n_hidden = 512
-
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4, seed=1)
-
     optimizer = Adam()
+
+    def gen_mult_ser(nums):
+        """ Method which generates multiplication series """
+        X = np.zeros([nums, 10, 60], dtype=float)
+        y = np.zeros([nums, 10, 60], dtype=float)
+        for i in range(nums):
+            start = np.random.randint(2, 6)
+            mult_ser = np.linspace(start, start*10, num=10, dtype=int)
+            X[i] = to_categorical(mult_ser, n_col=60)
+            y[i] = np.roll(X[i], -1, axis=0)
+        y[:, -1, 1] = 1 # Mark endpoint as 1
+        return X, y
+
+
+    def gen_num_seq(nums):
+        """ Method which generates sequence of numbers """
+        X = np.zeros([nums, 10, 20], dtype=float)
+        y = np.zeros([nums, 10, 20], dtype=float)
+        for i in range(nums):
+            start = np.random.randint(0, 10)
+            num_seq = np.arange(start, start+10)
+            X[i] = to_categorical(num_seq, n_col=20)
+            y[i] = np.roll(X[i], -1, axis=0)
+        y[:, -1, 1] = 1 # Mark endpoint as 1
+        return X, y
+
+    X, y = gen_num_seq(5000)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4)
+
+    # Model definition
+    clf = NeuralNetwork(optimizer=optimizer,
+                        loss=CrossEntropy)
+    clf.add(RNN(10, activation="tanh", bptt_trunc=4, input_shape=(10, 20)))
+    clf.summary("RNN")
+
+    # Print a problem instance and the correct solution
+    tmp_X = np.argmax(X_train[0], axis=1)
+    tmp_y = np.argmax(y_train[0], axis=1)
+    print ("Simple Number Series:")
+    print ("X = [" + " ".join(tmp_X.astype("str")) + "]")
+    print ("y = [" + " ".join(tmp_y.astype("str")) + "]")
+    print ()
+
+    train_err, _ = clf.fit(X_train, y_train, n_epochs=1000, batch_size=X_train.shape[0])
+
+    # Predict labels of the test data
+    y_pred = np.argmax(clf.predict(X_test), axis=2)
+    y_test = np.argmax(y_test, axis=2)
+
+    print ()
+    print ("Results:")
+    for i in range(5):
+        # Print a problem instance and the correct solution
+        tmp_X = np.argmax(X_test[i], axis=1)
+        tmp_y1 = y_test[i]
+        tmp_y2 = y_pred[i]
+        print ("X      = [" + " ".join(tmp_X.astype("str")) + "]")
+        print ("y_true = [" + " ".join(tmp_y1.astype("str")) + "]")
+        print ("y_pred = [" + " ".join(tmp_y2.astype("str")) + "]")
+        print ()
+    
+    accuracy = np.mean(accuracy_score(y_test, y_pred))
+    print ("Accuracy:", accuracy)
+
+    training = plt.plot(range(1000), train_err, label="Training Error")
+    plt.title("Error Plot")
+    plt.ylabel('Training Error')
+    plt.xlabel('Iterations')
+    plt.show()
+
 
     #-----
     # MLP
     #-----
+
+    # data = datasets.load_digits()
+    # X = data.data
+    # y = data.target
+
+    # # Convert to one-hot encoding
+    # y = to_categorical(y.astype("int"))
+
+    # n_samples = np.shape(X)
+    # n_hidden = 512
+
+    # X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4, seed=1)
 
     # clf = NeuralNetwork(optimizer=optimizer,
     #                     loss=CrossEntropy,
@@ -204,9 +272,22 @@ def main():
     # accuracy = accuracy_score(y_test, y_pred)
     # print ("Accuracy:", accuracy)
 
+
     #----------
     # Conv Net
     #----------
+
+    data = datasets.load_digits()
+    X = data.data
+    y = data.target
+
+    # Convert to one-hot encoding
+    y = to_categorical(y.astype("int"))
+
+    n_samples = np.shape(X)
+    n_hidden = 512
+
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4, seed=1)
 
     # Reshape X to (n_samples, channels, height, width)
     X_train = X_train.reshape((-1,1,8,8))
@@ -249,6 +330,7 @@ def main():
 
     # Predict labels of the test data
     y_pred = np.argmax(clf.predict(X_test), axis=1)
+    y_test = np.argmax(y_test, axis=1)
 
     accuracy = accuracy_score(y_test, y_pred)
     print ("Accuracy:", accuracy)
@@ -257,7 +339,7 @@ def main():
     X_test = X_test.reshape(-1, 8*8)
 
     # Reduce dimension to 2D using PCA and plot the results
-    Plot().plot_in_2d(X_test, y_pred, title="Convolutional Neural Network", accuracy=accuracy, legend_labels=np.unique(y))
+    Plot().plot_in_2d(X_test, y_pred, title="Convolutional Neural Network", accuracy=accuracy, legend_labels=range(10))
 
 if __name__ == "__main__":
     main()

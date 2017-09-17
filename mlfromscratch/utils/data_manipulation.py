@@ -136,8 +136,9 @@ def k_fold_cross_validation_sets(X, y, k, shuffle=True):
 
 
 # One-hot encoding of nominal values
-def to_categorical(x):
-    n_col = np.amax(x) + 1
+def to_categorical(x, n_col=None):
+    if not n_col:
+        n_col = np.amax(x) + 1
     binarized = np.zeros((len(x), n_col))
     for i in range(len(x)):
         binarized[i, x[i]] = 1

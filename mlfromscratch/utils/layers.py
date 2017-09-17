@@ -31,7 +31,6 @@ class Layer(object):
 
 class Dense(Layer):
     """A fully-connected NN layer. 
-
     Parameters:
     -----------
     n_units: int
@@ -43,11 +42,12 @@ class Dense(Layer):
     """
     def __init__(self, n_units, input_shape=None):
         self.layer_input = None
-        self.initialized = False
-        self.input_shape, self.n_units = input_shape, n_units
+        self.input_shape = input_shape
+        self.n_units = n_units
+        self.trainable = True
+        # Weights
         self.W = None
         self.wb = None
-        self.trainable = True
 
     def initialize(self, optimizer):
         # Initialize the weights
@@ -87,6 +87,130 @@ class Dense(Layer):
     def output_shape(self):
         return (self.n_units,)
 
+
+class RNN(Layer):
+    """A Fully-Connected Recurrent Neural Network layer. 
+
+    Parameters:
+    -----------
+    n_units: int
+        The number of hidden states in the layer.
+    activation: string
+        The name of the activation function which will be applied to the output of each state.
+    bptt_trunc: int
+        Decides how many time steps the gradient should be propogated backwards through states 
+        given the loss gradient for time step t.
+    input_shape: tuple
+        The expected input shape of the layer. For dense layers a single digit specifying
+        the number of features of the input. Must be specified if it is the first layer in
+        the network.
+
+    Reference: 
+    http://www.wildml.com/2015/09/recurrent-neural-networks-tutorial-part-2-implementing-a-language-model-rnn-with-python-numpy-and-theano/
+    """
+    def __init__(self, n_units, activation='tanh', bptt_trunc=4, input_shape=None):
+        self.input_shape = input_shape
+        self.n_units = n_units
+        self.activation = activation_functions[activation]()
+        self.softmax = activation_functions['softmax']()
+        self.trainable = True
+        self.prev_output = None
+        self.bptt_trunc = bptt_trunc
+        # Weights
+        self.W = None # Weight of the previous state
+        self.V = None # Weight of the output
+        self.U = None # Weight of the input
+
+    def initialize(self, optimizer):
+        timesteps, input_dim = self.input_shape
+        # Initialize the weights
+        limit = 1 / math.sqrt(input_dim)
+        self.U  = np.random.uniform(-limit, limit, (self.n_units, input_dim))
+        limit = 1 / math.sqrt(self.n_units)
+        self.V = np.random.uniform(-limit, limit, (input_dim, self.n_units))
+        self.W  = np.random.uniform(-limit, limit, (self.n_units, self.n_units))
+        # Weight optimizers
+        self.U_opt  = copy.copy(optimizer)
+        self.V_opt = copy.copy(optimizer)
+        self.W_opt = copy.copy(optimizer)
+
+    def parameters(self):
+        return np.prod(self.W.shape) + np.prod(self.U.shape) + np.prod(self.V.shape)
+
+    def forward_pass(self, X, training=True):
+        self.layer_input = X
+        batch_size, timesteps, input_dim = X.shape
+
+        # Input to each state (input from previous states and from current input)
+        state_input = np.zeros((batch_size, timesteps, self.n_units))
+        # These are the hidden units 
+        states = np.zeros((batch_size, timesteps+1, self.n_units))
+        states[:, -1] = np.zeros((batch_size, self.n_units))
+
+        outputs = np.zeros((batch_size, timesteps, input_dim))
+        for t in range(timesteps):
+            # Output is the dot product of the input signal at time step t and the weights W
+            # and the dot product of the output of the previous unit at time step t-1 and weights U
+            state_input[:, t] = X[:, t].dot(self.U.T) + states[:, t-1].dot(self.W.T)
+            # Apply user specified activation function to the weighted input (X and U) and 
+            # weighted previous state (State[t-1] and W)
+            states[:, t] = self.activation.function(state_input[:, t])
+            # Apply softmax to the output to get probabilities 
+            outputs[:, t] = self.softmax.function(states[:, t].dot(self.V.T))
+
+        # Save state and output for use in backprop.
+        self.state_input = state_input
+        self.states = states
+        self.outputs = outputs
+
+        return outputs
+
+    def backward_pass(self, acc_grad):
+
+        _, timesteps, _ = acc_grad.shape
+
+        # Variables where we save the accumulated gradient w.r.t each parameter
+        grad_u = np.zeros_like(self.U)
+        grad_v = np.zeros_like(self.V)
+        grad_w = np.zeros_like(self.W)
+
+        # -------------------------------
+        #  Back propogation through time
+        # -------------------------------
+
+        # For each time step in reverse update parameters
+        for t in reversed(range(timesteps)):
+
+            # First calculate the error w.r.t the input of the softmax function
+            grad_t = acc_grad[:, t] * self.softmax.gradient(self.states[:, t].dot(self.V.T))
+
+            # If trainable => update gradient w.r.t V at time step t
+            if self.trainable:
+                grad_v = grad_t.T.dot(self.states[:, t])
+
+            # Calculate the gradient w.r.t the state input
+            grad_wrt_state = grad_t.dot(self.V) * self.activation.gradient(self.state_input[:, t])
+
+            # If trainable => update gradient w.r.t W and U by backprop. from time step t
+            if self.trainable:
+                # Propogate the gradient backwards in the chain for at most 4 time steps
+                for t_ in reversed(np.arange(max(0, t - self.bptt_trunc), t+1)):
+                    grad_u += grad_wrt_state.T.dot(self.layer_input[:, t_])
+                    grad_w += grad_wrt_state.T.dot(self.states[:, t_-1])
+                    # Calculate gradient w.r.t previous state
+                    grad_wrt_state = grad_wrt_state.dot(self.W) * self.activation.gradient(self.state_input[:, t_-1])
+
+        # If trainable update weights
+        if self.trainable:
+            self.U = self.U_opt.update(self.U, grad_u)
+            self.V = self.V_opt.update(self.V, grad_v)
+            self.W = self.W_opt.update(self.W, grad_w)
+
+        acc_grad = grad_wrt_state
+        return acc_grad
+
+    def output_shape(self):
+        return self.input_shape
 
 class Conv2D(Layer):
     """A 2D Convolution Layer.
@@ -357,7 +481,7 @@ class ConstantPadding2D(Layer):
 
     def backward_pass(self, acc_grad):
         pad_top, pad_left = self.padding[0][0], self.padding[1][0]
-        height, width = self.input_shape[1], self.input_shape[2]
+        height, width = input_dim, self.input_shape[2]
         acc_grad = acc_grad[:, :, pad_top:pad_top+height, pad_left:pad_left+width]
         return acc_grad
 
@@ -492,6 +616,16 @@ class Dropout(Layer):
     def output_shape(self):
         return self.input_shape
 
+activation_functions = {
+    'relu': ReLU,
+    'sigmoid': Sigmoid,
+    'selu': SELU,
+    'elu': ELU,
+    'softmax': Softmax,
+    'leaky_relu': LeakyReLU,
+    'tanh': TanH,
+    'softplus': SoftPlus
+}
 
 class Activation(Layer):
     """A layer that applies an activation operation to the input.
@@ -501,20 +635,10 @@ class Activation(Layer):
     name: string
         The name of the activation function that will be used. 
     """
-    activation_functions = {
-        'relu': ReLU,
-        'sigmoid': Sigmoid,
-        'selu': SELU,
-        'elu': ELU,
-        'softmax': Softmax,
-        'leaky_relu': LeakyReLU,
-        'tanh': TanH,
-        'softplus': SoftPlus
-    }
 
     def __init__(self, name):
         self.activation_name = name
-        self.activation = self.activation_functions[name]()
+        self.activation = activation_functions[name]()
         self.trainable = True
 
     def layer_name(self):

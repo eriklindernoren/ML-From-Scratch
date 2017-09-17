@@ -49,7 +49,7 @@ def euclidean_distance(x1, x2):
 
 # Compare y_true to y_pred and return the accuracy
 def accuracy_score(y_true, y_pred):
-    accuracy = np.sum(y_true == y_pred) / len(y_true)
+    accuracy = np.sum(y_true == y_pred, axis=0) / len(y_true)
     return accuracy
 
 # Calculate the covariance matrix for the dataset X

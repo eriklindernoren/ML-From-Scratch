@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-from mlfromscratch.utils.data_manipulation import train_test_split, normalize
+from mlfromscratch.utils.data_manipulation import train_test_split, normalize, to_categorical
 from mlfromscratch.utils.data_operation import accuracy_score
 from mlfromscratch.utils.optimizers import GradientDescent, Adam
 from mlfromscratch.utils.loss_functions import CrossEntropy
@@ -93,7 +93,7 @@ lda.fit(X_train, y_train)
 print ("- Logistic Regression")
 logistic_regression.fit(X_train, y_train)
 print ("- Multilayer Perceptron")
-mlp.fit(X_train, y_train, n_epochs=300, batch_size=50)
+mlp.fit(X_train, to_categorical(y_train), n_epochs=300, batch_size=50)
 print ("- Naive Bayes")
 naive_bayes.fit(X_train, y_train)
 print ("- Perceptron")
