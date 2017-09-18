@@ -222,6 +222,7 @@ but rather to present the inner workings of them in a transparent way.
 - [Bayesian Regression](mlfromscratch/supervised_learning/bayesian_regression.py)
 - [Decision Tree](mlfromscratch/supervised_learning/decision_tree.py)
 - [Deep Learning](mlfromscratch/supervised_learning/neural_network.py)
+  + [Base Class](mlfromscratch/supervised_learning/neural_network.py)
   + [Layers](mlfromscratch/utils/layers.py)
     * Activation Layer
     * Average Pooling Layer
@@ -236,7 +237,7 @@ but rather to present the inner workings of them in a transparent way.
     * Reshape Layer
     * Up Sampling Layer
     * Zero Padding Layer
-  + [Model Types](mlfromscratch/supervised_learning/neural_network.py)
+  + Model Types
     * [Convolutional Neural Network](mlfromscratch/examples/cnn.py)
     * [Multilayer Perceptron](mlfromscratch/examples/mlp.py)
     * [Recurrent Neural Network](mlfromscratch/examples/rnn.py)
