@@ -267,21 +267,6 @@ but rather to present the inner workings of them in a transparent way.
     * Reshape Layer
     * Up Sampling Layer
     * Zero Padding Layer
-  + [Activation Functions](mlfromscratch/deep_learning/activation_functions.py)
-    * ELU
-    * LeakyReLU
-    * ReLU
-    * SELU
-    * Sigmoid
-    * Softmax
-    * Softplus
-    * TanH
-  + [Optimizers](mlfromscratch/deep_learning/optimizers.py)
-    * Adadelta
-    * Adagrad
-    * Adam
-    * Gradient Descent
-    * RMSProp
   + Model Types
     * [Convolutional Neural Network](mlfromscratch/examples/convolutional_neural_network.py)
     * [Multilayer Perceptron](mlfromscratch/examples/multilayer_perceptron.py)
