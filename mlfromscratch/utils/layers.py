@@ -108,7 +108,7 @@ class RNN(Layer):
     Reference: 
     http://www.wildml.com/2015/09/recurrent-neural-networks-tutorial-part-2-implementing-a-language-model-rnn-with-python-numpy-and-theano/
     """
-    def __init__(self, n_units, activation='tanh', bptt_trunc=4, input_shape=None):
+    def __init__(self, n_units, activation='tanh', bptt_trunc=5, input_shape=None):
         self.input_shape = input_shape
         self.n_units = n_units
         self.activation = activation_functions[activation]()
@@ -141,24 +141,19 @@ class RNN(Layer):
         self.layer_input = X
         batch_size, timesteps, input_dim = X.shape
 
-        # Input to each state (input from previous states and from current input)
         state_input = np.zeros((batch_size, timesteps, self.n_units))
-        # These are the hidden units 
         states = np.zeros((batch_size, timesteps+1, self.n_units))
+        # Set to zero for calculation of first state input
         states[:, -1] = np.zeros((batch_size, self.n_units))
-
         outputs = np.zeros((batch_size, timesteps, input_dim))
+
         for t in range(timesteps):
-            # Output is the dot product of the input signal at time step t and the weights W
-            # and the dot product of the output of the previous unit at time step t-1 and weights U
             state_input[:, t] = X[:, t].dot(self.U.T) + states[:, t-1].dot(self.W.T)
-            # Apply user specified activation function to the weighted input (X and U) and 
-            # weighted previous state (State[t-1] and W)
             states[:, t] = self.activation.function(state_input[:, t])
             # Apply softmax to the output to get probabilities 
             outputs[:, t] = self.softmax.function(states[:, t].dot(self.V.T))
 
-        # Save state and output for use in backprop.
+        # Save for use in backprop.
         self.state_input = state_input
         self.states = states
         self.outputs = outputs
@@ -166,7 +161,6 @@ class RNN(Layer):
         return outputs
 
     def backward_pass(self, acc_grad):
-
         _, timesteps, _ = acc_grad.shape
 
         # Variables where we save the accumulated gradient w.r.t each parameter
@@ -174,37 +168,30 @@ class RNN(Layer):
         grad_v = np.zeros_like(self.V)
         grad_w = np.zeros_like(self.W)
 
-        # -------------------------------
-        #  Back propogation through time
-        # -------------------------------
-
-        # For each time step in reverse update parameters
+        # Back Propogation Through Time
+        # Traverse time steps in reverse
         for t in reversed(range(timesteps)):
-
             # First calculate the error w.r.t the input of the softmax function
             grad_t = acc_grad[:, t] * self.softmax.gradient(self.states[:, t].dot(self.V.T))
 
-            # If trainable => update gradient w.r.t V at time step t
-            if self.trainable:
-                grad_v += grad_t.T.dot(self.states[:, t])
+            # Update gradient w.r.t V at time step t
+            grad_v += grad_t.T.dot(self.states[:, t])
 
             # Calculate the gradient w.r.t the state input
             grad_wrt_state = grad_t.dot(self.V) * self.activation.gradient(self.state_input[:, t])
 
-            # If trainable => update gradient w.r.t W and U by backprop. from time step t
-            if self.trainable:
-                # Propogate the gradient backwards in the chain for at most 4 time steps
-                for t_ in reversed(np.arange(max(0, t - self.bptt_trunc), t+1)):
-                    grad_u += grad_wrt_state.T.dot(self.layer_input[:, t_])
-                    grad_w += grad_wrt_state.T.dot(self.states[:, t_-1])
-                    # Calculate gradient w.r.t previous state
-                    grad_wrt_state = grad_wrt_state.dot(self.W) * self.activation.gradient(self.state_input[:, t_-1])
+            # Update gradient w.r.t W and U by backprop. from time step t for at most
+            # self.bptt_trunc number of time steps
+            for t_ in reversed(np.arange(max(0, t - self.bptt_trunc), t+1)):
+                grad_u += grad_wrt_state.T.dot(self.layer_input[:, t_])
+                grad_w += grad_wrt_state.T.dot(self.states[:, t_-1])
+                # Calculate gradient w.r.t previous state
+                grad_wrt_state = grad_wrt_state.dot(self.W) * self.activation.gradient(self.state_input[:, t_-1])
 
-        # If trainable update weights
-        if self.trainable:
-            self.U = self.U_opt.update(self.U, grad_u)
-            self.V = self.V_opt.update(self.V, grad_v)
-            self.W = self.W_opt.update(self.W, grad_w)
+        # Update weights
+        self.U = self.U_opt.update(self.U, grad_u)
+        self.V = self.V_opt.update(self.V, grad_v)
+        self.W = self.W_opt.update(self.W, grad_w)
 
         acc_grad = grad_wrt_state
         return acc_grad
