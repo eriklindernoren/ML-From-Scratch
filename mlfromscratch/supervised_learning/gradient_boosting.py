@@ -87,7 +87,6 @@ class GradientBoosting(object):
         for i, tree in enumerate(self.trees):
             update = tree.predict(X)
             update = np.multiply(self.learning_rate, update)
-            # prediction = np.array(prediction).reshape(np.shape(y_pred))
             y_pred = -update if not y_pred.any() else y_pred - update
 
         if not self.regression:

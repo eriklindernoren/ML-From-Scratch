@@ -23,6 +23,7 @@ but rather to present the inner workings of them in a transparent way.
     + [Supervised Learning](#supervised-learning)
     + [Unsupervised Learning](#unsupervised-learning)
     + [Reinforcement Learning](#reinforcement-learning)
+    + [Deep Learning](#deep-learning)
   * [Contact](#contact)
     
 ## Installation
@@ -221,32 +222,13 @@ but rather to present the inner workings of them in a transparent way.
 - [Adaboost](mlfromscratch/supervised_learning/adaboost.py)
 - [Bayesian Regression](mlfromscratch/supervised_learning/bayesian_regression.py)
 - [Decision Tree](mlfromscratch/supervised_learning/decision_tree.py)
-- Deep Learning
-  + [Base Class](mlfromscratch/supervised_learning/neural_network.py)
-  + [Layers](mlfromscratch/utils/layers.py)
-    * Activation Layer
-    * Average Pooling Layer
-    * Batch Normalization Layer
-    * Constant Padding Layer
-    * Convolutional Layer
-    * Dropout Layer
-    * Flatten Layer
-    * Fully-Connected (Dense) Layer
-    * Fully-Connected RNN Layer
-    * Max Pooling Layer
-    * Reshape Layer
-    * Up Sampling Layer
-    * Zero Padding Layer
-  + Model Types
-    * [Convolutional Neural Network](mlfromscratch/examples/convolutional_neural_network.py)
-    * [Multilayer Perceptron](mlfromscratch/examples/multilayer_perceptron.py)
-    * [Recurrent Neural Network](mlfromscratch/examples/recurrent_neural_network.py)
 - [Gradient Boosting](mlfromscratch/supervised_learning/gradient_boosting.py)
 - [K Nearest Neighbors](mlfromscratch/supervised_learning/k_nearest_neighbors.py)
 - [Linear Discriminant Analysis](mlfromscratch/supervised_learning/linear_discriminant_analysis.py)
 - [Linear Regression](mlfromscratch/supervised_learning/regression.py)
 - [Logistic Regression](mlfromscratch/supervised_learning/logistic_regression.py)
 - [Multi-class Linear Discriminant Analysis](mlfromscratch/supervised_learning/multi_class_lda.py)
+- [Multilayer Perceptron](mlfromscratch/supervised_learning/multilayer_perceptron.py)
 - [Naive Bayes](mlfromscratch/supervised_learning/naive_bayes.py)
 - [Perceptron](mlfromscratch/supervised_learning/perceptron.py)
 - [Polynomial Regression](mlfromscratch/supervised_learning/regression.py)
@@ -268,6 +250,42 @@ but rather to present the inner workings of them in a transparent way.
 
 ### Reinforcement Learning
 - [Deep Q-Network](mlfromscratch/reinforcement_learning/deep_q_network.py)
+
+### Deep Learning
+  + [Base Class](mlfromscratch/supervised_learning/neural_network.py)
+  + [Layers](mlfromscratch/utils/layers.py)
+    * Activation Layer
+    * Average Pooling Layer
+    * Batch Normalization Layer
+    * Constant Padding Layer
+    * Convolutional Layer
+    * Dropout Layer
+    * Flatten Layer
+    * Fully-Connected (Dense) Layer
+    * Fully-Connected RNN Layer
+    * Max Pooling Layer
+    * Reshape Layer
+    * Up Sampling Layer
+    * Zero Padding Layer
+  + [Activation Functions](mlfromscratch/utils/activations.py)
+    * ELU
+    * LeakyReLU
+    * ReLU
+    * SELU
+    * Sigmoid
+    * Softmax
+    * Softplus
+    * TanH
+  + [Optimizers](mlfromscratcu/utils/optimizers.py)
+    * Adadelta
+    * Adagrad
+    * Adam
+    * Gradient Descent
+    * RMSProp
+  + Model Types
+    * [Convolutional Neural Network](mlfromscratch/examples/convolutional_neural_network.py)
+    * [Multilayer Perceptron](mlfromscratch/examples/multilayer_perceptron.py)
+    * [Recurrent Neural Network](mlfromscratch/examples/recurrent_neural_network.py)
 
 ## Contact
 If there's some implementation you would like to see here or if you're just
