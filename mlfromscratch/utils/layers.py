@@ -167,6 +167,9 @@ class RNN(Layer):
         grad_v = np.zeros_like(self.V)
         grad_w = np.zeros_like(self.W)
 
+        # The gradient which will be passed on to the previous layer
+        acc_grad_next = np.zeros_like(acc_grad)
+
         # Back Propagation Through Time
         for t in reversed(range(timesteps)):
             # Update gradient w.r.t V at time step t
@@ -174,6 +177,8 @@ class RNN(Layer):
 
             # Calculate the gradient w.r.t the state input
             grad_wrt_state = acc_grad[:, t].dot(self.V) * self.activation.gradient(self.state_input[:, t])
+            # Gradient w.r.t the layer input
+            acc_grad_next[:, t] = grad_wrt_state.dot(self.U)
 
             # Update gradient w.r.t W and U by backprop. from time step t for at most
             # self.bptt_trunc number of time steps
@@ -188,8 +193,7 @@ class RNN(Layer):
         self.V = self.V_opt.update(self.V, grad_v)
         self.W = self.W_opt.update(self.W, grad_w)
 
-        acc_grad = grad_wrt_state
-        return acc_grad
+        return acc_grad_next
 
     def output_shape(self):
         return self.input_shape
