@@ -43,7 +43,7 @@ but rather to present the inner workings of them in a transparent way.
 </p>
 
 ### Classification With CNN
-    $ python mlfromscratch/examples/cnn.py
+    $ python mlfromscratch/examples/convolutional_neural_network.py
 
     +---------+
     | ConvNet |
@@ -221,7 +221,7 @@ but rather to present the inner workings of them in a transparent way.
 - [Adaboost](mlfromscratch/supervised_learning/adaboost.py)
 - [Bayesian Regression](mlfromscratch/supervised_learning/bayesian_regression.py)
 - [Decision Tree](mlfromscratch/supervised_learning/decision_tree.py)
-- [Deep Learning](mlfromscratch/supervised_learning/neural_network.py)
+- Deep Learning
   + [Base Class](mlfromscratch/supervised_learning/neural_network.py)
   + [Layers](mlfromscratch/utils/layers.py)
     * Activation Layer
@@ -238,9 +238,9 @@ but rather to present the inner workings of them in a transparent way.
     * Up Sampling Layer
     * Zero Padding Layer
   + Model Types
-    * [Convolutional Neural Network](mlfromscratch/examples/cnn.py)
-    * [Multilayer Perceptron](mlfromscratch/examples/mlp.py)
-    * [Recurrent Neural Network](mlfromscratch/examples/rnn.py)
+    * [Convolutional Neural Network](mlfromscratch/examples/convolutional_neural_network.py)
+    * [Multilayer Perceptron](mlfromscratch/examples/multilayer_perceptron.py)
+    * [Recurrent Neural Network](mlfromscratch/examples/recurrent_neural_network.py)
 - [Gradient Boosting](mlfromscratch/supervised_learning/gradient_boosting.py)
 - [K Nearest Neighbors](mlfromscratch/supervised_learning/k_nearest_neighbors.py)
 - [Linear Discriminant Analysis](mlfromscratch/supervised_learning/linear_discriminant_analysis.py)
