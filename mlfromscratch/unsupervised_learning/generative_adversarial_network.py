@@ -12,10 +12,10 @@ import progressbar
 from sklearn.datasets import fetch_mldata
 
 # Import helper functions
-from mlfromscratch.utils.optimizers import Adam
-from mlfromscratch.utils.loss_functions import CrossEntropy
-from mlfromscratch.utils.layers import Dense, Dropout, Flatten, Activation, Reshape, BatchNormalization
-from mlfromscratch.supervised_learning import NeuralNetwork
+from mlfromscratch.deep_learning.optimizers import Adam
+from mlfromscratch.deep_learning.loss_functions import CrossEntropy
+from mlfromscratch.deep_learning.layers import Dense, Dropout, Flatten, Activation, Reshape, BatchNormalization
+from mlfromscratch.deep_learning import NeuralNetwork
 
 
 class GAN():

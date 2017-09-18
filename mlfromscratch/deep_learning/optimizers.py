@@ -37,7 +37,6 @@ class NesterovAcceleratedGradient():
         # Move against the gradient to minimize loss
         return w - self.w_updt
 
-
 class Adagrad():
     def __init__(self, learning_rate=0.01):
         self.learning_rate = learning_rate

@@ -9,9 +9,8 @@ import numpy as np
 # Import helper functions
 from mlfromscratch.utils.data_manipulation import train_test_split, to_categorical, normalize
 from mlfromscratch.utils.data_operation import accuracy_score
-from mlfromscratch.utils.activation_functions import Sigmoid, ReLU, SoftPlus, LeakyReLU, TanH, ELU
-from mlfromscratch.utils.optimizers import GradientDescent
-from mlfromscratch.unsupervised_learning import PCA
+from mlfromscratch.deep_learning.activation_functions import Sigmoid, ReLU, SoftPlus, LeakyReLU, TanH, ELU
+from mlfromscratch.deep_learning.optimizers import GradientDescent
 from mlfromscratch.utils import Plot
 
 

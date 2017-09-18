@@ -11,12 +11,12 @@ import numpy as np
 from mlfromscratch.utils.data_manipulation import train_test_split, to_categorical, normalize
 from mlfromscratch.utils.data_operation import accuracy_score
 from mlfromscratch.utils import Plot
-from mlfromscratch.utils.activation_functions import Sigmoid, Softmax
-from mlfromscratch.utils.loss_functions import CrossEntropy
+from mlfromscratch.deep_learning.activation_functions import Sigmoid, Softmax
+from mlfromscratch.deep_learning.loss_functions import CrossEntropy
 
 class MultilayerPerceptron():
-    """Multilayer Perceptron classifier. A neural network with one hidden layer.
-    Unrolled to display the whole forward pass and backward pass.
+    """Multilayer Perceptron classifier. A fully-connected neural network with one hidden layer.
+    Unrolled to display the whole forward and backward pass.
 
     Parameters:
     -----------
@@ -26,8 +26,6 @@ class MultilayerPerceptron():
         The number of training iterations the algorithm will tune the weights for.
     learning_rate: float
         The step length that will be used when updating the weights.
-    loss: class
-        The loss function used. Either CrossEntropy or SquareLoss.
     """
     def __init__(self, n_hidden, n_iterations=3000, learning_rate=0.01):
         self.n_hidden = n_hidden

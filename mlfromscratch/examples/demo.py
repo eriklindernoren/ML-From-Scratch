@@ -7,13 +7,14 @@ import matplotlib.pyplot as plt
 
 from mlfromscratch.utils.data_manipulation import train_test_split, normalize, to_categorical
 from mlfromscratch.utils.data_operation import accuracy_score
-from mlfromscratch.utils.optimizers import GradientDescent, Adam
-from mlfromscratch.utils.loss_functions import CrossEntropy
-from mlfromscratch.utils.activation_functions import Softmax
+from mlfromscratch.deep_learning.optimizers import GradientDescent, Adam
+from mlfromscratch.deep_learning.loss_functions import CrossEntropy
+from mlfromscratch.deep_learning.activation_functions import Softmax
 from mlfromscratch.utils.kernels import *
 from mlfromscratch.supervised_learning import *
+from mlfromscratch.deep_learning import *
 from mlfromscratch.unsupervised_learning import PCA
-from mlfromscratch.utils.layers import Dense, Dropout, Conv2D, Flatten, Activation
+from mlfromscratch.deep_learning.layers import Dense, Dropout, Conv2D, Flatten, Activation
 
 
 print ("+-------------------------------------------+")

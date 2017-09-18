@@ -252,8 +252,8 @@ but rather to present the inner workings of them in a transparent way.
 - [Deep Q-Network](mlfromscratch/reinforcement_learning/deep_q_network.py)
 
 ### Deep Learning
-  + [Base Class](mlfromscratch/supervised_learning/neural_network.py)
-  + [Layers](mlfromscratch/utils/layers.py)
+  + [Base Class](mlfromscratch/deep_learning/neural_network.py)
+  + [Layers](mlfromscratch/deep_learning/layers.py)
     * Activation Layer
     * Average Pooling Layer
     * Batch Normalization Layer
@@ -267,7 +267,7 @@ but rather to present the inner workings of them in a transparent way.
     * Reshape Layer
     * Up Sampling Layer
     * Zero Padding Layer
-  + [Activation Functions](mlfromscratch/utils/activations.py)
+  + [Activation Functions](mlfromscratch/deep_learning/activation_functions.py)
     * ELU
     * LeakyReLU
     * ReLU
@@ -276,7 +276,7 @@ but rather to present the inner workings of them in a transparent way.
     * Softmax
     * Softplus
     * TanH
-  + [Optimizers](mlfromscratcu/utils/optimizers.py)
+  + [Optimizers](mlfromscratcu/deep_learning/optimizers.py)
     * Adadelta
     * Adagrad
     * Adam

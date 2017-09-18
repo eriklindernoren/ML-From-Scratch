@@ -14,14 +14,8 @@ import progressbar
 from mlfromscratch.utils.data_manipulation import train_test_split, to_categorical, normalize
 from mlfromscratch.utils.data_manipulation import get_random_subsets, shuffle_data, normalize
 from mlfromscratch.utils.data_operation import accuracy_score
-from mlfromscratch.utils.optimizers import GradientDescent, Adam, RMSprop, Adagrad, Adadelta
-from mlfromscratch.utils.loss_functions import CrossEntropy, SquareLoss
-from mlfromscratch.unsupervised_learning import PCA
+from mlfromscratch.deep_learning.loss_functions import CrossEntropy
 from mlfromscratch.utils.misc import bar_widgets
-from mlfromscratch.utils import Plot
-from mlfromscratch.utils.layers import Dense, Dropout, Conv2D, Flatten, Activation, MaxPooling2D
-from mlfromscratch.utils.layers import AveragePooling2D, ZeroPadding2D, BatchNormalization, RNN
-
 
 
 class NeuralNetwork():

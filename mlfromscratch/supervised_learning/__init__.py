@@ -8,7 +8,6 @@ from .regression import LinearRegression, PolynomialRegression
 from .regression import RidgeRegression, PolynomialRidgeRegression
 from .logistic_regression import LogisticRegression
 from .multi_class_lda import MultiClassLDA
-from .neural_network import NeuralNetwork
 from .naive_bayes import NaiveBayes
 from .perceptron import Perceptron
 from .random_forest import RandomForest

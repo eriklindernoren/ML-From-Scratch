@@ -6,15 +6,15 @@ import math
 import numpy as np
 
 # Import helper functions
-from mlfromscratch.supervised_learning import NeuralNetwork
+from mlfromscratch.deep_learning import NeuralNetwork
 from mlfromscratch.utils.data_manipulation import train_test_split, to_categorical, normalize
 from mlfromscratch.utils.data_manipulation import get_random_subsets, shuffle_data
 from mlfromscratch.utils.data_operation import accuracy_score
-from mlfromscratch.utils.optimizers import GradientDescent, Adam, RMSprop, Adagrad, Adadelta
-from mlfromscratch.utils.loss_functions import CrossEntropy
+from mlfromscratch.deep_learning.optimizers import GradientDescent, Adam, RMSprop, Adagrad, Adadelta
+from mlfromscratch.deep_learning.loss_functions import CrossEntropy
 from mlfromscratch.utils.misc import bar_widgets
 from mlfromscratch.utils import Plot
-from mlfromscratch.utils.layers import Dense, Dropout, Activation
+from mlfromscratch.deep_learning.layers import Dense, Dropout, Activation
 
 
 def main():
