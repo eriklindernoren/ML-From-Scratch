@@ -150,8 +150,7 @@ class RNN(Layer):
         for t in range(timesteps):
             state_input[:, t] = X[:, t].dot(self.U.T) + states[:, t-1].dot(self.W.T)
             states[:, t] = self.activation.function(state_input[:, t])
-            # Apply softmax to the output to get probabilities 
-            outputs[:, t] = self.softmax.function(states[:, t].dot(self.V.T))
+            outputs[:, t] = states[:, t].dot(self.V.T)
 
         # Save for use in backprop.
         self.state_input = state_input
@@ -168,17 +167,13 @@ class RNN(Layer):
         grad_v = np.zeros_like(self.V)
         grad_w = np.zeros_like(self.W)
 
-        # Back Propogation Through Time
-        # Traverse time steps in reverse
+        # Back Propagation Through Time
         for t in reversed(range(timesteps)):
-            # First calculate the error w.r.t the input of the softmax function
-            grad_t = acc_grad[:, t] * self.softmax.gradient(self.states[:, t].dot(self.V.T))
-
             # Update gradient w.r.t V at time step t
-            grad_v += grad_t.T.dot(self.states[:, t])
+            grad_v += acc_grad[:, t].T.dot(self.states[:, t])
 
             # Calculate the gradient w.r.t the state input
-            grad_wrt_state = grad_t.dot(self.V) * self.activation.gradient(self.state_input[:, t])
+            grad_wrt_state = acc_grad[:, t].dot(self.V) * self.activation.gradient(self.state_input[:, t])
 
             # Update gradient w.r.t W and U by backprop. from time step t for at most
             # self.bptt_trunc number of time steps

@@ -189,6 +189,7 @@ def main():
     clf = NeuralNetwork(optimizer=optimizer,
                         loss=CrossEntropy)
     clf.add(RNN(10, activation="tanh", bptt_trunc=5, input_shape=(10, 61)))
+    clf.add(Activation('softmax'))
     clf.summary("RNN")
 
     # Print a problem instance and the correct solution
@@ -199,7 +200,7 @@ def main():
     print ("y = [" + " ".join(tmp_y.astype("str")) + "]")
     print ()
 
-    train_err, _ = clf.fit(X_train, y_train, n_epochs=1500, batch_size=X_train.shape[0])
+    train_err, _ = clf.fit(X_train, y_train, n_epochs=500, batch_size=512)
 
     # Predict labels of the test data
     y_pred = np.argmax(clf.predict(X_test), axis=2)
@@ -220,7 +221,7 @@ def main():
     accuracy = np.mean(accuracy_score(y_test, y_pred))
     print ("Accuracy:", accuracy)
 
-    training = plt.plot(range(1500), train_err, label="Training Error")
+    training = plt.plot(range(500), train_err, label="Training Error")
     plt.title("Error Plot")
     plt.ylabel('Training Error')
     plt.xlabel('Iterations')

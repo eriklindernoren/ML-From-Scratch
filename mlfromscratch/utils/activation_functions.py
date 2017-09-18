@@ -17,8 +17,8 @@ class Softmax():
     def __init__(self): pass 
 
     def function(self, x):
-        e_x = np.exp(x - np.max(x, axis=1, keepdims=True))
-        return e_x / np.sum(e_x, axis=1, keepdims=True)
+        e_x = np.exp(x - np.max(x, axis=-1, keepdims=True))
+        return e_x / np.sum(e_x, axis=-1, keepdims=True)
 
     def gradient(self, x):
         p = self.function(x)
