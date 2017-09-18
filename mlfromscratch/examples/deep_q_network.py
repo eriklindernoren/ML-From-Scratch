@@ -9,10 +9,10 @@ import gym
 from collections import deque
 
 from mlfromscratch.utils.data_manipulation import to_categorical
-from mlfromscratch.utils.optimizers import Adam
-from mlfromscratch.utils.loss_functions import SquareLoss
-from mlfromscratch.utils.layers import Dense, Dropout, Flatten, Activation, Reshape, BatchNormalization
-from mlfromscratch.supervised_learning import NeuralNetwork
+from mlfromscratch.deep_learning.optimizers import Adam
+from mlfromscratch.deep_learning.loss_functions import SquareLoss
+from mlfromscratch.deep_learning.layers import Dense, Dropout, Flatten, Activation, Reshape, BatchNormalization
+from mlfromscratch.deep_learning import NeuralNetwork
 from mlfromscratch.reinforcement_learning import DeepQNetwork
 
 
