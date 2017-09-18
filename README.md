@@ -276,7 +276,7 @@ but rather to present the inner workings of them in a transparent way.
     * Softmax
     * Softplus
     * TanH
-  + [Optimizers](mlfromscratcu/deep_learning/optimizers.py)
+  + [Optimizers](mlfromscratch/deep_learning/optimizers.py)
     * Adadelta
     * Adagrad
     * Adam

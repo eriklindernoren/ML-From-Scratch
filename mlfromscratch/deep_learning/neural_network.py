@@ -19,7 +19,7 @@ from mlfromscratch.utils.misc import bar_widgets
 
 
 class NeuralNetwork():
-    """Neural Network.
+    """Neural Network. Deep Learning base model.
 
     Parameters:
     -----------
