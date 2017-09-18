@@ -237,9 +237,9 @@ but rather to present the inner workings of them in a transparent way.
     * Up Sampling Layer
     * Zero Padding Layer
   + [Model Types](mlfromscratch/supervised_learning/neural_network.py)
-    * Convolutional Neural Network
-    * Multilayer Perceptron
-    * Recurrent Neural Network
+    * [Convolutional Neural Network](mlfromscratch/examples/cnn.py)
+    * [Multilayer Perceptron](mlfromscratch/examples/mlp.py)
+    * [Recurrent Neural Network](mlfromscratch/examples/rnn.py)
 - [Gradient Boosting](mlfromscratch/supervised_learning/gradient_boosting.py)
 - [K Nearest Neighbors](mlfromscratch/supervised_learning/k_nearest_neighbors.py)
 - [Linear Discriminant Analysis](mlfromscratch/supervised_learning/linear_discriminant_analysis.py)
