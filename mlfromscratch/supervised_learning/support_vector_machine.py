@@ -17,7 +17,6 @@ from mlfromscratch.utils import Plot
 # Hide cvxopt output
 cvxopt.solvers.options['show_progress'] = False
 
-
 class SupportVectorMachine(object):
     """The Support Vector Machine classifier.
     Uses cvxopt to solve the quadratic optimization problem.
@@ -118,27 +117,3 @@ class SupportVectorMachine(object):
             prediction += self.intercept
             y_pred.append(np.sign(prediction))
         return np.array(y_pred)
-
-
-def main():
-    data = datasets.load_iris()
-    X = normalize(data.data[data.target != 0])
-    y = data.target[data.target != 0]
-    y[y == 1] = -1
-    y[y == 2] = 1
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33)
-
-    clf = SupportVectorMachine(kernel=polynomial_kernel, power=4, coef=1)
-    clf.fit(X_train, y_train)
-    y_pred = clf.predict(X_test)
-
-    accuracy = accuracy_score(y_test, y_pred)
-
-    print ("Accuracy:", accuracy)
-
-    # Reduce dimension to two using PCA and plot the results
-    Plot().plot_in_2d(X_test, y_pred, title="Support Vector Machine", accuracy=accuracy)
-
-
-if __name__ == "__main__":
-    main()

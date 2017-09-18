@@ -125,19 +125,3 @@ class GaussianMixtureModel():
         # Make new assignments and return them
         self._expectation(X)
         return self.sample_assignments
-
-def main():
-    # Load the dataset
-    X, y = datasets.make_blobs()
-
-    # Cluster the data
-    clf = GaussianMixtureModel(k=3)
-    y_pred = clf.predict(X)
-
-    p = MatplotlibWrapper()
-    p.plot_in_2d(X, y_pred, title="GMM Clustering")
-    p.plot_in_2d(X, y, title="Actual Clustering")
-
-
-if __name__ == "__main__":
-    main()

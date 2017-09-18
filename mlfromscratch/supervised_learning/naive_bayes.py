@@ -98,24 +98,3 @@ class NaiveBayes():
             y_pred.append(y)
         return y_pred
 
-
-def main():
-    data = datasets.load_iris()
-    X = normalize(data.data)
-    y = data.target
-
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5)
-
-    clf = NaiveBayes()
-    clf.fit(X_train, y_train)
-    y_pred = clf.predict(X_test)
-
-    accuracy = accuracy_score(y_test, y_pred)
-
-    print ("Accuracy:", accuracy)
-
-    # Reduce dimension to two using PCA and plot the results
-    Plot().plot_in_2d(X_test, y_pred, title="Naive Bayes", accuracy=accuracy, legend_labels=data.target_names)
-
-if __name__ == "__main__":
-    main()

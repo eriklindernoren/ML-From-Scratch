@@ -39,9 +39,6 @@ class Perceptron():
         X_train = X
         y_train = y
 
-        # One-hot encoding of nominal y-values
-        y_train = to_categorical(y_train)
-
         n_samples, n_features = np.shape(X_train)
         n_outputs = np.shape(y_train)[1]
 
@@ -69,32 +66,5 @@ class Perceptron():
 
     # Use the trained model to predict labels of X
     def predict(self, X):
-        output = self.activation.function(np.dot(X, self.W) + self.w0)
-        # Predict as the indices of the largest outputs
-        y_pred = np.argmax(output, axis=1)
+        y_pred = self.activation.function(np.dot(X, self.W) + self.w0)
         return y_pred
-
-
-def main():
-    data = datasets.load_digits()
-    X = normalize(data.data)
-    y = data.target
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, seed=1)
-
-    # Perceptron
-    clf = Perceptron(n_iterations=5000,
-        learning_rate=0.001, 
-        activation_function=Sigmoid)
-    clf.fit(X_train, y_train)
-    y_pred = clf.predict(X_test)
-
-    accuracy = accuracy_score(y_test, y_pred)
-
-    print ("Accuracy:", accuracy)
-
-    # Reduce dimension to two using PCA and plot the results
-    Plot().plot_in_2d(X_test, y_pred, title="Perceptron", accuracy=accuracy, legend_labels=np.unique(y))
-
-
-if __name__ == "__main__":
-    main()

@@ -12,9 +12,9 @@ but rather to present the inner workings of them in a transparent way.
   * [Table of Contents](#table-of-contents)
   * [Installation](#installation)
   * [Example Usage](#example-usage)
-    + [Regression](#regression)
-    + [Classification](#classification)
-    + [Clustering](#clustering)
+    + [Polynomial Regression](#polynomial-regression)
+    + [Classification With CNN](#classification-with-cnn)
+    + [Density-Based Clustering](#density-based-clustering)
     + [Generating Handwritten Digits](#generating-handwritten-digits)
     + [Deep Reinforcement Learning](#deep-reinforcement-learning)
     + [Genetic Algorithm](#genetic-algorithm)
@@ -31,8 +31,8 @@ but rather to present the inner workings of them in a transparent way.
     $ python setup.py install
     
 ## Example Usage
-### Regression
-    $ python mlfromscratch/supervised_learning/regression.py
+### Polynomial Regression
+    $ python mlfromscratch/examples/polynomial_regression.py
 
 <p align="center">
     <img src="http://eriklindernoren.se/images/mlfs_prr.png" width="640"\>
@@ -42,8 +42,8 @@ but rather to present the inner workings of them in a transparent way.
     Linköping, Sweden 2016.
 </p>
 
-### Classification
-    $ python mlfromscratch/supervised_learning/neural_network.py
+### Classification With CNN
+    $ python mlfromscratch/examples/cnn.py
 
     +---------+
     | ConvNet |
@@ -80,8 +80,8 @@ but rather to present the inner workings of them in a transparent way.
     Figure: Classification of the digit dataset using CNN.
 </p>
 
-### Clustering
-    $ python mlfromscratch/unsupervised_learning/dbscan.py
+### Density-Based Clustering
+    $ python mlfromscratch/examples/dbscan.py
    
 <p align="center">
     <img src="http://eriklindernoren.se/images/mlfs_dbscan.png" width="640">
@@ -141,7 +141,7 @@ but rather to present the inner workings of them in a transparent way.
 </p>
 
 ### Deep Reinforcement Learning
-    $ python mlfromscratch/reinforcement_learning/deep_q_network.py
+    $ python mlfromscratch/examples/deep_q_network.py
 
     +----------------+
     | Deep Q-Network |
@@ -164,7 +164,7 @@ but rather to present the inner workings of them in a transparent way.
 </p>
 
 ### Genetic Algorithm
-    $ python mlfromscratch/unsupervised_learning/genetic_algorithm.py
+    $ python mlfromscratch/examples/genetic_algorithm.py
 
     +--------+
     |   GA   |
@@ -194,7 +194,7 @@ but rather to present the inner workings of them in a transparent way.
     [294 Answer: 'Genetic Algorithm']
 
 ### Association Analysis
-    $ python mlfromscratch/unsupervised_learning/apriori.py 
+    $ python mlfromscratch/examples/apriori.py 
     +-------------+
     |   Apriori   |
     +-------------+
