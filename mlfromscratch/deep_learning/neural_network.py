@@ -1,12 +1,6 @@
 from __future__ import print_function
-from sklearn import datasets
 from terminaltables import AsciiTable
-import sys
-import os
-import math
 import copy
-import pandas as pd
-import matplotlib.pyplot as plt
 import numpy as np
 import progressbar
 
@@ -134,7 +128,7 @@ class NeuralNetwork():
 
         # Print network configuration table
         print (AsciiTable(table_data).table)
-        
+
         print ("Total Parameters: %d\n" % tot_params)
 
     def predict(self, X):

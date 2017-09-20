@@ -1,18 +1,9 @@
 from __future__ import print_function
-import sys
-import os
-import math
-from sklearn import datasets
 import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
 
 # Import helper functions
-from mlfromscratch.utils.data_manipulation import make_diagonal, normalize, train_test_split
-from mlfromscratch.utils.data_operation import accuracy_score
+from mlfromscratch.utils.data_manipulation import make_diagonal
 from mlfromscratch.utils.activation_functions import Sigmoid
-from mlfromscratch.utils.optimizers import GradientDescent
-from mlfromscratch.unsupervised_learning import PCA
 from mlfromscratch.utils import Plot
 
 
@@ -42,7 +33,7 @@ class LogisticRegression():
         # Initialize parameters between [-1/sqrt(N), 1/sqrt(N)]
         limit = 1 / math.sqrt(n_features)
         self.param = np.random.uniform(-limit, limit, (n_features,))
-        
+
         # Tune parameters for n iterations
         for i in range(n_iterations):
             # Make a new prediction

@@ -10,7 +10,6 @@ import numpy as np
 from mlfromscratch.utils.data_manipulation import train_test_split, to_categorical, normalize
 from mlfromscratch.utils.data_operation import accuracy_score
 from mlfromscratch.deep_learning.activation_functions import Sigmoid, ReLU, SoftPlus, LeakyReLU, TanH, ELU
-from mlfromscratch.deep_learning.optimizers import GradientDescent
 from mlfromscratch.deep_learning.loss_functions import CrossEntropy, SquareLoss
 from mlfromscratch.utils import Plot
 
@@ -52,14 +51,11 @@ class Perceptron():
             # Calculate outputs
             linear_output = X.dot(self.W) + self.w0
             y_pred = self.activation.function(linear_output)
-
             # Calculate the loss gradient w.r.t the input of the activation function
             error_gradient = self.loss.gradient(y, y_pred) * self.activation.gradient(linear_output)
-
             # Calculate the gradient of the loss with respect to each weight
             grad_wrt_w = X.T.dot(error_gradient)
             grad_wrt_w0 = np.sum(error_gradient, axis=0, keepdims=True)
-
             # Update weights
             self.W  -= self.learning_rate * grad_wrt_w
             self.w0 -= self.learning_rate  * grad_wrt_w0

@@ -10,7 +10,7 @@ from mlfromscratch.deep_learning import NeuralNetwork
 from mlfromscratch.utils.data_manipulation import train_test_split, to_categorical, normalize
 from mlfromscratch.utils.data_manipulation import get_random_subsets, shuffle_data
 from mlfromscratch.utils.data_operation import accuracy_score
-from mlfromscratch.deep_learning.optimizers import GradientDescent, Adam, RMSprop, Adagrad, Adadelta
+from mlfromscratch.deep_learning.optimizers import StochasticGradientDescent, Adam, RMSprop, Adagrad, Adadelta
 from mlfromscratch.deep_learning.loss_functions import CrossEntropy
 from mlfromscratch.utils.misc import bar_widgets
 from mlfromscratch.utils import Plot
@@ -25,7 +25,7 @@ def main():
     # Conv Net
     #----------
 
-    optimizer = Adam()
+    optimizer = Adadelta()
 
     data = datasets.load_digits()
     X = data.data

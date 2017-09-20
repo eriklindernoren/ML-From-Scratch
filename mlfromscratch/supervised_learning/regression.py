@@ -1,11 +1,5 @@
 from __future__ import print_function
-import matplotlib.pyplot as plt
 import numpy as np
-import pandas as pd
-from sklearn import datasets
-import sys
-import os
-import math
 # Import helper functions
 from mlfromscratch.utils.data_manipulation import normalize
 from mlfromscratch.utils.data_manipulation import polynomial_features
