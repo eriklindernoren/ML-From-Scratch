@@ -19,7 +19,7 @@ class NaiveBayes():
         self.classes = None
         self.X = None
         self.y = None
-        # Gaussian prob. distribution parameters
+        # Gaussian prob. distribution parameters (mean and variance)
         self.parameters = []
 
     def fit(self, X, y):
@@ -27,28 +27,25 @@ class NaiveBayes():
         self.y = y
         self.classes = np.unique(y)
         # Calculate the mean and variance of each feature for each class
-        for i in range(len(self.classes)):
-            c = self.classes[i]
-            # Only select the rows where the species equals the given class
+        for i, c in enumerate(self.classes):
+            # Only select the rows where the label equals the given class
             x_where_c = X[np.where(y == c)]
             # Add the mean and variance for each feature
             self.parameters.append([])
             for j in range(len(x_where_c[0, :])):
                 col = x_where_c[:, j]
-                parameters = {}
-                parameters["mean"] = col.mean()
-                parameters["var"] = col.var()
+                parameters = {"mean": col.mean(), "var": col.var()}
                 self.parameters[i].append(parameters)
 
     def _calculate_probability(self, mean, var, x):
-        """ Gaussian probability distribution """
+        """ Gaussian likelihood of the data x given mean and var """
         coeff = (1.0 / (math.sqrt((2.0 * math.pi) * var)))
         exponent = math.exp(-(math.pow(x - mean, 2) / (2 * var)))
         return coeff * exponent
 
     def _calculate_prior(self, c):
-        """ Calculate the prior of class c (samples where class == c / total number
-        of samples)"""
+        """ Calculate the prior of class c 
+        (samples where class == c / total number of samples)"""
         # Selects the rows where the class label is c
         x_where_c = self.X[np.where(self.y == c)]
         n_class_instances = np.shape(x_where_c)[0]
@@ -57,11 +54,12 @@ class NaiveBayes():
 
     def _classify(self, sample):
         """ Classify using Bayes Rule, P(Y|X) = P(X|Y)*P(Y)/P(X)
-        P(X|Y) - Probability. Gaussian distribution (given by calculate_probability)
-        P(Y) - Prior (given by calculate_prior)
-        P(X) - Scales the posterior to the range 0 - 1 (ignored)
-        Classify the sample as the class that results in the largest P(Y|X)
-        (posterior)
+        P(X|Y) - Probability. Gaussian distribution (given by _calculate_probability)
+        P(Y) - Prior (given by _calculate_prior)
+        P(X) - Scales the posterior to make it a proper probability distribution.
+               This term is ignored in this implementation since it doesn't affect
+               which class distribution the sample is most likely of belonging to.
+        Classify the sample as the class that results in the largest P(Y|X) (posterior)
         """
         posteriors = []
         # Go through list of classes
@@ -74,13 +72,11 @@ class NaiveBayes():
             # P(x1,x2,x3|Y) = P(x1|Y)*P(x2|Y)*P(x3|Y)
             for j, params in enumerate(self.parameters[i]):
                 sample_feature = sample[j]
-                mean = params["mean"]
-                var = params["var"]
                 # Determine P(x|Y)
-                prob = self._calculate_probability(mean, var, sample_feature)
+                likelihood = self._calculate_probability(params["mean"], params["var"], sample_feature)
                 # Multiply with the rest
-                posterior *= prob
-            # Total probability = P(Y)*P(x1|Y)*P(x2|Y)*...*P(xN|Y)
+                posterior *= likelihood
+            # Total posterior = P(Y)*P(x1|Y)*P(x2|Y)*...*P(xN|Y)
             posteriors.append(posterior)
         # Get the largest probability and return the class corresponding
         # to that probability
@@ -90,8 +86,7 @@ class NaiveBayes():
         return self.classes[index_of_max]
 
     def predict(self, X):
-        """ Predict the class labels corresponding to the
-        samples in X"""
+        """ Predict the class labels of the samples in X """
         y_pred = []
         for sample in X:
             y = self._classify(sample)

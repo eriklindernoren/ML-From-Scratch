@@ -46,23 +46,23 @@ class Dense(Layer):
         self.n_units = n_units
         self.trainable = True
         self.W = None
-        self.wb = None
+        self.w0 = None
 
     def initialize(self, optimizer):
         # Initialize the weights
         limit = 1 / math.sqrt(self.input_shape[0])
         self.W  = np.random.uniform(-limit, limit, (self.input_shape[0], self.n_units))
-        self.wb = np.zeros((1, self.n_units))
+        self.w0 = np.zeros((1, self.n_units))
         # Weight optimizers
         self.W_opt  = copy.copy(optimizer)
-        self.wb_opt = copy.copy(optimizer)
+        self.w0_opt = copy.copy(optimizer)
 
     def parameters(self):
-        return np.prod(self.W.shape) + np.prod(self.wb.shape)
+        return np.prod(self.W.shape) + np.prod(self.w0.shape)
 
     def forward_pass(self, X, training=True):
         self.layer_input = X
-        return X.dot(self.W) + self.wb
+        return X.dot(self.W) + self.w0
 
     def backward_pass(self, acc_grad):
         
@@ -72,11 +72,11 @@ class Dense(Layer):
         if self.trainable:
             # Calculate gradient w.r.t layer weights
             grad_w = self.layer_input.T.dot(acc_grad)
-            grad_wb = np.sum(acc_grad, axis=0, keepdims=True)
+            grad_w0 = np.sum(acc_grad, axis=0, keepdims=True)
 
             # Update the layer weights
             self.W = self.W_opt.update(self.W, grad_w)
-            self.wb = self.wb_opt.update(self.wb, grad_wb)
+            self.w0 = self.w0_opt.update(self.w0, grad_w0)
 
         # Return accumulated gradient for next layer
         # Calculated based on the weights used during the forward pass
@@ -84,7 +84,7 @@ class Dense(Layer):
         return acc_grad
 
     def output_shape(self):
-        return (self.n_units,)
+        return (self.n_units, )
 
 
 class RNN(Layer):
@@ -222,13 +222,13 @@ class Conv2D(Layer):
         channels = self.input_shape[0]
         limit = 1 / math.sqrt(np.prod(self.filter_shape))
         self.W  = np.random.uniform(-limit, limit, size=(self.n_filters, channels, filter_height, filter_width))
-        self.wb = np.zeros((self.n_filters, 1))
+        self.w0 = np.zeros((self.n_filters, 1))
         # Weight optimizers
         self.W_opt  = copy.copy(optimizer)
-        self.wb_opt = copy.copy(optimizer)
+        self.w0_opt = copy.copy(optimizer)
 
     def parameters(self):
-        return np.prod(self.W.shape) + np.prod(self.wb.shape)
+        return np.prod(self.W.shape) + np.prod(self.w0.shape)
 
     def forward_pass(self, X, training=True):
         batch_size, channels, height, width = X.shape
@@ -239,7 +239,7 @@ class Conv2D(Layer):
         # Turn weights into column shape
         self.W_col = self.W.reshape((self.n_filters, -1))
         # Calculate output
-        output = self.W_col.dot(self.X_col) + self.wb
+        output = self.W_col.dot(self.X_col) + self.w0
         # Reshape into (n_filters, out_height, out_width, batch_size)
         output = output.reshape(self.output_shape() + (batch_size, ))
         # Redistribute axises so that batch size comes first
@@ -254,11 +254,11 @@ class Conv2D(Layer):
             # layer input to determine the gradient at the layer with respect to layer weights
             grad_w = acc_grad.dot(self.X_col.T).reshape(self.W.shape)
             # The gradient with respect to bias terms is the sum similarly to in Dense layer
-            grad_wb = np.sum(acc_grad, axis=1, keepdims=True)
+            grad_w0 = np.sum(acc_grad, axis=1, keepdims=True)
 
             # Update the layers weights
             self.W = self.W_opt.update(self.W, grad_w)
-            self.wb = self.wb_opt.update(self.wb, grad_wb)
+            self.w0 = self.w0_opt.update(self.w0, grad_w0)
 
         # Recalculate the gradient which will be propogated back to prev. layer
         acc_grad = self.W_col.T.dot(acc_grad)

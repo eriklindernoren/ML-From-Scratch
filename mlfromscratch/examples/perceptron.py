@@ -5,7 +5,8 @@ import numpy as np
 # Import helper functions
 from mlfromscratch.utils.data_manipulation import train_test_split, normalize, to_categorical
 from mlfromscratch.utils.data_operation import accuracy_score
-from mlfromscratch.utils.activation_functions import Sigmoid
+from mlfromscratch.deep_learning.activation_functions import Sigmoid
+from mlfromscratch.deep_learning.loss_functions import CrossEntropy 
 from mlfromscratch.utils import Plot
 from mlfromscratch.supervised_learning import Perceptron
 
@@ -23,6 +24,7 @@ def main():
     # Perceptron
     clf = Perceptron(n_iterations=5000,
         learning_rate=0.001, 
+        loss=CrossEntropy,
         activation_function=Sigmoid)
     clf.fit(X_train, y_train)
 

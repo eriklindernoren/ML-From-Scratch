@@ -37,15 +37,12 @@ class Regression(object):
     def fit(self, X, y):
         # Insert constant ones as first column (for bias weights)
         X = np.insert(X, 0, 1, axis=1)
-
         n_features = np.shape(X)[1]
-
         # Get weights by gradient descent opt.
         if self.gradient_descent:
             # Initial weights randomly [-1/N, 1/N]
             limit = 1 / np.sqrt(n_features)
             self.w = np.random.uniform(-limit, limit, (n_features, ))
-
             # Do gradient descent for n_iterations
             for _ in range(self.n_iterations):
                 y_pred = X.dot(self.w)
@@ -53,10 +50,9 @@ class Regression(object):
                 grad_w = - (y - y_pred).dot(X) + self.reg_factor * self.w
                 # Update the weights
                 self.w -= self.learning_rate * grad_w
-        # Get weights by least squares (by pseudoinverse)
+        # Get weights by least squares (using Moore-Penrose pseudoinverse)
         else:
-            U, S, V = np.linalg.svd(
-                X.T.dot(X) + self.reg_factor * np.identity(n_features))
+            U, S, V = np.linalg.svd(X.T.dot(X) + self.reg_factor * np.identity(n_features))
             S = np.diag(S)
             X_sq_reg_inv = V.dot(np.linalg.pinv(S)).dot(U.T)
             self.w = X_sq_reg_inv.dot(X.T).dot(y)

@@ -12,7 +12,7 @@ import progressbar
 
 # Import helper functions
 from mlfromscratch.utils.data_manipulation import train_test_split, to_categorical, normalize
-from mlfromscratch.utils.data_manipulation import get_random_subsets, shuffle_data, normalize
+from mlfromscratch.utils.data_manipulation import get_random_subsets, shuffle_data, batch_iterator
 from mlfromscratch.utils.data_operation import accuracy_score
 from mlfromscratch.deep_learning.loss_functions import CrossEntropy
 from mlfromscratch.utils.misc import bar_widgets
@@ -50,7 +50,7 @@ class NeuralNetwork():
     def add(self, layer):
         """ Method which adds a layer to the neural network """
         # If this is not the first layer added then set the input shape
-        # as the output shape of the last added layer
+        # to the output shape of the last added layer
         if self.layers:
             layer.set_input_shape(shape=self.layers[-1].output_shape())
 
@@ -87,9 +87,7 @@ class NeuralNetwork():
             np.random.shuffle(idx)
 
             batch_t_error = 0   # Mean batch training error
-            for i in range(n_batches):
-                X_batch = X[idx[i*batch_size:(i+1)*batch_size]]
-                y_batch = y[idx[i*batch_size:(i+1)*batch_size]]
+            for X_batch, y_batch in batch_iterator(X, y, batch_size=batch_size):
                 loss, _ = self.train_on_batch(X_batch, y_batch)
                 batch_t_error += loss
 
@@ -120,13 +118,10 @@ class NeuralNetwork():
             acc_grad = layer.backward_pass(acc_grad)
 
     def summary(self, name="Model Summary"):
-
         # Print model name
         print (AsciiTable([[name]]).table)
-
         # Network input shape (first layer's input shape)
         print ("Input Shape: %s" % str(self.layers[0].input_shape))
-
         # Get each layer's configuration
         table_data = [["Layer Type", "Parameters", "Output Shape"]]
         tot_params = 0
@@ -139,7 +134,7 @@ class NeuralNetwork():
 
         # Print network configuration table
         print (AsciiTable(table_data).table)
-
+        
         print ("Total Parameters: %d\n" % tot_params)
 
     def predict(self, X):

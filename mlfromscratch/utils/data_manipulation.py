@@ -8,13 +8,19 @@ import sys
 def shuffle_data(X, y, seed=None):
     if seed:
         np.random.seed(seed)
-    n_samples = X.shape[0]
-    idx = np.arange(n_samples)
+    idx = np.arange(X.shape[0])
     np.random.shuffle(idx)
-    X = X[idx]
-    y = y[idx]
-    return X, y
+    return X[idx], y[idx]
 
+def batch_iterator(X, y=None, batch_size=64):
+    """ Simple batch generator """
+    n_samples = X.shape[0]
+    for i in np.arange(0, n_samples, batch_size):
+        begin, end = i, min(i+batch_size, n_samples)
+        if y is not None:
+            yield X[begin:end], y[begin:end]
+        else:
+            yield X[begin:end]
 
 # Divide dataset based on if sample value on feature index is larger than
 # the given threshold
@@ -29,6 +35,7 @@ def divide_on_feature(X, feature_i, threshold):
     X_2 = np.array([sample for sample in X if not split_func(sample)])
 
     return np.array([X_1, X_2])
+
 
 def polynomial_features(X, degree):
 
@@ -98,10 +105,10 @@ def train_test_split(X, y, test_size=0.5, shuffle=True, seed=None):
     # Split the training data from test data in the ratio specified in
     # test_size
     split_i = len(y) - int(len(y) // (1 / test_size))
-    x_train, x_test = X[:split_i], X[split_i:]
+    X_train, X_test = X[:split_i], X[split_i:]
     y_train, y_test = y[:split_i], y[split_i:]
 
-    return x_train, x_test, y_train, y_test
+    return X_train, X_test, y_train, y_test
 
 
 # Split the data into k sets of training / test data
@@ -139,24 +146,14 @@ def k_fold_cross_validation_sets(X, y, k, shuffle=True):
 def to_categorical(x, n_col=None):
     if not n_col:
         n_col = np.amax(x) + 1
-    binarized = np.zeros((len(x), n_col))
-    for i in range(len(x)):
-        binarized[i, x[i]] = 1
-
-    return binarized
+    one_hot = np.zeros((x.shape[0], n_col))
+    one_hot[np.arange(x.shape[0]), x] = 1
+    return one_hot
 
 
 # Conversion from one-hot encoding to nominal
 def to_nominal(x):
-    categorical = []
-    for i in range(len(x)):
-        if not 1 in x[i]:
-            categorical.append(0)
-        else:
-            i_where_one = np.where(x[i] == 1)[0][0]
-            categorical.append(i_where_one)
-
-    return categorical
+    return np.argmax(x, axis=1)
 
 
 # Converts a vector into an diagonal matrix
@@ -164,5 +161,4 @@ def make_diagonal(x):
     m = np.zeros((len(x), len(x)))
     for i in range(len(m[0])):
         m[i, i] = x[i]
-
     return m

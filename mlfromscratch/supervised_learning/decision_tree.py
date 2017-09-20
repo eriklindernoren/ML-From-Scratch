@@ -87,8 +87,8 @@ class DecisionTree(object):
         best_criteria = None    # Feature index and threshold
         best_sets = None        # Subsets of the data
 
-        expand_needed = len(np.shape(y)) == 1
-        if expand_needed:
+        # Check if expansion of y is needed
+        if len(np.shape(y)) == 1:
             y = np.expand_dims(y, axis=1)
 
         # Add y as last column of X
@@ -111,6 +111,7 @@ class DecisionTree(object):
                     Xy1, Xy2 = divide_on_feature(Xy, feature_i, threshold)
                     
                     if len(Xy1) > 0 and len(Xy2) > 0:
+                        # Select the y-values of the two sets
                         y1 = Xy1[:, n_features:]
                         y2 = Xy2[:, n_features:]
 
@@ -122,8 +123,7 @@ class DecisionTree(object):
                         # index
                         if impurity > largest_impurity:
                             largest_impurity = impurity
-                            best_criteria = {
-                                "feature_i": feature_i, "threshold": threshold}
+                            best_criteria = {"feature_i": feature_i, "threshold": threshold}
                             best_sets = {
                                 "leftX": Xy1[:, :n_features],
                                 "lefty": Xy1[:, n_features:],
@@ -145,13 +145,13 @@ class DecisionTree(object):
 
 
     def predict_value(self, x, tree=None):
-        """ Do a recursive search down the tree and make a predict of the data sample by the
+        """ Do a recursive search down the tree and make a prediction of the data sample by the
             value of the leaf that we end up at """
 
         if tree is None:
             tree = self.root
 
-        # If we have a value => return prediction
+        # If we have a value (i.e we're at a leaf) => return value as the prediction
         if tree.value is not None:
             return tree.value
 
@@ -204,10 +204,9 @@ class XGBoostRegressionTree(DecisionTree):
     http://xgboost.readthedocs.io/en/latest/model.html
     """
 
-    # y contains y_true in left half of the middle col
-    # and y_pred in the right half. Split and return
-    # the two matrices
     def _split(self, y):
+        """ y contains y_true in left half of the middle column and 
+        y_pred in the right half. Split and return the two matrices """
         col = int(np.shape(y)[1]/2)
         y, y_pred = y[:, :col], y[:, col:]
         return y, y_pred

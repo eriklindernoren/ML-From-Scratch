@@ -33,7 +33,6 @@ class LogisticRegression():
         self.gradient_descent = gradient_descent
         self.sigmoid = Sigmoid()
 
-
     def fit(self, X, y, n_iterations=4000):
         # Add dummy ones for bias weights
         X = np.insert(X, 0, 1, axis=1)
@@ -43,7 +42,7 @@ class LogisticRegression():
         # Initialize parameters between [-1/sqrt(N), 1/sqrt(N)]
         limit = 1 / math.sqrt(n_features)
         self.param = np.random.uniform(-limit, limit, (n_features,))
-
+        
         # Tune parameters for n iterations
         for i in range(n_iterations):
             # Make a new prediction
@@ -51,7 +50,7 @@ class LogisticRegression():
             if self.gradient_descent:
                 # Move against the gradient of the loss function with 
                 # respect to the parameters to minimize the loss
-                self.param -= self.learning_rate * - (y - y_pred).dot(X)
+                self.param -= self.learning_rate * -(y - y_pred).dot(X)
             else:
                 # Make a diagonal matrix of the sigmoid gradient column vector
                 diag_gradient = make_diagonal(self.sigmoid.gradient(X.dot(self.param)))

@@ -107,8 +107,8 @@ class XGBoost(object):
             update = np.multiply(self.learning_rate, tree.predict(X))
             y_pred = update if not y_pred.any() else y_pred - update
 
-        # Turn into probability distribution
-        y_pred = np.exp(y_pred) / np.expand_dims(np.sum(np.exp(y_pred), axis=1), axis=1)
+        # Turn into probability distribution (Softmax)
+        y_pred = np.exp(y_pred) / np.sum(np.exp(y_pred), axis=1, keepdims=True)
         # Set label to the value that maximizes probability
         y_pred = np.argmax(y_pred, axis=1)
         return y_pred
