@@ -7,13 +7,12 @@ import numpy as np
 
 # Import helper functions
 from mlfromscratch.deep_learning import NeuralNetwork
-from mlfromscratch.utils.data_manipulation import train_test_split, to_categorical, normalize
-from mlfromscratch.utils.data_manipulation import get_random_subsets, shuffle_data
+from mlfromscratch.utils import train_test_split, to_categorical, normalize
+from mlfromscratch.utils import get_random_subsets, shuffle_data, Plot
 from mlfromscratch.utils.data_operation import accuracy_score
 from mlfromscratch.deep_learning.optimizers import StochasticGradientDescent, Adam, RMSprop, Adagrad, Adadelta
 from mlfromscratch.deep_learning.loss_functions import CrossEntropy
 from mlfromscratch.utils.misc import bar_widgets
-from mlfromscratch.utils import Plot
 from mlfromscratch.deep_learning.layers import Dense, Dropout, Conv2D, Flatten, Activation, MaxPooling2D
 from mlfromscratch.deep_learning.layers import AveragePooling2D, ZeroPadding2D, BatchNormalization, RNN
 
@@ -25,7 +24,7 @@ def main():
     # Conv Net
     #----------
 
-    optimizer = Adadelta()
+    optimizer = Adam()
 
     data = datasets.load_digits()
     X = data.data
@@ -62,7 +61,6 @@ def main():
     clf.add(BatchNormalization())
     clf.add(Dense(10))
     clf.add(Activation('softmax'))
-
     print ()
     clf.summary(name="ConvNet")
 

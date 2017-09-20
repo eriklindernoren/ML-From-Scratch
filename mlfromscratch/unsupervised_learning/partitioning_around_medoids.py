@@ -1,15 +1,6 @@
-import sys
-import os
-import math
-import random
-from sklearn import datasets
 import numpy as np
-
-# Import helper functions
-from mlfromscratch.utils.data_manipulation import normalize
-from mlfromscratch.utils.data_operation import euclidean_distance
+from mlfromscratch.utils import normalize, euclidean_distance, Plot
 from mlfromscratch.unsupervised_learning import PCA
-from mlfromscratch.utils import Plot
 
 
 class PAM():

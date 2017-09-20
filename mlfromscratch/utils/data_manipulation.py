@@ -6,11 +6,13 @@ import sys
 
 
 def shuffle_data(X, y, seed=None):
+    """ Random shuffle of the samples in X and y """
     if seed:
         np.random.seed(seed)
     idx = np.arange(X.shape[0])
     np.random.shuffle(idx)
     return X[idx], y[idx]
+
 
 def batch_iterator(X, y=None, batch_size=64):
     """ Simple batch generator """
@@ -22,9 +24,10 @@ def batch_iterator(X, y=None, batch_size=64):
         else:
             yield X[begin:end]
 
-# Divide dataset based on if sample value on feature index is larger than
-# the given threshold
+
 def divide_on_feature(X, feature_i, threshold):
+    """ Divide dataset based on if sample value on feature index is larger than
+        the given threshold """
     split_func = None
     if isinstance(threshold, int) or isinstance(threshold, float):
         split_func = lambda sample: sample[feature_i] >= threshold
@@ -38,7 +41,6 @@ def divide_on_feature(X, feature_i, threshold):
 
 
 def polynomial_features(X, degree):
-
     n_samples, n_features = np.shape(X)
 
     def index_combinations():
@@ -55,8 +57,9 @@ def polynomial_features(X, degree):
 
     return X_new
 
-# Return random subsets (with replacements) of the data
+
 def get_random_subsets(X, y, n_subsets, replacements=True):
+    """ Return random subsets (with replacements) of the data """
     n_samples = np.shape(X)[0]
     # Concatenate x and y and do a random shuffle
     X_y = np.concatenate((X, y.reshape((1, len(y))).T), axis=1)
@@ -64,7 +67,7 @@ def get_random_subsets(X, y, n_subsets, replacements=True):
     subsets = []
 
     # Uses 50% of training samples without replacements
-    subsample_size = n_samples // 2
+    subsample_size = int(n_samples // 2)
     if replacements:
         subsample_size = n_samples      # 100% with replacements
 
@@ -79,15 +82,15 @@ def get_random_subsets(X, y, n_subsets, replacements=True):
     return subsets
 
 
-# Normalize the dataset X
 def normalize(X, axis=-1, order=2):
+    """ Normalize the dataset X """
     l2 = np.atleast_1d(np.linalg.norm(X, order, axis))
     l2[l2 == 0] = 1
     return X / np.expand_dims(l2, axis)
 
 
-# Standardize the dataset X
 def standardize(X):
+    """ Standardize the dataset X """
     X_std = X
     mean = X.mean(axis=0)
     std = X.std(axis=0)
@@ -98,8 +101,8 @@ def standardize(X):
     return X_std
 
 
-# Split the data into train and test sets
 def train_test_split(X, y, test_size=0.5, shuffle=True, seed=None):
+    """ Split the data into train and test sets """
     if shuffle:
         X, y = shuffle_data(X, y, seed)
     # Split the training data from test data in the ratio specified in
@@ -111,8 +114,8 @@ def train_test_split(X, y, test_size=0.5, shuffle=True, seed=None):
     return X_train, X_test, y_train, y_test
 
 
-# Split the data into k sets of training / test data
 def k_fold_cross_validation_sets(X, y, k, shuffle=True):
+    """ Split the data into k sets of training / test data """
     if shuffle:
         X, y = shuffle_data(X, y)
 
@@ -142,8 +145,8 @@ def k_fold_cross_validation_sets(X, y, k, shuffle=True):
     return np.array(sets)
 
 
-# One-hot encoding of nominal values
 def to_categorical(x, n_col=None):
+    """ One-hot encoding of nominal values """
     if not n_col:
         n_col = np.amax(x) + 1
     one_hot = np.zeros((x.shape[0], n_col))
@@ -151,13 +154,13 @@ def to_categorical(x, n_col=None):
     return one_hot
 
 
-# Conversion from one-hot encoding to nominal
 def to_nominal(x):
+    """ Conversion from one-hot encoding to nominal """
     return np.argmax(x, axis=1)
 
 
-# Converts a vector into an diagonal matrix
 def make_diagonal(x):
+    """ Converts a vector into an diagonal matrix """
     m = np.zeros((len(x), len(x)))
     for i in range(len(m[0])):
         m[i, i] = x[i]

@@ -1,15 +1,9 @@
 from __future__ import division, print_function
-import sys
-import os
 import math
-import random
 from sklearn import datasets
 import numpy as np
 
-# Import helper functions
-from mlfromscratch.utils.data_manipulation import normalize
-from mlfromscratch.utils.data_operation import euclidean_distance, calculate_covariance_matrix
-from mlfromscratch.unsupervised_learning import PCA
+from mlfromscratch.utils import normalize, euclidean_distance, calculate_covariance_matrix
 from mlfromscratch.utils import Plot
 
 

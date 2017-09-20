@@ -1,17 +1,12 @@
 from __future__ import print_function
 from sklearn import datasets
-import sys
-import os
 import math
-import copy
-import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 import progressbar
 
 from sklearn.datasets import fetch_mldata
 
-# Import helper functions
 from mlfromscratch.deep_learning.optimizers import Adam
 from mlfromscratch.deep_learning.loss_functions import CrossEntropy
 from mlfromscratch.deep_learning.layers import Dense, Dropout, Flatten, Activation, Reshape, BatchNormalization

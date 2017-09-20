@@ -1,6 +1,6 @@
 from __future__ import division
 import numpy as np
-from mlfromscratch.utils.data_operation import accuracy_score
+from mlfromscratch.utils import accuracy_score
 from mlfromscratch.deep_learning.activation_functions import Sigmoid
 
 class Loss(object):

@@ -1,5 +1,4 @@
 import numpy as np
-import sys
 
 # Collection of activation functions
 # Reference: https://en.wikipedia.org/wiki/Activation_function
@@ -31,7 +30,6 @@ class TanH():
         return 2 / (1 + np.exp(-2*x)) - 1
 
     def gradient(self, x):
-        # Avoid overflow for large inputs
         return 1 - np.power(self.function(x), 2)
 
 class ReLU():
@@ -64,8 +62,8 @@ class ELU():
         return np.where(x >= 0.0, 1, self.function(x) + self.alpha)
 
 class SELU():
-    # Reference :   https://arxiv.org/abs/1706.02515,
-    #               https://github.com/bioinf-jku/SNNs/blob/master/SelfNormalizingNetworks_MLP_MNIST.ipynb
+    # Reference : https://arxiv.org/abs/1706.02515,
+    # https://github.com/bioinf-jku/SNNs/blob/master/SelfNormalizingNetworks_MLP_MNIST.ipynb
     def __init__(self):
         self.alpha = 1.6732632423543772848170429916717
         self.scale = 1.0507009873554804934193349852946 
@@ -83,5 +81,5 @@ class SoftPlus():
         return np.log(1 + np.exp(x))
 
     def gradient(self, x):
-        return Sigmoid().function(x)
+        return 1 / (1 + np.exp(-x))
 

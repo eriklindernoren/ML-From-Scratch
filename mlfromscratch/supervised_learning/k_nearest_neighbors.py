@@ -1,14 +1,6 @@
 from __future__ import print_function
-import sys
-import os
-import math
 import numpy as np
-import matplotlib.pyplot as plt
-from sklearn import datasets
-
-# Import helper functions
-from mlfromscratch.utils.data_manipulation import train_test_split, normalize
-from mlfromscratch.utils.data_operation import euclidean_distance, accuracy_score
+from mlfromscratch.utils import train_test_split, normalize, euclidean_distance, accuracy_score
 from mlfromscratch.unsupervised_learning import PCA
 from mlfromscratch.utils import Plot
 

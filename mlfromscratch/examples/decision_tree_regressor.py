@@ -1,16 +1,10 @@
 from __future__ import division, print_function
 import numpy as np
-from sklearn import datasets
 import matplotlib.pyplot as plt
 import pandas as pd
-import sys
-import os
 
-# Import helper functions
-from mlfromscratch.utils.data_manipulation import train_test_split, standardize
-from mlfromscratch.utils.data_operation import accuracy_score
-from mlfromscratch.utils.data_operation import mean_squared_error, calculate_variance
-from mlfromscratch.utils import Plot
+from mlfromscratch.utils import train_test_split, standardize, accuracy_score
+from mlfromscratch.utils import mean_squared_error, calculate_variance, Plot
 from mlfromscratch.supervised_learning import RegressionTree
 
 def main():

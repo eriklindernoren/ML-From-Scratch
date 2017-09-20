@@ -1,14 +1,6 @@
 from __future__ import print_function
-import sys
-import os
-import math
-import random
 import numpy as np
-import progressbar
-import gym
-from collections import deque
-
-from mlfromscratch.utils.data_manipulation import to_categorical
+from mlfromscratch.utils import to_categorical
 from mlfromscratch.deep_learning.optimizers import Adam
 from mlfromscratch.deep_learning.loss_functions import SquareLoss
 from mlfromscratch.deep_learning.layers import Dense, Dropout, Flatten, Activation, Reshape, BatchNormalization

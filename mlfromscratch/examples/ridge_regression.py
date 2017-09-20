@@ -2,16 +2,10 @@ from __future__ import print_function
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from sklearn import datasets
-import sys
-import os
-import math
 # Import helper functions
 from mlfromscratch.supervised_learning import PolynomialRidgeRegression
-from mlfromscratch.utils.data_manipulation import k_fold_cross_validation_sets, normalize
-from mlfromscratch.utils.data_manipulation import train_test_split, polynomial_features
-from mlfromscratch.utils.data_operation import mean_squared_error
-from mlfromscratch.utils import Plot
+from mlfromscratch.utils import k_fold_cross_validation_sets, normalize, Plot
+from mlfromscratch.utils import train_test_split, polynomial_features, mean_squared_error
 
 
 def main():

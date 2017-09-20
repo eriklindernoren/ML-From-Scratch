@@ -1,13 +1,8 @@
 from __future__ import print_function
 from terminaltables import AsciiTable
-import copy
 import numpy as np
 import progressbar
-
-# Import helper functions
-from mlfromscratch.utils.data_manipulation import train_test_split, to_categorical, normalize
-from mlfromscratch.utils.data_manipulation import get_random_subsets, shuffle_data, batch_iterator
-from mlfromscratch.utils.data_operation import accuracy_score
+from mlfromscratch.utils import batch_iterator
 from mlfromscratch.deep_learning.loss_functions import CrossEntropy
 from mlfromscratch.utils.misc import bar_widgets
 
@@ -30,7 +25,7 @@ class NeuralNetwork():
         self.layers = []
         self.errors = {"training": [], "validation": []}
         self.loss_function = loss()
-        
+
         self.validation_set = False
         if validation_data:
             self.validation_set = True
@@ -47,50 +42,41 @@ class NeuralNetwork():
         # to the output shape of the last added layer
         if self.layers:
             layer.set_input_shape(shape=self.layers[-1].output_shape())
-
         # If the layer has weights that needs to be initialized 
         if hasattr(layer, 'initialize'):
             layer.initialize(optimizer=self.optimizer)
-
         # Add layer to the network
         self.layers.append(layer)
 
     def train_on_batch(self, X, y):
-        # Calculate output
         y_pred = self._forward_pass(X)
-        # Calculate the training loss
+        # Calculate the loss and accuracy of the prediction
         loss = np.mean(self.loss_function.loss(y, y_pred))
+        acc = self.loss_function.acc(y, y_pred)
         # Calculate the gradient of the loss function wrt y_pred
         loss_grad = self.loss_function.gradient(y, y_pred)
-        # Calculate the accuracy of the prediction
-        acc = self.loss_function.acc(y, y_pred)
-        # Backprop. Update weights
+        # Backpropagate. Update weights
         self._backward_pass(loss_grad=loss_grad)
 
         return loss, acc
 
-
     def fit(self, X, y, n_epochs, batch_size):
-
         n_samples = np.shape(X)[0]
         n_batches = int(n_samples / batch_size)
 
         bar = progressbar.ProgressBar(widgets=bar_widgets)
         for _ in bar(range(n_epochs)):
-            idx = range(n_samples)
-            np.random.shuffle(idx)
-
-            batch_t_error = 0   # Mean batch training error
+            batch_error = 0
             for X_batch, y_batch in batch_iterator(X, y, batch_size=batch_size):
                 loss, _ = self.train_on_batch(X_batch, y_batch)
-                batch_t_error += loss
+                batch_error += loss
 
-            # Save the epoch mean error
-            self.errors["training"].append(batch_t_error / n_batches)
+            self.errors["training"].append(batch_error / n_batches)
+
             if self.validation_set:
                 # Determine validation error
-                y_val_p = self._forward_pass(self.X_val)
-                validation_loss = np.mean(self.loss_function.loss(self.y_val, y_val_p))
+                y_val_pred = self._forward_pass(self.X_val)
+                validation_loss = np.mean(self.loss_function.loss(self.y_val, y_val_pred))
                 self.errors["validation"].append(validation_loss)
 
         return self.errors["training"], self.errors["validation"]
@@ -116,7 +102,7 @@ class NeuralNetwork():
         print (AsciiTable([[name]]).table)
         # Network input shape (first layer's input shape)
         print ("Input Shape: %s" % str(self.layers[0].input_shape))
-        # Get each layer's configuration
+        # Iterate through network and get each layer's configuration
         table_data = [["Layer Type", "Parameters", "Output Shape"]]
         tot_params = 0
         for layer in self.layers:
@@ -125,10 +111,8 @@ class NeuralNetwork():
             out_shape = layer.output_shape()
             table_data.append([layer_name, str(params), str(out_shape)])
             tot_params += params
-
         # Print network configuration table
         print (AsciiTable(table_data).table)
-
         print ("Total Parameters: %d\n" % tot_params)
 
     def predict(self, X):

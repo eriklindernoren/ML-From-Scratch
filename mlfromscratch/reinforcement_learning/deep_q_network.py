@@ -1,10 +1,6 @@
 from __future__ import print_function
-import sys
-import os
-import math
 import random
 import numpy as np
-import progressbar
 import gym
 from collections import deque
 

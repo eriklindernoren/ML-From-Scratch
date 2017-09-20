@@ -1,16 +1,9 @@
 from __future__ import print_function
-from sklearn import datasets
-import sys
-import os
-import math
-import pandas as pd
-import matplotlib.pyplot as plt
 import numpy as np
+import math
+from sklearn import datasets
 
-# Import helper functions
-from mlfromscratch.utils.data_manipulation import train_test_split, to_categorical, normalize
-from mlfromscratch.utils.data_operation import accuracy_score
-from mlfromscratch.utils import Plot
+from mlfromscratch.utils import train_test_split, to_categorical, normalize, accuracy_score, Plot
 from mlfromscratch.deep_learning.activation_functions import Sigmoid, Softmax
 from mlfromscratch.deep_learning.loss_functions import CrossEntropy
 

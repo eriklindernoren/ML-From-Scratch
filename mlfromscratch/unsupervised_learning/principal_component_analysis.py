@@ -1,11 +1,7 @@
 from __future__ import print_function
-import sys
-import os
 import numpy as np
-
-from mlfromscratch.utils.data_operation import calculate_covariance_matrix
-from mlfromscratch.utils.data_operation import calculate_correlation_matrix
-from mlfromscratch.utils.data_manipulation import standardize
+from mlfromscratch.utils import calculate_covariance_matrix, standardize
+from mlfromscratch.utils import calculate_correlation_matrix
 
 
 class PCA():

@@ -1,13 +1,9 @@
 from __future__ import print_function
-import sys
-import os
-import scipy
 from sklearn import datasets
 import numpy as np
 
-# Import helper functions
 from mlfromscratch.supervised_learning import MultiClassLDA
-from mlfromscratch.utils.data_manipulation import normalize
+from mlfromscratch.utils import normalize
 
 def main():
     # Load the dataset

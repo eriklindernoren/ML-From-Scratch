@@ -1,7 +1,3 @@
-import sys
-import os
-import math
-import random
 from sklearn import datasets
 import numpy as np
 

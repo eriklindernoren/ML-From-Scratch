@@ -1,17 +1,9 @@
 
 from __future__ import division, print_function
-import math
-import sys
-import os
 import numpy as np
 import cvxopt
-from sklearn import datasets
-
-# Import helper functions
-from mlfromscratch.utils.data_manipulation import train_test_split, normalize
-from mlfromscratch.utils.data_operation import accuracy_score
+from mlfromscratch.utils import train_test_split, normalize, accuracy_score
 from mlfromscratch.utils.kernels import *
-from mlfromscratch.unsupervised_learning import PCA
 from mlfromscratch.utils import Plot
 
 # Hide cvxopt output

@@ -1,16 +1,8 @@
 from __future__ import division, print_function
-from sklearn import datasets
-import matplotlib.pyplot as plt
-import math
-import sys
-import os
 import numpy as np
-import pandas as pd
-
-from mlfromscratch.utils.data_manipulation import train_test_split, normalize
-from mlfromscratch.utils.data_operation import accuracy_score
-from mlfromscratch.unsupervised_learning import PCA
-from mlfromscratch.utils import Plot
+import math
+from mlfromscratch.utils import train_test_split, normalize
+from mlfromscratch.utils import Plot, accuracy_score
 
 
 class NaiveBayes():

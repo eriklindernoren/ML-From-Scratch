@@ -1,17 +1,11 @@
 from __future__ import print_function
-import sys
-import os
-import math
 from sklearn import datasets
 import numpy as np
-import pandas as pd
 import matplotlib.pyplot as plt
 
 # Import helper functions
-from mlfromscratch.utils.data_manipulation import make_diagonal, normalize, train_test_split
-from mlfromscratch.utils.data_operation import accuracy_score
-from mlfromscratch.utils.activation_functions import Sigmoid
-from mlfromscratch.utils.optimizers import GradientDescent
+from mlfromscratch.utils import make_diagonal, normalize, train_test_split, accuracy_score
+from mlfromscratch.deep_learning.activation_functions import Sigmoid
 from mlfromscratch.utils import Plot
 from mlfromscratch.supervised_learning import LogisticRegression
 
@@ -30,7 +24,6 @@ def main():
     y_pred = clf.predict(X_test)
 
     accuracy = accuracy_score(y_test, y_pred)
-
     print ("Accuracy:", accuracy)
 
     # Reduce dimension to two using PCA and plot the results

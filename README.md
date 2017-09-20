@@ -252,7 +252,7 @@ but rather to present the inner workings of them in a transparent way.
 - [Deep Q-Network](mlfromscratch/reinforcement_learning/deep_q_network.py)
 
 ### Deep Learning
-  + [Base Class](mlfromscratch/deep_learning/neural_network.py)
+  + [Neural Network](mlfromscratch/deep_learning/neural_network.py)
   + [Layers](mlfromscratch/deep_learning/layers.py)
     * Activation Layer
     * Average Pooling Layer

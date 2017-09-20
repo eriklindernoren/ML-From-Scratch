@@ -1,17 +1,7 @@
 from __future__ import print_function
-import matplotlib.pyplot as plt
 import numpy as np
-from sklearn import datasets
-import pandas as pd
-import sys
-import os
-import math
-
 from scipy.stats import chi2, multivariate_normal
-
-# Import helper functions
-from mlfromscratch.utils.data_operation import mean_squared_error
-from mlfromscratch.utils.data_manipulation import train_test_split, polynomial_features
+from mlfromscratch.utils import mean_squared_error, train_test_split, polynomial_features
 
 
 

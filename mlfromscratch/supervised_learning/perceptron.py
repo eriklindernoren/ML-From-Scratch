@@ -1,14 +1,9 @@
 from __future__ import print_function
-import sys
-import os
 import math
-from sklearn import datasets
-import matplotlib.pyplot as plt
 import numpy as np
 
 # Import helper functions
-from mlfromscratch.utils.data_manipulation import train_test_split, to_categorical, normalize
-from mlfromscratch.utils.data_operation import accuracy_score
+from mlfromscratch.utils import train_test_split, to_categorical, normalize, accuracy_score
 from mlfromscratch.deep_learning.activation_functions import Sigmoid, ReLU, SoftPlus, LeakyReLU, TanH, ELU
 from mlfromscratch.deep_learning.loss_functions import CrossEntropy, SquareLoss
 from mlfromscratch.utils import Plot

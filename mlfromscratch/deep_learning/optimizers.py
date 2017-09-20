@@ -1,5 +1,5 @@
 import numpy as np
-from mlfromscratch.utils.data_manipulation import make_diagonal, normalize
+from mlfromscratch.utils import make_diagonal, normalize
 
 # Optimizers for models that use gradient based methods for finding the 
 # weights that minimizes the loss.

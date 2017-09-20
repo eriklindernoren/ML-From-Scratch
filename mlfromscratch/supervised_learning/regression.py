@@ -1,8 +1,7 @@
 from __future__ import print_function
 import numpy as np
-# Import helper functions
-from mlfromscratch.utils.data_manipulation import normalize
-from mlfromscratch.utils.data_manipulation import polynomial_features
+import math
+from mlfromscratch.utils import normalize, polynomial_features
 
 
 class Regression(object):
@@ -35,7 +34,7 @@ class Regression(object):
         # Get weights by gradient descent opt.
         if self.gradient_descent:
             # Initial weights randomly [-1/N, 1/N]
-            limit = 1 / np.sqrt(n_features)
+            limit = 1 / math.sqrt(n_features)
             self.w = np.random.uniform(-limit, limit, (n_features, ))
             # Do gradient descent for n_iterations
             for _ in range(self.n_iterations):

@@ -1,17 +1,12 @@
 from __future__ import print_function
-import sys
-import os
 from sklearn import datasets
 import matplotlib.pyplot as plt
 import numpy as np
-import pandas as pd
 
-# Import helper functions
 from mlfromscratch.supervised_learning import LDA
-from mlfromscratch.utils.data_operation import calculate_covariance_matrix, accuracy_score
-from mlfromscratch.utils.data_manipulation import normalize, standardize, train_test_split
+from mlfromscratch.utils import calculate_covariance_matrix, accuracy_score
+from mlfromscratch.utils import normalize, standardize, train_test_split, Plot
 from mlfromscratch.unsupervised_learning import PCA
-from mlfromscratch.utils import Plot
 
 def main():
     # Load the dataset

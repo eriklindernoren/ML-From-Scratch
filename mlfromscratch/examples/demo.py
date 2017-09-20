@@ -1,13 +1,11 @@
 from __future__ import print_function
-import sys, os
 from sklearn import datasets
 import numpy as np
-import pandas as pd
+import math
 import matplotlib.pyplot as plt
 
-from mlfromscratch.utils.data_manipulation import train_test_split, normalize, to_categorical
-from mlfromscratch.utils.data_operation import accuracy_score
-from mlfromscratch.deep_learning.optimizers import GradientDescent, Adam
+from mlfromscratch.utils import train_test_split, normalize, to_categorical, accuracy_score
+from mlfromscratch.deep_learning.optimizers import Adam
 from mlfromscratch.deep_learning.loss_functions import CrossEntropy
 from mlfromscratch.deep_learning.activation_functions import Softmax
 from mlfromscratch.utils.kernels import *

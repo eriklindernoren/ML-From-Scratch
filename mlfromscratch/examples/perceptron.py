@@ -3,8 +3,7 @@ from sklearn import datasets
 import numpy as np
 
 # Import helper functions
-from mlfromscratch.utils.data_manipulation import train_test_split, normalize, to_categorical
-from mlfromscratch.utils.data_operation import accuracy_score
+from mlfromscratch.utils import train_test_split, normalize, to_categorical, accuracy_score
 from mlfromscratch.deep_learning.activation_functions import Sigmoid
 from mlfromscratch.deep_learning.loss_functions import CrossEntropy 
 from mlfromscratch.utils import Plot

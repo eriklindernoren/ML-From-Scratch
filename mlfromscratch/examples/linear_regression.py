@@ -2,10 +2,8 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-# Import helper functions
-from mlfromscratch.utils.data_manipulation import train_test_split, polynomial_features
-from mlfromscratch.utils.data_operation import mean_squared_error
-from mlfromscratch.utils import Plot
+from mlfromscratch.utils import train_test_split, polynomial_features
+from mlfromscratch.utils import mean_squared_error, Plot
 from mlfromscratch.supervised_learning import LinearRegression
 
 def main():

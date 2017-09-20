@@ -1,16 +1,11 @@
 from __future__ import division, print_function
 import numpy as np
-from sklearn import datasets
-import sys
-import os
-import matplotlib.pyplot as plt
-from scipy.optimize import line_search
 import progressbar
 
 # Import helper functions
-from mlfromscratch.utils.data_manipulation import train_test_split, standardize, to_categorical
-from mlfromscratch.utils.data_operation import mean_squared_error, accuracy_score
-from mlfromscratch.utils.loss_functions import SquareLoss, CrossEntropy
+from mlfromscratch.utils import train_test_split, standardize, to_categorical
+from mlfromscratch.utils import mean_squared_error, accuracy_score
+from mlfromscratch.deep_learning.loss_functions import SquareLoss, CrossEntropy
 from mlfromscratch.supervised_learning.decision_tree import RegressionTree
 from mlfromscratch.unsupervised_learning import PCA
 from mlfromscratch.utils.misc import bar_widgets

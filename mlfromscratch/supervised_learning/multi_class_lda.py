@@ -1,16 +1,7 @@
 from __future__ import print_function
-import sys
-import os
-import scipy
-from sklearn import datasets
-from sklearn.preprocessing import StandardScaler
-from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.pyplot as plt
 import numpy as np
-
-# Import helper functions
-from mlfromscratch.utils.data_operation import calculate_covariance_matrix
-from mlfromscratch.utils.data_manipulation import normalize, standardize
+from mlfromscratch.utils import calculate_covariance_matrix, normalize, standardize
 
 
 class MultiClassLDA():

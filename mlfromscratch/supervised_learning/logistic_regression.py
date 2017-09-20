@@ -1,10 +1,8 @@
 from __future__ import print_function
 import numpy as np
-
-# Import helper functions
-from mlfromscratch.utils.data_manipulation import make_diagonal
-from mlfromscratch.utils.activation_functions import Sigmoid
-from mlfromscratch.utils import Plot
+import math
+from mlfromscratch.utils import make_diagonal, Plot
+from mlfromscratch.deep_learning.activation_functions import Sigmoid
 
 
 class LogisticRegression():
