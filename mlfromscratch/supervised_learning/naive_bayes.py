@@ -45,13 +45,16 @@ class NaiveBayes():
         return n_class_instances / n_total_instances
 
     def _classify(self, sample):
-        """ Classify using Bayes Rule, P(Y|X) = P(X|Y)*P(Y)/P(X)
-        P(X|Y) - Likelihood. Gaussian distribution (given by _calculate_likelihood)
-        P(Y) - Prior (given by _calculate_prior)
-        P(X) - Scales the posterior to make it a proper probability distribution.
-               This term is ignored in this implementation since it doesn't affect
-               which class distribution the sample is most likely of belonging to.
-        Classify the sample as the class that results in the largest P(Y|X) (posterior)
+        """ Classification using Bayes Rule P(Y|X) = P(X|Y)*P(Y)/P(X)
+
+        P(X|Y) - Likelihood of data X given class distribution Y. 
+                 Gaussian distribution (given by _calculate_likelihood)
+        P(Y)   - Prior (given by _calculate_prior)
+        P(X)   - Scales the posterior to make it a proper probability distribution.
+                 This term is ignored in this implementation since it doesn't affect
+                 which class distribution the sample is most likely to belong to.
+
+        Classifies the sample as the class that results in the largest P(Y|X) (posterior)
         """
         posteriors = []
         # Go through list of classes

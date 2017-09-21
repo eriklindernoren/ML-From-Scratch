@@ -57,10 +57,11 @@ def main():
     clf.add(Flatten())
     clf.add(Dense(256))
     clf.add(Activation('relu'))
-    clf.add(Dropout(0.5))
+    clf.add(Dropout(0.4))
     clf.add(BatchNormalization())
     clf.add(Dense(10))
     clf.add(Activation('softmax'))
+
     print ()
     clf.summary(name="ConvNet")
 
@@ -76,16 +77,12 @@ def main():
     plt.xlabel('Iterations')
     plt.show()
 
-    # Predict labels of the test data
-    y_pred = np.argmax(clf.predict(X_test), axis=1)
-    y_test = np.argmax(y_test, axis=1)
-
-    accuracy = accuracy_score(y_test, y_pred)
+    _, accuracy = clf.test_on_batch(X_test, y_test)
     print ("Accuracy:", accuracy)
 
-    # Flatten data set
-    X_test = X_test.reshape(-1, 8*8)
 
+    y_pred = np.argmax(clf.predict(X_test), axis=1)
+    X_test = X_test.reshape(-1, 8*8)
     # Reduce dimension to 2D using PCA and plot the results
     Plot().plot_in_2d(X_test, y_pred, title="Convolutional Neural Network", accuracy=accuracy, legend_labels=range(10))
 
