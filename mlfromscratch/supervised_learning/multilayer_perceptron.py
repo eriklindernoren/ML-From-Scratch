@@ -1,4 +1,4 @@
-from __future__ import print_function
+from __future__ import print_function, division
 import numpy as np
 import math
 from sklearn import datasets
@@ -27,25 +27,22 @@ class MultilayerPerceptron():
         self.hidden_activation = Sigmoid()
         self.output_activation = Softmax()
         self.loss = CrossEntropy()
-        self.W = None   # Hidden layer weights
-        self.w0 = None  # Hidden layer bias
-        self.V = None   # Output layer weights
-        self.v0 = None  # Output layer bias
 
-    def initialize_weights(self, X, y):
+    def _initialize_weights(self, X, y):
         n_samples, n_features = X.shape
         _, n_outputs = y.shape
-        # Initialize weights between [-1/sqrt(N), 1/sqrt(N)]
+        # Hidden layer
         limit   = 1 / math.sqrt(n_features)
         self.W  = np.random.uniform(-limit, limit, (n_features, self.n_hidden))
         self.w0 = np.zeros((1, self.n_hidden))
+        # Output layer
         limit   = 1 / math.sqrt(self.n_hidden)
         self.V  = np.random.uniform(-limit, limit, (self.n_hidden, n_outputs))
         self.v0 = np.zeros((1, n_outputs))
 
     def fit(self, X, y):
 
-        self.initialize_weights(X, y)
+        self._initialize_weights(X, y)
 
         for i in range(self.n_iterations):
 
@@ -55,10 +52,10 @@ class MultilayerPerceptron():
 
             # HIDDEN LAYER
             hidden_input = X.dot(self.W) + self.w0
-            hidden_output = self.hidden_activation.function(hidden_input)
+            hidden_output = self.hidden_activation(hidden_input)
             # OUTPUT LAYER
             output_layer_input = hidden_output.dot(self.V) + self.v0
-            y_pred = self.output_activation.function(output_layer_input)
+            y_pred = self.output_activation(output_layer_input)
 
             # ...............
             #  Backward Pass
@@ -87,10 +84,10 @@ class MultilayerPerceptron():
         # Forward pass:
         # Calculate hidden layer
         hidden_input = X.dot(self.W) + self.w0
-        hidden_output = self.hidden_activation.function(hidden_input)
+        hidden_output = self.hidden_activation(hidden_input)
         # Calculate output layer
         output_layer_input = hidden_output.dot(self.V) + self.v0
-        y_pred = self.output_activation.function(output_layer_input)
+        y_pred = self.output_activation(output_layer_input)
         return y_pred
 
 

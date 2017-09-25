@@ -11,9 +11,13 @@ from mlfromscratch.utils import train_test_split, accuracy_score, Plot
 # Decision stump used as weak classifier in this impl. of Adaboost
 class DecisionStump():
     def __init__(self):
+        # Determines if sample shall be classified as -1 or 1 given threshold
         self.polarity = 1
+        # The index of the feature used to make classification
         self.feature_index = None
+        # The threshold value that the feature should be measured against
         self.threshold = None
+        # Value indicative of the classifier's accuracy
         self.alpha = None
 
 class Adaboost():
@@ -28,21 +32,20 @@ class Adaboost():
     """
     def __init__(self, n_clf=5):
         self.n_clf = n_clf
-        self.clfs = [] # List of weak classifiers
 
     def fit(self, X, y):
-
         n_samples, n_features = np.shape(X)
 
         # Initialize weights to 1/N
         w = np.full(n_samples, (1 / n_samples))
         
+        self.clfs = []
         # Iterate through classifiers
         for _ in range(self.n_clf):
             clf = DecisionStump()
             # Minimum error given for using a certain feature value threshold
             # for predicting sample label
-            min_error = 1
+            min_error = float('inf')
             # Iterate throught every unique feature value and see what value
             # makes the best threshold for predicting y
             for feature_i in range(n_features):
@@ -58,10 +61,10 @@ class Adaboost():
                     # Error = sum of weights of misclassified samples
                     error = sum(w[y != prediction])
                     
-                    # If the error is over 50% we flip the polarity
+                    # If the error is over 50% we flip the polarity so that samples that
+                    # were classified as 0 are classified as 1, and vice versa
+                    # E.g error = 0.8 => (1 - error) = 0.2
                     if error > 0.5:
-                        # E.g error = 0.8 => (1 - error) = 0.2
-                        # We flip the error and polarity
                         error = 1 - error
                         p = -1
 
@@ -75,14 +78,12 @@ class Adaboost():
             # Calculate the alpha which is used to update the sample weights,
             # Alpha is also an approximation of this classifier's proficiency
             clf.alpha = 0.5 * math.log((1.0 - min_error) / (min_error + 1e-10))
-
             # Set all predictions to '1' initially
             predictions = np.ones(np.shape(y))
             # The indexes where the sample values are below threshold
             negative_idx = (clf.polarity * X[:, clf.feature_index] < clf.polarity * clf.threshold)
             # Label those as '-1'
             predictions[negative_idx] = -1
-
             # Calculate new weights 
             # Missclassified samples gets larger weights and correctly classified samples smaller
             w *= np.exp(-clf.alpha * y * predictions)
@@ -104,7 +105,7 @@ class Adaboost():
             # Label those as '-1'
             predictions[negative_idx] = -1
             # Add predictions weighted by the classifiers alpha
-            # (alpha indicative of classifiers profieciency)
+            # (alpha indicative of classifier's proficiency)
             y_pred += clf.alpha * predictions
 
         # Return sign of prediction sum

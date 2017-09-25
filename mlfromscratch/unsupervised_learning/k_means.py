@@ -1,3 +1,4 @@
+from __future__ import print_function, division
 import numpy as np
 from mlfromscratch.utils import normalize, euclidean_distance, Plot
 from mlfromscratch.unsupervised_learning import *
@@ -31,13 +32,13 @@ class KMeans():
 
     def _closest_centroid(self, sample, centroids):
         """ Return the index of the closest centroid to the sample """
-        closest_i = None
-        closest_distance = float("inf")
+        closest_i = 0
+        closest_dist = float('inf')
         for i, centroid in enumerate(centroids):
             distance = euclidean_distance(sample, centroid)
-            if distance < closest_distance:
+            if distance < closest_dist:
                 closest_i = i
-                closest_distance = distance
+                closest_dist = distance
         return closest_i
 
     def _create_clusters(self, centroids, X):

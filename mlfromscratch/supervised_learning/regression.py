@@ -1,4 +1,4 @@
-from __future__ import print_function
+from __future__ import print_function, division
 import numpy as np
 import math
 from mlfromscratch.utils import normalize, polynomial_features
@@ -33,7 +33,7 @@ class Regression(object):
         n_features = np.shape(X)[1]
         # Get weights by gradient descent opt.
         if self.gradient_descent:
-            # Initial weights randomly [-1/N, 1/N]
+            # Initialize weights randomly [-1/N, 1/N]
             limit = 1 / math.sqrt(n_features)
             self.w = np.random.uniform(-limit, limit, (n_features, ))
             # Do gradient descent for n_iterations

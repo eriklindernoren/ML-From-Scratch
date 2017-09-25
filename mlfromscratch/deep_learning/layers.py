@@ -622,18 +622,18 @@ class Activation(Layer):
 
     def __init__(self, name):
         self.activation_name = name
-        self.activation = activation_functions[name]()
+        self.activation_func = activation_functions[name]()
         self.trainable = True
 
     def layer_name(self):
-        return "%s (%s)" % (self.__class__.__name__, self.activation.__class__.__name__)
+        return "Activation (%s)" % (self.activation_func.__class__.__name__)
 
     def forward_pass(self, X, training=True):
         self.layer_input = X
-        return self.activation.function(X)
+        return self.activation_func(X)
 
     def backward_pass(self, acc_grad):
-        return acc_grad * self.activation.gradient(self.layer_input)
+        return acc_grad * self.activation_func.gradient(self.layer_input)
 
     def output_shape(self):
         return self.input_shape

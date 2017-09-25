@@ -1,3 +1,4 @@
+from __future__ import print_function, division
 import numpy as np
 from mlfromscratch.utils import normalize, euclidean_distance, Plot
 from mlfromscratch.unsupervised_learning import PCA

@@ -13,7 +13,7 @@ from mlfromscratch.utils import Plot
 class LogisticLoss():
     def __init__(self):
         sigmoid = Sigmoid()
-        self.log_func = sigmoid.function
+        self.log_func = sigmoid
         self.log_grad = sigmoid.gradient
 
     def loss(self, y, y_pred):
@@ -50,17 +50,14 @@ class XGBoost(object):
         The minimum impurity required to split the tree further. 
     max_depth: int
         The maximum depth of a tree.
-    debug: boolean
-        True or false depending on if we wish to display the training progress.
     """
     def __init__(self, n_estimators=200, learning_rate=0.001, min_samples_split=2,
-                 min_impurity=1e-7, max_depth=2, debug=False):
+                 min_impurity=1e-7, max_depth=2):
         self.n_estimators = n_estimators            # Number of trees
         self.learning_rate = learning_rate          # Step size for weight update
         self.min_samples_split = min_samples_split  # The minimum n of sampels to justify split
         self.min_impurity = min_impurity              # Minimum variance reduction to continue
         self.max_depth = max_depth                  # Maximum depth for tree
-        self.debug = debug
 
         self.bar = progressbar.ProgressBar(widgets=bar_widgets)
         
@@ -82,7 +79,6 @@ class XGBoost(object):
         y = to_categorical(y)
 
         y_pred = np.zeros(np.shape(y))
-
         for i in self.bar(range(self.n_estimators)):
             tree = self.trees[i]
             y_and_pred = np.concatenate((y, y_pred), axis=1)
@@ -92,14 +88,14 @@ class XGBoost(object):
             y_pred -= np.multiply(self.learning_rate, update_pred)
 
     def predict(self, X):
-        # Fix shape of y_pred as (n_samples, n_outputs)
-        n_samples = np.shape(X)[0]
-        y_pred = np.array([])
+        y_pred = None
         # Make predictions
         for tree in self.trees:
             # Estimate gradient and update prediction
-            update = np.multiply(self.learning_rate, tree.predict(X))
-            y_pred = update if not y_pred.any() else y_pred - update
+            update_pred = tree.predict(X)
+            if y_pred is None:
+                y_pred = np.zeros_like(update_pred)
+            y_pred -= np.multiply(self.learning_rate, update_pred)
 
         # Turn into probability distribution (Softmax)
         y_pred = np.exp(y_pred) / np.sum(np.exp(y_pred), axis=1, keepdims=True)

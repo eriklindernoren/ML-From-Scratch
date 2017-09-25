@@ -1,4 +1,4 @@
-from __future__ import print_function
+from __future__ import print_function, division
 import numpy as np
 from scipy.stats import chi2, multivariate_normal
 from mlfromscratch.utils import mean_squared_error, train_test_split, polynomial_features

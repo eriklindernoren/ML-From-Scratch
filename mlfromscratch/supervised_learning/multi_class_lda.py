@@ -1,4 +1,4 @@
-from __future__ import print_function
+from __future__ import print_function, division
 import matplotlib.pyplot as plt
 import numpy as np
 from mlfromscratch.utils import calculate_covariance_matrix, normalize, standardize
