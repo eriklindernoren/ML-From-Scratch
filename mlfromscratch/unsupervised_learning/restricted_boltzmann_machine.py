@@ -47,8 +47,8 @@ class RBM():
 
         self._initialize_weights(X)
 
-        self.errors = []
-        self.training_recon = []
+        self.training_errors = []
+        self.training_reconstructions = []
         for i in self.progressbar(range(self.n_iterations)):
             batch_errors = []
             for batch in batch_iterator(X, batch_size=self.batch_size):
@@ -69,15 +69,15 @@ class RBM():
 
                 batch_errors.append(np.mean((batch - negative_visible) ** 2))
 
-            self.errors.append(np.mean(batch_errors))
+            self.training_errors.append(np.mean(batch_errors))
             # Reconstruct a batch of images from the training set
             idx = np.random.choice(range(X.shape[0]), self.batch_size)
-            self.training_recon.append(self.reconstruct(X[idx]))
+            self.training_reconstructions.append(self.reconstruct(X[idx]))
 
     def _sample(self, X):
         return X > np.random.random_sample(size=X.shape)
 
-    def reconstruct(self, X=None):
+    def reconstruct(self, X):
         positive_hidden = sigmoid(X.dot(self.W) + self.h0)
         hidden_states = self._sample(positive_hidden)
         negative_visible = sigmoid(hidden_states.dot(self.W.T) + self.v0)
