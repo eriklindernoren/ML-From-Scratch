@@ -4,7 +4,7 @@
 Python implementations of some of the fundamental Machine Learning models and algorithms from scratch.
 
 The purpose of this project is not to produce as optimized and computationally efficient algorithms as possible 
-but rather to present the inner workings of them in a transparent way.
+but rather to present the inner workings of them in a transparent and accessible way.
 
 ## Table of Contents
 - [Machine Learning From Scratch](#machine-learning-from-scratch)
@@ -17,6 +17,7 @@ but rather to present the inner workings of them in a transparent way.
     + [Density-Based Clustering](#density-based-clustering)
     + [Generating Handwritten Digits](#generating-handwritten-digits)
     + [Deep Reinforcement Learning](#deep-reinforcement-learning)
+    + [Image Reconstruction With RBM](#image-reconstruction-with-rbm)
     + [Genetic Algorithm](#genetic-algorithm)
     + [Association Analysis](#association-analysis)
   * [Implementations](#implementations)
@@ -164,6 +165,17 @@ but rather to present the inner workings of them in a transparent way.
     Figure: Deep Q-Network solution to the CartPole-v1 environment in OpenAI gym.
 </p>
 
+### Image Reconstruction With RBM
+    $ python mlfromscratch/examples/restricted_boltzmann_machine.py
+
+<p align="center">
+    <img src="http://eriklindernoren.se/images/rbm_digits.gif" width="640">
+</p>
+<p align="center">
+    Figure: Shows how the network progresses in getting better at reconstructing <br>
+    the digit 2 in the MNIST training set.
+</p>
+
 ### Genetic Algorithm
     $ python mlfromscratch/examples/genetic_algorithm.py
 
@@ -247,6 +259,7 @@ but rather to present the inner workings of them in a transparent way.
 - [K-Means](mlfromscratch/unsupervised_learning/k_means.py)
 - [Partitioning Around Medoids](mlfromscratch/unsupervised_learning/partitioning_around_medoids.py)
 - [Principal Component Analysis](mlfromscratch/unsupervised_learning/principal_component_analysis.py)
+- [Restricted Boltzmann Machine](mlfromscratch/unsupervised_learning/restricted_boltzmann_machine.py)
 
 ### Reinforcement Learning
 - [Deep Q-Network](mlfromscratch/reinforcement_learning/deep_q_network.py)

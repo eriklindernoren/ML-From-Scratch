@@ -16,7 +16,7 @@ class KNN():
         self.k = k
 
     def _vote(self, neighbors):
-        """ Return the most label class among the neighbors """
+        """ Return the most common label among the neighbors """
         counts = np.bincount(neighbors[:, 1].astype('int'))
         return counts.argmax()
 
@@ -24,6 +24,7 @@ class KNN():
         y_pred = np.empty(X_test.shape[0])
         # Determine the class of each sample
         for i, test_sample in enumerate(X_test):
+            # Two columns [distance, label], for each observed sample
             neighbors = np.empty((X_train.shape[0], 2))
             # Calculate the distance from each observed sample to the
             # sample we wish to predict

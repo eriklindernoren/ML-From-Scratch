@@ -18,7 +18,7 @@ class DBSCAN():
     def __init__(self, eps=1, min_samples=5):
         self.eps = eps
         self.min_samples = min_samples
-        # List of arrays (clusters) containing sample indices
+        # List of lists (each is a cluster) containing sample indices
         self.clusters = []
         self.visited_samples = []
         # Hashmap {"sample_index": [neighbor1, neighbor2, ...]}

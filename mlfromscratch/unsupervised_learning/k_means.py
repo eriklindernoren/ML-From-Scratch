@@ -22,7 +22,7 @@ class KMeans():
         self.max_iterations = max_iterations
 
     def _init_random_centroids(self, X):
-        """ Initialize the centroids as random samples """
+        """ Initialize the centroids as k random samples of X"""
         n_samples, n_features = np.shape(X)
         centroids = np.zeros((self.k, n_features))
         for i in range(self.k):
@@ -71,13 +71,14 @@ class KMeans():
     def predict(self, X):
         """ Do K-Means clustering and return cluster indices """
 
-        # Initialize centroids
+        # Initialize centroids as k random samples from X
         centroids = self._init_random_centroids(X)
 
         # Iterate until convergence or for max iterations
         for _ in range(self.max_iterations):
             # Assign samples to closest centroids (create clusters)
             clusters = self._create_clusters(centroids, X)
+            # Save current centroids for convergence check
             prev_centroids = centroids
             # Calculate new centroids from the clusters
             centroids = self._calculate_centroids(clusters, X)

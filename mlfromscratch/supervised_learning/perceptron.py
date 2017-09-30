@@ -29,7 +29,7 @@ class Perceptron():
         self.n_iterations = n_iterations
         self.learning_rate = learning_rate
         self.loss = loss()
-        self.activation = activation_function()
+        self.activation_func = activation_function()
 
     def fit(self, X, y):
         n_samples, n_features = np.shape(X)
@@ -43,9 +43,9 @@ class Perceptron():
         for i in range(self.n_iterations):
             # Calculate outputs
             linear_output = X.dot(self.W) + self.w0
-            y_pred = self.activation(linear_output)
+            y_pred = self.activation_func(linear_output)
             # Calculate the loss gradient w.r.t the input of the activation function
-            error_gradient = self.loss.gradient(y, y_pred) * self.activation.gradient(linear_output)
+            error_gradient = self.loss.gradient(y, y_pred) * self.activation_func.gradient(linear_output)
             # Calculate the gradient of the loss with respect to each weight
             grad_wrt_w = X.T.dot(error_gradient)
             grad_wrt_w0 = np.sum(error_gradient, axis=0, keepdims=True)
@@ -55,5 +55,5 @@ class Perceptron():
 
     # Use the trained model to predict labels of X
     def predict(self, X):
-        y_pred = self.activation(X.dot(self.W) + self.w0)
+        y_pred = self.activation_func(X.dot(self.W) + self.w0)
         return y_pred
