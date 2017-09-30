@@ -10,6 +10,7 @@ class BayesianRegression(object):
     be transformed to with a polynomial basis function, which allows for polynomial
     regression. Assumes Normal prior and likelihood for the weights and scaled inverse
     chi-squared prior and likelihood for the variance of the weights.
+    
     Parameters:
     -----------
     n_draws: float

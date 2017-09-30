@@ -6,11 +6,6 @@ from mlfromscratch.utils.misc import bar_widgets
 from mlfromscratch.utils import batch_iterator
 from mlfromscratch.deep_learning.activation_functions import Sigmoid
 
-"""
-References:
-A Practical Guide to Training Restricted Boltzmann Machines https://www.cs.toronto.edu/~hinton/absps/guideTR.pdf
-"""
-
 sigmoid = Sigmoid()
 
 class RBM():
@@ -26,19 +21,21 @@ class RBM():
         The size of the mini-batch used to calculate each weight update.
     n_iterations: float
         The number of training iterations the algorithm will tune the weights for.
+
+    Reference:
+        A Practical Guide to Training Restricted Boltzmann Machines 
+        URL: https://www.cs.toronto.edu/~hinton/absps/guideTR.pdf
     """
     def __init__(self, n_hidden=128, learning_rate=0.1, batch_size=10, n_iterations=100):
         self.n_iterations = n_iterations
         self.batch_size = batch_size
         self.lr = learning_rate
         self.n_hidden = n_hidden
-
         self.progressbar = progressbar.ProgressBar(widgets=bar_widgets)
 
     def _initialize_weights(self, X):
         n_visible = X.shape[1]
         self.W = np.random.normal(scale=0.1, size=(n_visible, self.n_hidden))
-
         self.v0 = np.zeros(n_visible)       # Bias visible
         self.h0 = np.zeros(self.n_hidden)   # Bias hidden
 
@@ -49,7 +46,7 @@ class RBM():
 
         self.training_errors = []
         self.training_reconstructions = []
-        for i in self.progressbar(range(self.n_iterations)):
+        for _ in self.progressbar(range(self.n_iterations)):
             batch_errors = []
             for batch in batch_iterator(X, batch_size=self.batch_size):
                 # Positive phase

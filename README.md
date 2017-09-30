@@ -169,11 +169,11 @@ but rather to present the inner workings of them in a transparent and accessible
     $ python mlfromscratch/examples/restricted_boltzmann_machine.py
 
 <p align="center">
-    <img src="http://eriklindernoren.se/images/rbm_digits.gif" width="640">
+    <img src="http://eriklindernoren.se/images/rbm_digits1.gif" width="640">
 </p>
 <p align="center">
-    Figure: Shows how the network progresses in getting better at reconstructing <br>
-    the digit 2 in the MNIST training set.
+    Figure: Shows how the network gets better during training at reconstructing <br>
+    the digit 2 in the MNIST dataset.
 </p>
 
 ### Genetic Algorithm
