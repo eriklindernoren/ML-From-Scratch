@@ -7,25 +7,20 @@ from mlfromscratch.utils import Plot, accuracy_score
 
 class NaiveBayes():
     """The Gaussian Naive Bayes classifier. """
-    def __init__(self):
-        self.classes = None
-        self.X = None
-        self.y = None
-        # Gaussian prob. distribution parameters (mean and variance)
-        self.parameters = []
+    def __init__(self): pass
 
     def fit(self, X, y):
-        self.X = X
-        self.y = y
+        self.X, self.y = X, y
         self.classes = np.unique(y)
+        self.parameters = []
         # Calculate the mean and variance of each feature for each class
         for i, c in enumerate(self.classes):
             # Only select the rows where the label equals the given class
-            x_where_c = X[np.where(y == c)]
-            # Add the mean and variance for each feature
+            X_where_c = X[np.where(y == c)]
             self.parameters.append([])
-            for j in range(len(x_where_c[0, :])):
-                col = x_where_c[:, j]
+            # Add the mean and variance for each feature (column)
+            for j in range(X.shape[1]):
+                col = X_where_c[:, j]
                 parameters = {"mean": col.mean(), "var": col.var()}
                 self.parameters[i].append(parameters)
 
@@ -39,9 +34,9 @@ class NaiveBayes():
         """ Calculate the prior of class c 
         (samples where class == c / total number of samples)"""
         # Selects the rows where the class label is c
-        x_where_c = self.X[np.where(self.y == c)]
-        n_class_instances = np.shape(x_where_c)[0]
-        n_total_instances = np.shape(self.X)[0]
+        X_where_c = self.X[np.where(self.y == c)]
+        n_class_instances = X_where_c.shape[0]
+        n_total_instances = self.X.shape[0]
         return n_class_instances / n_total_instances
 
     def _classify(self, sample):
@@ -58,8 +53,7 @@ class NaiveBayes():
         """
         posteriors = []
         # Go through list of classes
-        for i in range(len(self.classes)):
-            c = self.classes[i]
+        for i, c in enumerate(self.classes):
             posterior = self._calculate_prior(c)
             # Naive assumption (independence):
             # P(x1,x2,x3|Y) = P(x1|Y)*P(x2|Y)*P(x3|Y)

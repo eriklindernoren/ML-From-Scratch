@@ -236,6 +236,7 @@ but rather to present the inner workings of them in a transparent and accessible
 - [Decision Tree](mlfromscratch/supervised_learning/decision_tree.py)
 - [Gradient Boosting](mlfromscratch/supervised_learning/gradient_boosting.py)
 - [K Nearest Neighbors](mlfromscratch/supervised_learning/k_nearest_neighbors.py)
+- [Lasso Regression](mlfromscratch/supervised_learning/regression.py)
 - [Linear Discriminant Analysis](mlfromscratch/supervised_learning/linear_discriminant_analysis.py)
 - [Linear Regression](mlfromscratch/supervised_learning/regression.py)
 - [Logistic Regression](mlfromscratch/supervised_learning/logistic_regression.py)
