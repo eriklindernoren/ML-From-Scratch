@@ -40,7 +40,7 @@ but rather to present the inner workings of them in a transparent and accessible
     <img src="http://eriklindernoren.se/images/mlfs_prr.png" width="640"\>
 </p>
 <p align="center">
-    Figure: Polynomial ridge regression of temperature data measured in <br> 
+    Figure: Regularized polynomial regression of temperature data measured in <br> 
     Linköping, Sweden 2016.
 </p>
 
@@ -234,6 +234,7 @@ but rather to present the inner workings of them in a transparent and accessible
 - [Adaboost](mlfromscratch/supervised_learning/adaboost.py)
 - [Bayesian Regression](mlfromscratch/supervised_learning/bayesian_regression.py)
 - [Decision Tree](mlfromscratch/supervised_learning/decision_tree.py)
+- [Elastic Net](mlfromscratch/supervised_learning/regression.py)
 - [Gradient Boosting](mlfromscratch/supervised_learning/gradient_boosting.py)
 - [K Nearest Neighbors](mlfromscratch/supervised_learning/k_nearest_neighbors.py)
 - [Lasso Regression](mlfromscratch/supervised_learning/regression.py)

@@ -53,13 +53,14 @@ def main():
 
     # Make final prediction
     model = PolynomialRidgeRegression(degree=poly_degree, 
-                                    reg_factor=best_reg_factor,
+                                    reg_factor=reg_factor,
                                     learning_rate=0.001,
                                     n_iterations=10000)
     model.fit(X_train, y_train)
+
     y_pred = model.predict(X_test)
     mse = mean_squared_error(y_test, y_pred)
-    print ("Mean squared error: %s (given by reg. factor: %s)" % (lowest_error, best_reg_factor))
+    print ("Mean squared error: %s (given by reg. factor: %s)" % (mse, reg_factor))
 
     y_pred_line = model.predict(X)
 

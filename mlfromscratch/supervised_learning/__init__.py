@@ -5,7 +5,7 @@ from .gradient_boosting import GradientBoostingClassifier, GradientBoostingRegre
 from .k_nearest_neighbors import KNN
 from .linear_discriminant_analysis import LDA
 from .regression import LinearRegression, PolynomialRegression, LassoRegression
-from .regression import RidgeRegression, PolynomialRidgeRegression
+from .regression import RidgeRegression, PolynomialRidgeRegression, ElasticNet
 from .logistic_regression import LogisticRegression
 from .multi_class_lda import MultiClassLDA
 from .naive_bayes import NaiveBayes
