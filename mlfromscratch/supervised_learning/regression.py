@@ -3,15 +3,31 @@ import numpy as np
 import math
 from mlfromscratch.utils import normalize, polynomial_features
 
+class l1_regularization():
+    def __init__(self, alpha):
+        self.alpha = alpha
+    
+    def __call__(self, w):
+        return self.alpha * np.linalg.norm(w)
+
+    def grad(self, w):
+        return self.alpha * np.sign(w)
+
+class l2_regularization():
+    def __init__(self, alpha):
+        self.alpha = alpha
+    
+    def __call__(self, w):
+        return self.alpha * 0.5 *  w.T.dot(w)
+
+    def grad(self, w):
+        return self.alpha * w
 
 class Regression(object):
     """ Base regression model. Models the relationship between a scalar dependent variable y and the independent 
     variables X. 
     Parameters:
     -----------
-    reg_factor: float
-        The factor that will determine the amount of regularization and feature
-        shrinkage. 
     n_iterations: float
         The number of training iterations the algorithm will tune the weights for.
     learning_rate: float
@@ -20,46 +36,36 @@ class Regression(object):
         True or false depending if gradient descent should be used when training. If 
         false then we use batch optimization by least squares.
     """
-    def __init__(self, reg_factor, n_iterations, learning_rate, gradient_descent):
-        self.w = None
+    def __init__(self, n_iterations, learning_rate, gradient_descent):
         self.n_iterations = n_iterations
         self.learning_rate = learning_rate
         self.gradient_descent = gradient_descent
-        self.reg_factor = reg_factor
 
     def initialize_weights(self, n_features):
         """ Initialize weights randomly [-1/N, 1/N] """
         limit = 1 / math.sqrt(n_features)
         self.w = np.random.uniform(-limit, limit, (n_features, ))
 
-    def regularization(self):
-        # No regularization by default
-        return 0
-
-    def regularization_gradient(self):
-        # No regularization by default
-        return 0
-
     def fit(self, X, y):
         # Insert constant ones as first column (for bias weights)
         X = np.insert(X, 0, 1, axis=1)
-        n_features = np.shape(X)[1]
         # Get weights by gradient descent opt.
         if self.gradient_descent:
             self.training_errors = []
-            self.initialize_weights(n_features)
+            self.initialize_weights(n_features=X.shape[1])
             # Do gradient descent for n_iterations
             for _ in range(self.n_iterations):
                 y_pred = X.dot(self.w)
-                # Calculate mean squared error
-                mse = np.mean(0.5 * (y - y_pred)**2 + self.regularization())
+                # Calculate l2 loss
+                mse = np.mean(0.5 * (y - y_pred)**2 + self.regularization(self.w))
                 self.training_errors.append(mse)
                 # Gradient of l2 loss w.r.t w
-                grad_w = - (y - y_pred).dot(X) + self.regularization_gradient()
+                grad_w = - (y - y_pred).dot(X) + self.regularization.grad(self.w)
                 # Update the weights
                 self.w -= self.learning_rate * grad_w
         # Get weights by least squares (using Moore-Penrose pseudoinverse)
         else:
+            n_features = np.shape(X)[1]
             U, S, V = np.linalg.svd(X.T.dot(X) + self.reg_factor * np.identity(n_features))
             S = np.diag(S)
             X_sq_reg_inv = V.dot(np.linalg.pinv(S)).dot(U.T)
@@ -84,8 +90,12 @@ class LinearRegression(Regression):
         false then we use batch optimization by least squares.
     """
     def __init__(self, n_iterations=100, learning_rate=0.001, gradient_descent=True):
-        super(LinearRegression, self).__init__(reg_factor=0, n_iterations=n_iterations, \
-                                learning_rate=learning_rate, gradient_descent=gradient_descent)
+        # No regularization
+        self.regularization = lambda x: 0
+        self.regularization.grad = lambda x: 0
+        super(LinearRegression, self).__init__(n_iterations=n_iterations,
+                                            learning_rate=learning_rate, 
+                                            gradient_descent=gradient_descent)
 
 class PolynomialRegression(Regression):
     """Performs a non-linear transformation of the data before fitting the model
@@ -104,8 +114,12 @@ class PolynomialRegression(Regression):
     """
     def __init__(self, degree, n_iterations=3000, learning_rate=0.001, gradient_descent=True):
         self.degree = degree
-        super(PolynomialRegression, self).__init__(reg_factor=0, n_iterations=n_iterations, \
-                                learning_rate=learning_rate, gradient_descent=gradient_descent)
+        # No regularization
+        self.regularization = lambda x: 0
+        self.regularization.grad = lambda x: 0
+        super(PolynomialRegression, self).__init__(n_iterations=n_iterations,
+                                                learning_rate=learning_rate, 
+                                                gradient_descent=gradient_descent)
 
     def fit(self, X, y):
         X_transformed = polynomial_features(X, degree=self.degree)
@@ -133,13 +147,11 @@ class RidgeRegression(Regression):
         false then we use batch optimization by least squares.
     """
     def __init__(self, reg_factor, n_iterations=1000, learning_rate=0.001, gradient_descent=True):
-        super(RidgeRegression, self).__init__(reg_factor, n_iterations, learning_rate, gradient_descent)
-
-    def regularization(self):
-        return self.reg_factor * self.w.T.dot(self.w)
-
-    def regularization_gradient(self):
-        return self.reg_factor * self.w
+        # Ridge Regression
+        self.regularization = l2_regularization(reg_factor)
+        super(RidgeRegression, self).__init__(n_iterations, 
+                                            learning_rate, 
+                                            gradient_descent)
 
 class LassoRegression(Regression):
     """Linear regression model with a regularization factor which does both variable selection 
@@ -163,7 +175,11 @@ class LassoRegression(Regression):
     """
     def __init__(self, degree, reg_factor, n_iterations=3000, learning_rate=0.01, gradient_descent=True):
         self.degree = degree
-        super(LassoRegression, self).__init__(reg_factor, n_iterations, learning_rate, gradient_descent)
+        # Lasso Regression
+        self.regularization = l1_regularization(reg_factor)
+        super(LassoRegression, self).__init__(n_iterations, 
+                                            learning_rate, 
+                                            gradient_descent)
 
     def fit(self, X, y):
         X_transformed = normalize(polynomial_features(X, degree=self.degree))
@@ -172,12 +188,6 @@ class LassoRegression(Regression):
     def predict(self, X):
         X_transformed = normalize(polynomial_features(X, degree=self.degree))
         return super(LassoRegression, self).predict(X_transformed)
-
-    def regularization(self):
-        return self.reg_factor * np.linalg.norm(self.w)
-
-    def regularization_gradient(self):
-        return self.reg_factor * np.sign(self.w)
 
 class PolynomialRidgeRegression(Regression):
     """Similar to regular ridge regression except that the data is transformed to allow
@@ -199,7 +209,11 @@ class PolynomialRidgeRegression(Regression):
     """
     def __init__(self, degree, reg_factor, n_iterations=3000, learning_rate=0.01, gradient_descent=True):
         self.degree = degree
-        super(PolynomialRidgeRegression, self).__init__(reg_factor, n_iterations, learning_rate, gradient_descent)
+        # Ridge Regression
+        self.regularization = l2_regularization(reg_factor)
+        super(PolynomialRidgeRegression, self).__init__(n_iterations, 
+                                                        learning_rate, 
+                                                        gradient_descent)
 
     def fit(self, X, y):
         X_transformed = normalize(polynomial_features(X, degree=self.degree))
@@ -209,9 +223,4 @@ class PolynomialRidgeRegression(Regression):
         X_transformed = normalize(polynomial_features(X, degree=self.degree))
         return super(PolynomialRidgeRegression, self).predict(X_transformed)
 
-    def regularization(self):
-        return self.reg_factor * self.w.T.dot(self.w)
-
-    def regularization_gradient(self):
-        return self.reg_factor * self.w
 
