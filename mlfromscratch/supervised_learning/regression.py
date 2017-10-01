@@ -174,7 +174,7 @@ class LassoRegression(Regression):
         return super(LassoRegression, self).predict(X_transformed)
 
     def regularization(self):
-        return self.reg_factor * len(self.w)
+        return self.reg_factor * np.linalg.norm(self.w)
 
     def regularization_gradient(self):
         return self.reg_factor * np.sign(self.w)

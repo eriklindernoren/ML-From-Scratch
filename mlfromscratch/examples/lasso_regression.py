@@ -29,7 +29,7 @@ def main():
                             n_iterations=4000)
     model.fit(X_train, y_train)
 
-    # Training and validation error plot
+    # Training error plot
     n = len(model.training_errors)
     training, = plt.plot(range(n), model.training_errors, label="Training Error")
     plt.legend(handles=[training])

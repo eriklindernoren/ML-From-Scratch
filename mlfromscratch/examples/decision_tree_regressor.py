@@ -22,11 +22,11 @@ def main():
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3)
 
-    clf = RegressionTree()
-    clf.fit(X_train, y_train)
-    y_pred = clf.predict(X_test)
+    model = RegressionTree()
+    model.fit(X_train, y_train)
+    y_pred = model.predict(X_test)
 
-    y_pred_line = clf.predict(X)
+    y_pred_line = model.predict(X)
 
     # Color map
     cmap = plt.get_cmap('viridis')
