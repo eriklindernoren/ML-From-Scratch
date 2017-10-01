@@ -27,6 +27,15 @@ class Regression(object):
         self.gradient_descent = gradient_descent
         self.reg_factor = reg_factor
 
+    def initialize_weights(self, n_features):
+        """ Initialize weights randomly [-1/N, 1/N] """
+        limit = 1 / math.sqrt(n_features)
+        self.w = np.random.uniform(-limit, limit, (n_features, ))
+
+    def regularization(self):
+        # No regularization by default
+        return 0
+
     def regularization_gradient(self):
         # No regularization by default
         return 0
@@ -37,12 +46,14 @@ class Regression(object):
         n_features = np.shape(X)[1]
         # Get weights by gradient descent opt.
         if self.gradient_descent:
-            # Initialize weights randomly [-1/N, 1/N]
-            limit = 1 / math.sqrt(n_features)
-            self.w = np.random.uniform(-limit, limit, (n_features, ))
+            self.training_errors = []
+            self.initialize_weights(n_features)
             # Do gradient descent for n_iterations
             for _ in range(self.n_iterations):
                 y_pred = X.dot(self.w)
+                # Calculate mean squared error
+                mse = np.mean(0.5 * (y - y_pred)**2 + self.regularization())
+                self.training_errors.append(mse)
                 # Gradient of l2 loss w.r.t w
                 grad_w = - (y - y_pred).dot(X) + self.regularization_gradient()
                 # Update the weights
@@ -72,7 +83,7 @@ class LinearRegression(Regression):
         True or false depending if gradient descent should be used when training. If 
         false then we use batch optimization by least squares.
     """
-    def __init__(self, n_iterations=1000, learning_rate=0.001, gradient_descent=True):
+    def __init__(self, n_iterations=100, learning_rate=0.001, gradient_descent=True):
         super(LinearRegression, self).__init__(reg_factor=0, n_iterations=n_iterations, \
                                 learning_rate=learning_rate, gradient_descent=gradient_descent)
 
@@ -124,10 +135,13 @@ class RidgeRegression(Regression):
     def __init__(self, reg_factor, n_iterations=1000, learning_rate=0.001, gradient_descent=True):
         super(RidgeRegression, self).__init__(reg_factor, n_iterations, learning_rate, gradient_descent)
 
+    def regularization(self):
+        return self.reg_factor * self.w.T.dot(self.w)
+
     def regularization_gradient(self):
         return self.reg_factor * self.w
 
-class Lasso(Regression):
+class LassoRegression(Regression):
     """Linear regression model with a regularization factor which does both variable selection 
     and regularization. Model that tries to balance the fit of the model with respect to the training 
     data and the complexity of the model. A large regularization factor with decreases the variance of 
@@ -149,15 +163,18 @@ class Lasso(Regression):
     """
     def __init__(self, degree, reg_factor, n_iterations=3000, learning_rate=0.01, gradient_descent=True):
         self.degree = degree
-        super(Lasso, self).__init__(reg_factor, n_iterations, learning_rate, gradient_descent)
+        super(LassoRegression, self).__init__(reg_factor, n_iterations, learning_rate, gradient_descent)
 
     def fit(self, X, y):
         X_transformed = normalize(polynomial_features(X, degree=self.degree))
-        super(Lasso, self).fit(X_transformed, y)
+        super(LassoRegression, self).fit(X_transformed, y)
 
     def predict(self, X):
         X_transformed = normalize(polynomial_features(X, degree=self.degree))
-        return super(Lasso, self).predict(X_transformed)
+        return super(LassoRegression, self).predict(X_transformed)
+
+    def regularization(self):
+        return self.reg_factor * len(self.w)
 
     def regularization_gradient(self):
         return self.reg_factor * np.sign(self.w)
@@ -191,6 +208,9 @@ class PolynomialRidgeRegression(Regression):
     def predict(self, X):
         X_transformed = normalize(polynomial_features(X, degree=self.degree))
         return super(PolynomialRidgeRegression, self).predict(X_transformed)
+
+    def regularization(self):
+        return self.reg_factor * self.w.T.dot(self.w)
 
     def regularization_gradient(self):
         return self.reg_factor * self.w

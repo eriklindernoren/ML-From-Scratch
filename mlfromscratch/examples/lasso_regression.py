@@ -1,24 +1,34 @@
+from __future__ import print_function
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
-from sklearn.datasets import make_regression
+# Import helper functions
+from mlfromscratch.supervised_learning import LassoRegression
+from mlfromscratch.utils import k_fold_cross_validation_sets, normalize, mean_squared_error
+from mlfromscratch.utils import train_test_split, polynomial_features, Plot
 
-from mlfromscratch.utils import train_test_split, polynomial_features
-from mlfromscratch.utils import mean_squared_error, Plot
-from mlfromscratch.supervised_learning import LinearRegression
 
 def main():
 
-    X, y = make_regression(n_samples=100, n_features=1, noise=20)
+    # Load temperature data
+    data = pd.read_csv('mlfromscratch/data/TempLinkoping2016.txt', sep="\t")
+
+    time = np.atleast_2d(data["time"].as_matrix()).T
+    temp = data["temp"].as_matrix()
+
+    X = time # fraction of the year [0, 1]
+    y = temp
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4)
 
-    n_samples, n_features = np.shape(X)
+    poly_degree = 13
 
-    model = LinearRegression(n_iterations=100)
-
+    model = LassoRegression(degree=15, 
+                            reg_factor=0.05,
+                            learning_rate=0.001,
+                            n_iterations=4000)
     model.fit(X_train, y_train)
-    
+
     # Training and validation error plot
     n = len(model.training_errors)
     training, = plt.plot(range(n), model.training_errors, label="Training Error")
@@ -30,7 +40,7 @@ def main():
 
     y_pred = model.predict(X_test)
     mse = mean_squared_error(y_test, y_pred)
-    print ("Mean squared error: %s" % (mse))
+    print ("Mean squared error: %s (given by reg. factor: %s)" % (mse, 0.05))
 
     y_pred_line = model.predict(X)
 
@@ -41,7 +51,7 @@ def main():
     m1 = plt.scatter(366 * X_train, y_train, color=cmap(0.9), s=10)
     m2 = plt.scatter(366 * X_test, y_test, color=cmap(0.5), s=10)
     plt.plot(366 * X, y_pred_line, color='black', linewidth=2, label="Prediction")
-    plt.suptitle("Linear Regression")
+    plt.suptitle("Lasso Regression")
     plt.title("MSE: %.2f" % mse, fontsize=10)
     plt.xlabel('Day')
     plt.ylabel('Temperature in Celcius')
