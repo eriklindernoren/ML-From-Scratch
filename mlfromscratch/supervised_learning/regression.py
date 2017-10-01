@@ -50,14 +50,10 @@ class Regression(object):
         The number of training iterations the algorithm will tune the weights for.
     learning_rate: float
         The step length that will be used when updating the weights.
-    gradient_descent: boolean
-        True or false depending if gradient descent should be used when training. If 
-        false then we use batch optimization by least squares.
     """
-    def __init__(self, n_iterations, learning_rate, gradient_descent):
+    def __init__(self, n_iterations, learning_rate):
         self.n_iterations = n_iterations
         self.learning_rate = learning_rate
-        self.gradient_descent = gradient_descent
 
     def initialize_weights(self, n_features):
         """ Initialize weights randomly [-1/N, 1/N] """
@@ -67,27 +63,18 @@ class Regression(object):
     def fit(self, X, y):
         # Insert constant ones as first column (for bias weights)
         X = np.insert(X, 0, 1, axis=1)
-        n_samples, n_features = X.shape
-        # Get weights by gradient descent opt.
-        if self.gradient_descent:
-            self.training_errors = []
-            self.initialize_weights(n_features)
-            # Do gradient descent for n_iterations
-            for _ in range(self.n_iterations):
-                y_pred = X.dot(self.w)
-                # Calculate l2 loss
-                mse = np.mean(0.5 * (y - y_pred)**2 + self.regularization(self.w))
-                self.training_errors.append(mse)
-                # Gradient of l2 loss w.r.t w
-                grad_w = - (y - y_pred).dot(X) + self.regularization.grad(self.w)
-                # Update the weights
-                self.w -= self.learning_rate * grad_w
-        # Get weights by least squares (using Moore-Penrose pseudoinverse)
-        else:
-            U, S, V = np.linalg.svd(X.T.dot(X) + self.reg_factor * np.identity(n_features))
-            S = np.diag(S)
-            X_sq_reg_inv = V.dot(np.linalg.pinv(S)).dot(U.T)
-            self.w = X_sq_reg_inv.dot(X.T).dot(y)
+        self.training_errors = []
+        self.initialize_weights(n_features=X.shape[1])
+        # Do gradient descent for n_iterations
+        for _ in range(self.n_iterations):
+            y_pred = X.dot(self.w)
+            # Calculate l2 loss
+            mse = np.mean(0.5 * (y - y_pred)**2 + self.regularization(self.w))
+            self.training_errors.append(mse)
+            # Gradient of l2 loss w.r.t w
+            grad_w = - (y - y_pred).dot(X) + self.regularization.grad(self.w)
+            # Update the weights
+            self.w -= self.learning_rate * grad_w
 
     def predict(self, X):
         # Insert constant ones for bias weights
@@ -108,12 +95,24 @@ class LinearRegression(Regression):
         false then we use batch optimization by least squares.
     """
     def __init__(self, n_iterations=100, learning_rate=0.001, gradient_descent=True):
+        self.gradient_descent = gradient_descent
         # No regularization
         self.regularization = lambda x: 0
         self.regularization.grad = lambda x: 0
         super(LinearRegression, self).__init__(n_iterations=n_iterations,
-                                            learning_rate=learning_rate, 
-                                            gradient_descent=gradient_descent)
+                                            learning_rate=learning_rate)
+    def fit(self, X, y):
+        # If not gradient descent => Least squares approximation of w
+        if not self.gradient_descent:
+            # Insert constant ones for bias weights
+            X = np.insert(X, 0, 1, axis=1)
+            # Calculate weights by least squares (using Moore-Penrose pseudoinverse)
+            U, S, V = np.linalg.svd(X.T.dot(X))
+            S = np.diag(S)
+            X_sq_reg_inv = V.dot(np.linalg.pinv(S)).dot(U.T)
+            self.w = X_sq_reg_inv.dot(X.T).dot(y)
+        else:
+            super(LinearRegression, self).fit(X, y)
 
 class LassoRegression(Regression):
     """Linear regression model with a regularization factor which does both variable selection 
@@ -131,17 +130,13 @@ class LassoRegression(Regression):
         The number of training iterations the algorithm will tune the weights for.
     learning_rate: float
         The step length that will be used when updating the weights.
-    gradient_descent: boolean
-        True or false depending if gradient descent should be used when training. If 
-        false then we use batch optimization by least squares.
     """
-    def __init__(self, degree, reg_factor, n_iterations=3000, learning_rate=0.01, gradient_descent=True):
+    def __init__(self, degree, reg_factor, n_iterations=3000, learning_rate=0.01):
         self.degree = degree
         # Lasso Regression
         self.regularization = l1_regularization(alpha=reg_factor)
         super(LassoRegression, self).__init__(n_iterations, 
-                                            learning_rate, 
-                                            gradient_descent)
+                                            learning_rate)
 
     def fit(self, X, y):
         X_transformed = normalize(polynomial_features(X, degree=self.degree))
@@ -162,18 +157,14 @@ class PolynomialRegression(Regression):
         The number of training iterations the algorithm will tune the weights for.
     learning_rate: float
         The step length that will be used when updating the weights.
-    gradient_descent: boolean
-        True or false depending if gradient descent should be used when training. If 
-        false then we use batch optimization by least squares.
     """
-    def __init__(self, degree, n_iterations=3000, learning_rate=0.001, gradient_descent=True):
+    def __init__(self, degree, n_iterations=3000, learning_rate=0.001):
         self.degree = degree
         # No regularization
         self.regularization = lambda x: 0
         self.regularization.grad = lambda x: 0
         super(PolynomialRegression, self).__init__(n_iterations=n_iterations,
-                                                learning_rate=learning_rate, 
-                                                gradient_descent=gradient_descent)
+                                                learning_rate=learning_rate)
 
     def fit(self, X, y):
         X_transformed = polynomial_features(X, degree=self.degree)
@@ -196,16 +187,12 @@ class RidgeRegression(Regression):
         The number of training iterations the algorithm will tune the weights for.
     learning_rate: float
         The step length that will be used when updating the weights.
-    gradient_descent: boolean
-        True or false depending if gradient descent should be used when training. If 
-        false then we use batch optimization by least squares.
     """
-    def __init__(self, reg_factor, n_iterations=1000, learning_rate=0.001, gradient_descent=True):
+    def __init__(self, reg_factor, n_iterations=1000, learning_rate=0.001):
         # Ridge Regression
         self.regularization = l2_regularization(alpha=reg_factor)
         super(RidgeRegression, self).__init__(n_iterations, 
-                                            learning_rate, 
-                                            gradient_descent)
+                                            learning_rate)
 
 class PolynomialRidgeRegression(Regression):
     """Similar to regular ridge regression except that the data is transformed to allow
@@ -221,17 +208,13 @@ class PolynomialRidgeRegression(Regression):
         The number of training iterations the algorithm will tune the weights for.
     learning_rate: float
         The step length that will be used when updating the weights.
-    gradient_descent: boolean
-        True or false depending if gradient descent should be used when training. If 
-        false then we use batch optimization by least squares.
     """
     def __init__(self, degree, reg_factor, n_iterations=3000, learning_rate=0.01, gradient_descent=True):
         self.degree = degree
         # Ridge Regression
         self.regularization = l2_regularization(alpha=reg_factor)
         super(PolynomialRidgeRegression, self).__init__(n_iterations, 
-                                                        learning_rate, 
-                                                        gradient_descent)
+                                                        learning_rate)
 
     def fit(self, X, y):
         X_transformed = normalize(polynomial_features(X, degree=self.degree))
@@ -257,18 +240,14 @@ class ElasticNet(Regression):
         The number of training iterations the algorithm will tune the weights for.
     learning_rate: float
         The step length that will be used when updating the weights.
-    gradient_descent: boolean
-        True or false depending if gradient descent should be used when training. If 
-        false then we use batch optimization by least squares.
     """
     def __init__(self, degree=1, reg_factor=0.05, l1_ratio=0.5, n_iterations=3000, 
-                learning_rate=0.01, gradient_descent=True):
+                learning_rate=0.01):
         self.degree = degree
         # Ridge Regression
         self.regularization = l1_l2_regularization(alpha=reg_factor, l1_ratio=l1_ratio)
         super(ElasticNet, self).__init__(n_iterations, 
-                                        learning_rate, 
-                                        gradient_descent)
+                                        learning_rate)
 
     def fit(self, X, y):
         X_transformed = normalize(polynomial_features(X, degree=self.degree))
