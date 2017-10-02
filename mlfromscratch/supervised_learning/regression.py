@@ -61,7 +61,7 @@ class Regression(object):
         self.w = np.random.uniform(-limit, limit, (n_features, ))
 
     def fit(self, X, y):
-        # Insert constant ones as first column (for bias weights)
+        # Insert constant ones for bias weights
         X = np.insert(X, 0, 1, axis=1)
         self.training_errors = []
         self.initialize_weights(n_features=X.shape[1])
@@ -72,7 +72,7 @@ class Regression(object):
             mse = np.mean(0.5 * (y - y_pred)**2 + self.regularization(self.w))
             self.training_errors.append(mse)
             # Gradient of l2 loss w.r.t w
-            grad_w = - (y - y_pred).dot(X) + self.regularization.grad(self.w)
+            grad_w = -(y - y_pred).dot(X) + self.regularization.grad(self.w)
             # Update the weights
             self.w -= self.learning_rate * grad_w
 
@@ -122,7 +122,7 @@ class LassoRegression(Regression):
     Parameters:
     -----------
     degree: int
-        The power of the polynomial that the independent variable X will be transformed to.
+        The degree of the polynomial that the independent variable X will be transformed to.
     reg_factor: float
         The factor that will determine the amount of regularization and feature
         shrinkage. 
@@ -139,12 +139,12 @@ class LassoRegression(Regression):
                                             learning_rate)
 
     def fit(self, X, y):
-        X_transformed = normalize(polynomial_features(X, degree=self.degree))
-        super(LassoRegression, self).fit(X_transformed, y)
+        X = normalize(polynomial_features(X, degree=self.degree))
+        super(LassoRegression, self).fit(X, y)
 
     def predict(self, X):
-        X_transformed = normalize(polynomial_features(X, degree=self.degree))
-        return super(LassoRegression, self).predict(X_transformed)
+        X = normalize(polynomial_features(X, degree=self.degree))
+        return super(LassoRegression, self).predict(X)
 
 class PolynomialRegression(Regression):
     """Performs a non-linear transformation of the data before fitting the model
@@ -152,7 +152,7 @@ class PolynomialRegression(Regression):
     Parameters:
     -----------
     degree: int
-        The power of the polynomial that the independent variable X will be transformed to.
+        The degree of the polynomial that the independent variable X will be transformed to.
     n_iterations: float
         The number of training iterations the algorithm will tune the weights for.
     learning_rate: float
@@ -167,12 +167,12 @@ class PolynomialRegression(Regression):
                                                 learning_rate=learning_rate)
 
     def fit(self, X, y):
-        X_transformed = polynomial_features(X, degree=self.degree)
-        super(PolynomialRegression, self).fit(X_transformed, y)
+        X = polynomial_features(X, degree=self.degree)
+        super(PolynomialRegression, self).fit(X, y)
 
     def predict(self, X):
-        X_transformed = polynomial_features(X, degree=self.degree)
-        return super(PolynomialRegression, self).predict(X_transformed)
+        X = polynomial_features(X, degree=self.degree)
+        return super(PolynomialRegression, self).predict(X)
 
 class RidgeRegression(Regression):
     """Also referred to as Tikhonov regularization. Linear regression model with a regularization factor.
@@ -200,7 +200,7 @@ class PolynomialRidgeRegression(Regression):
     Parameters:
     -----------
     degree: int
-        The power of the polynomial that the independent variable X will be transformed to.
+        The degree of the polynomial that the independent variable X will be transformed to.
     reg_factor: float
         The factor that will determine the amount of regularization and feature
         shrinkage. 
@@ -217,12 +217,12 @@ class PolynomialRidgeRegression(Regression):
                                                         learning_rate)
 
     def fit(self, X, y):
-        X_transformed = normalize(polynomial_features(X, degree=self.degree))
-        super(PolynomialRidgeRegression, self).fit(X_transformed, y)
+        X = normalize(polynomial_features(X, degree=self.degree))
+        super(PolynomialRidgeRegression, self).fit(X, y)
 
     def predict(self, X):
-        X_transformed = normalize(polynomial_features(X, degree=self.degree))
-        return super(PolynomialRidgeRegression, self).predict(X_transformed)
+        X = normalize(polynomial_features(X, degree=self.degree))
+        return super(PolynomialRidgeRegression, self).predict(X)
 
 class ElasticNet(Regression):
     """ Regression where a combination of l1 and l2 regularization are used. The
@@ -230,7 +230,7 @@ class ElasticNet(Regression):
     Parameters:
     -----------
     degree: int
-        The power of the polynomial that the independent variable X will be transformed to.
+        The degree of the polynomial that the independent variable X will be transformed to.
     reg_factor: float
         The factor that will determine the amount of regularization and feature
         shrinkage. 
@@ -250,9 +250,9 @@ class ElasticNet(Regression):
                                         learning_rate)
 
     def fit(self, X, y):
-        X_transformed = normalize(polynomial_features(X, degree=self.degree))
-        super(ElasticNet, self).fit(X_transformed, y)
+        X = normalize(polynomial_features(X, degree=self.degree))
+        super(ElasticNet, self).fit(X, y)
 
     def predict(self, X):
-        X_transformed = normalize(polynomial_features(X, degree=self.degree))
-        return super(ElasticNet, self).predict(X_transformed)
+        X = normalize(polynomial_features(X, degree=self.degree))
+        return super(ElasticNet, self).predict(X)

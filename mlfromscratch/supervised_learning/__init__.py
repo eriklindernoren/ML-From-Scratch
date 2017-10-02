@@ -13,3 +13,4 @@ from .perceptron import Perceptron
 from .random_forest import RandomForest
 from .support_vector_machine import SupportVectorMachine
 from .xgboost import XGBoost
+from .neuro_evolution import NeuroEvolution

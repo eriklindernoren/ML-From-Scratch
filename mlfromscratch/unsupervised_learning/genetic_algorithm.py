@@ -86,9 +86,9 @@ class GeneticAlgorithm():
             new_population = []
             for i in np.arange(0, self.population_size, 2):
                 # Select two parents randomly according to probabilities
-                parents = np.random.choice(self.population, size=2, p=parent_probabilities, replace=False)
+                parent1, parent2 = np.random.choice(self.population, size=2, p=parent_probabilities, replace=False)
                 # Perform crossover to produce offspring
-                child1, child2 = self._crossover(parents[0], parents[1])
+                child1, child2 = self._crossover(parent1, parent2)
                 # Save mutated offspring for next generation
                 new_population += [self._mutate(child1), self._mutate(child2)]
 

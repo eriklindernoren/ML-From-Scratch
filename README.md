@@ -244,6 +244,7 @@ but rather to present the inner workings of them in a transparent and accessible
 - [Multi-class Linear Discriminant Analysis](mlfromscratch/supervised_learning/multi_class_lda.py)
 - [Multilayer Perceptron](mlfromscratch/supervised_learning/multilayer_perceptron.py)
 - [Naive Bayes](mlfromscratch/supervised_learning/naive_bayes.py)
+- [Neuro-Evolution](mlfromscratch/supervised_learning/neuro_evolution.py)
 - [Perceptron](mlfromscratch/supervised_learning/perceptron.py)
 - [Polynomial Regression](mlfromscratch/supervised_learning/regression.py)
 - [Random Forest](mlfromscratch/supervised_learning/random_forest.py)
@@ -288,9 +289,7 @@ but rather to present the inner workings of them in a transparent and accessible
     * [Recurrent Neural Network](mlfromscratch/examples/recurrent_neural_network.py)
 
 ## Contact
-If there's some implementation you would like to see here or if you're just
-feeling social, feel free to email me or connect with me on LinkedIn.
+If there's some implementation you would like to see here or if you're just feeling social, 
+feel free to [email](mailto:eriklindernoren@gmail.com) me or connect with me on [LinkedIn](https://www.linkedin.com/in/eriklindernoren/).
 
-[eriklindernoren@gmail.com](mailto:eriklindernoren@gmail.com) <br>
-[LinkedIn](https://www.linkedin.com/in/eriklindernoren/)
 
