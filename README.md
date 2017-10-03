@@ -178,7 +178,7 @@ but rather to present the inner workings of them in a transparent and accessible
 </p>
 
 ### Evolutionary Evolved Neural Network
-    $ python mlfromscratch/examples/neuro_evolution.py
+    $ python mlfromscratch/examples/neuroevolution.py
 
     +---------------+
     | Model Summary |
@@ -277,7 +277,7 @@ but rather to present the inner workings of them in a transparent and accessible
 - [Multi-class Linear Discriminant Analysis](mlfromscratch/supervised_learning/multi_class_lda.py)
 - [Multilayer Perceptron](mlfromscratch/supervised_learning/multilayer_perceptron.py)
 - [Naive Bayes](mlfromscratch/supervised_learning/naive_bayes.py)
-- [Neuro-Evolution](mlfromscratch/supervised_learning/neuro_evolution.py)
+- [Neuroevolution](mlfromscratch/supervised_learning/neuroevolution.py)
 - [Perceptron](mlfromscratch/supervised_learning/perceptron.py)
 - [Polynomial Regression](mlfromscratch/supervised_learning/regression.py)
 - [Random Forest](mlfromscratch/supervised_learning/random_forest.py)

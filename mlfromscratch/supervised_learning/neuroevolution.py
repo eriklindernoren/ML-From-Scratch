@@ -5,9 +5,10 @@ import copy
 from mlfromscratch.utils.misc import bar_widgets
 from mlfromscratch.deep_learning import NeuralNetwork
 from mlfromscratch.deep_learning.layers import Activation, Dense
+from mlfromscratch.deep_learning.optimizers import Adam
 
 
-class NeuroEvolution():
+class Neuroevolution():
     """ Evolutionary optimization of Neural Networks.
 
     Parameters:
@@ -16,28 +17,25 @@ class NeuroEvolution():
         The number of neural networks that are allowed in the population at a time.
     mutation_rate: float
         The probability that a weight will be mutated.
-    optimizer: class
-        The weight optimizer that will be used to tune the weights in order of minimizing
-        the loss.
     loss: class
         Loss function used to measure the model's performance. SquareLoss or CrossEntropy.
     """
-    def __init__(self, population_size, mutation_rate, optimizer, loss):
+    def __init__(self, population_size, mutation_rate, loss):
         self.population_size = population_size
         self.mutation_rate = mutation_rate
-        self.optimizer = optimizer
         self.loss_function = loss
 
     def _build_mlp(self, id):
-        model = NeuralNetwork(optimizer=self.optimizer, loss=self.loss_function)
+        """ Returns a Multilayer Perceptron (a new individual in the population) """
+        model = NeuralNetwork(optimizer=Adam(), loss=self.loss_function)
         model.add(Dense(16, input_shape=(self.X.shape[1],)))
         model.add(Activation('relu'))
         model.add(Dense(self.y.shape[1]))
         model.add(Activation('softmax'))
         
         model.id = id
-        model.fitness = -1
-        model.acc = -1
+        model.fitness = 0
+        model.accuracy = 0
 
         return model
 
@@ -59,19 +57,20 @@ class NeuroEvolution():
                 layer.w0 += np.random.normal(0, var, size=layer.w0.shape) * mutation_mask
         return individual
 
-    def _assign_weights(self, child, parent):
+    def _inherit_weights(self, child, parent):
         """ Copies the weights from parent to child """
         for i in range(len(child.layers)):
             if hasattr(child.layers[i], 'W'):
+                # The child inherits both weights W and bias weights w0
                 child.layers[i].W = parent.layers[i].W.copy()
                 child.layers[i].w0 = parent.layers[i].w0.copy()
 
     def _crossover(self, parent1, parent2):
-        """ Performs crossover between the neurons in parent1 and parent2 to for offspring """
+        """ Performs crossover between the neurons in parent1 and parent2 to form offspring """
         child1 = self._build_mlp(id=parent1.id+1)
-        self._assign_weights(child1, parent1)
+        self._inherit_weights(child1, parent1)
         child2 = self._build_mlp(id=parent2.id+1)
-        self._assign_weights(child2, parent2)
+        self._inherit_weights(child2, parent2)
 
         # Perform crossover
         for i in range(len(child1.layers)):
@@ -90,10 +89,8 @@ class NeuroEvolution():
         """ Evaluate the NNs on the test set to get fitness scores """
         for i, individual in enumerate(self.population):
             loss, acc = individual.test_on_batch(self.X, self.y)
-            
             individual.fitness = 1 / (loss + 1e-8)
             individual.accuracy = acc
-
 
     def evolve(self, X, y, n_generations):
         """ Will evolve the population for n_generations based on dataset X and labels y"""
@@ -109,6 +106,7 @@ class NeuroEvolution():
         n_winners = int(self.population_size * 0.4)
 
         for epoch in range(n_generations):
+            # Determine the fitness of the individuals in the population
             self._calculate_fitness()
 
             # Sort population by fitness
@@ -120,11 +118,10 @@ class NeuroEvolution():
             print ("[%d Top Individual - Fitness: %.5f, Acc: %.1f%%]" % (epoch, 
                                                                         fittest_individual.fitness, 
                                                                         float(100*fittest_individual.accuracy)))
-
             # The 'winners' are selected for the next generation
             next_population = [self.population[i] for i in range(n_winners)]
 
-            # The rest are generated as offspring by combining the fittest individuals
+            # Parents are selected as the fittest 60% in the population
             parents = [self.population[i] for i in range(self.population_size - n_winners)]
             for i in np.arange(0, len(parents), 2):
                 # Perform crossover to produce offspring
