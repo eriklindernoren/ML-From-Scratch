@@ -8,7 +8,7 @@ from mlfromscratch.deep_learning.layers import Activation, Dense
 
 
 class NeuroEvolution():
-    """ Evolutionary Neural Network optimization.
+    """ Evolutionary optimization of Neural Networks.
 
     Parameters:
     -----------
@@ -16,31 +16,36 @@ class NeuroEvolution():
         The number of neural networks that are allowed in the population at a time.
     mutation_rate: float
         The probability that a weight will be mutated.
-    n_parents: int
-        The number of parents that will be selected to form offspring each generation.
     optimizer: class
         The weight optimizer that will be used to tune the weights in order of minimizing
         the loss.
     loss: class
         Loss function used to measure the model's performance. SquareLoss or CrossEntropy.
     """
-    def __init__(self, population_size, mutation_rate, n_parents, optimizer, loss):
+    def __init__(self, population_size, mutation_rate, optimizer, loss):
         self.population_size = population_size
         self.mutation_rate = mutation_rate
-        self.n_parents = n_parents
         self.optimizer = optimizer
         self.loss_function = loss
 
-    def _initialize_population(self, n_features, n_outputs):
+    def _build_mlp(self, id):
+        model = NeuralNetwork(optimizer=self.optimizer, loss=self.loss_function)
+        model.add(Dense(16, input_shape=(self.X.shape[1],)))
+        model.add(Activation('relu'))
+        model.add(Dense(self.y.shape[1]))
+        model.add(Activation('softmax'))
+        
+        model.id = id
+        model.fitness = -1
+        model.acc = -1
+
+        return model
+
+    def _initialize_population(self):
         """ Initialization of the neural networks forming the population"""
         self.population = []
         for _ in range(self.population_size):
-            model = NeuralNetwork(optimizer=self.optimizer, loss=self.loss_function)
-            model.add(Dense(16, input_shape=(n_features,)))
-            model.add(Activation('relu'))
-            model.add(Dense(n_outputs))
-            model.add(Activation('softmax'))
-
+            model = self._build_mlp(id=np.random.randint(1000))
             self.population.append(model)
 
     def _mutate(self, individual, var=1):
@@ -54,14 +59,26 @@ class NeuroEvolution():
                 layer.w0 += np.random.normal(0, var, size=layer.w0.shape) * mutation_mask
         return individual
 
-    def _recombination(self, parent1, parent2):
-        """ Swap the weights of parent1 and parent2 to form new children """
-        child1 = copy.copy(parent1)
-        child2 = copy.copy(parent2)
+    def _assign_weights(self, child, parent):
+        """ Copies the weights from parent to child """
+        for i in range(len(child.layers)):
+            if hasattr(child.layers[i], 'W'):
+                child.layers[i].W = parent.layers[i].W.copy()
+                child.layers[i].w0 = parent.layers[i].w0.copy()
+
+    def _crossover(self, parent1, parent2):
+        """ Performs crossover between the neurons in parent1 and parent2 to for offspring """
+        child1 = self._build_mlp(id=parent1.id+1)
+        self._assign_weights(child1, parent1)
+        child2 = self._build_mlp(id=parent2.id+1)
+        self._assign_weights(child2, parent2)
+
+        # Perform crossover
         for i in range(len(child1.layers)):
             if hasattr(child1.layers[i], 'W'):
+                n_neurons = child1.layers[i].W.shape[1]
                 # Perform crossover between the individuals' neuron weights
-                cutoff = np.random.randint(0, child1.layers[i].W.shape[1])
+                cutoff = np.random.randint(0, n_neurons)
                 child1.layers[i].W[:, cutoff:] = parent2.layers[i].W[:, cutoff:].copy()
                 child1.layers[i].w0[:, cutoff:] = parent2.layers[i].w0[:, cutoff:].copy()
                 child2.layers[i].W[:, cutoff:] = parent1.layers[i].W[:, cutoff:].copy()
@@ -69,64 +86,49 @@ class NeuroEvolution():
 
         return child1, child2
 
-    def _calculate_fitness(self, population):
+    def _calculate_fitness(self):
         """ Evaluate the NNs on the test set to get fitness scores """
-        population_fitness = np.empty(len(population))
-        accuracies = np.empty_like(population_fitness)
-        for i, individual in enumerate(population):
+        for i, individual in enumerate(self.population):
             loss, acc = individual.test_on_batch(self.X, self.y)
-            fitness = 1 / (loss + 1e-8)
-            population_fitness[i] = fitness
-            accuracies[i] = acc
-
-        return population_fitness, accuracies
+            
+            individual.fitness = 1 / (loss + 1e-8)
+            individual.accuracy = acc
 
 
     def evolve(self, X, y, n_generations):
         """ Will evolve the population for n_generations based on dataset X and labels y"""
         self.X, self.y = X, y
 
-        self._initialize_population(n_features=X.shape[1], n_outputs=y.shape[1])
+        self._initialize_population()
 
         # The 40% highest fittest individuals are selected for the next generation
         n_winners = int(self.population_size * 0.4)
 
         for epoch in range(n_generations):
-            population_fitness, accuracies = self._calculate_fitness(self.population)
+            self._calculate_fitness()
+
+            # Sort population by fitness
+            fitness_sort = np.argsort([model.fitness for model in self.population])[::-1]
+            self.population = [self.population[i] for i in fitness_sort]
 
             # Get the individual with the highest fitness
-            fittest_individual = self.population[np.argmax(population_fitness)]
-            highest_fitness = max(population_fitness)
-            highest_accuracy = max(accuracies)
+            fittest_individual = self.population[0]
+            print ("[%d Top Individual - Fitness: %.5f, Acc: %.2f%%]" % (epoch, 
+                                                                        fittest_individual.fitness, 
+                                                                        fittest_individual.accuracy))
 
-            print ("[%d Closest Candidate - Fitness: %.5f, Acc: %.2f%%]" % (epoch, highest_fitness, highest_accuracy))
+            # The 'winners' are selected for the next generation
+            next_population = [self.population[i] for i in range(n_winners)]
 
-            # Set the probability that the individual should be selected as a parent
-            # proportionate to the individual's fitness.
-            parent_probabilities = [fitness / sum(population_fitness) for fitness in population_fitness]
-
-            # Select the n_winners for next generation
-            highest_i = np.argsort(population_fitness)[-n_winners:]
-            next_population = [self.population[cand_i] for cand_i in highest_i]
-
-            population_candidates = []
-            for _ in np.arange(0, self.population_size, 2):
-                # Select two parents randomly according to parent selection probabilities
-                parent1, parent2 = np.random.choice(self.population, size=2, p=parent_probabilities, replace=False)
+            # The rest are generated as offspring by combining the fittest individuals
+            parents = [self.population[i] for i in range(self.population_size - n_winners)]
+            for i in np.arange(0, len(parents), 2):
                 # Perform crossover to produce offspring
-                child1, child2 = self._recombination(parent1, parent2)
-                # Save mutated offspring as candidates for next population
-                population_candidates += [self._mutate(child1), self._mutate(child2)]
-
-            # Select individuals for next generation based on fitness
-            population_fitness, accuracies = self._calculate_fitness(population_candidates)
-            selection_probabilities = [fitness / sum(population_fitness) for fitness in population_fitness]
-            next_population += np.random.choice(population_candidates, 
-                                            size=self.population_size-n_winners, 
-                                            p=selection_probabilities,
-                                            replace=True).tolist()
+                child1, child2 = self._crossover(parents[i], parents[i+1])
+                # Save mutated offspring for next population
+                next_population += [self._mutate(child1), self._mutate(child2)]
 
             self.population = next_population
 
-        return fittest_individual, highest_fitness, highest_accuracy
+        return fittest_individual
 

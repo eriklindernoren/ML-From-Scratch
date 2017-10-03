@@ -18,6 +18,7 @@ but rather to present the inner workings of them in a transparent and accessible
     + [Generating Handwritten Digits](#generating-handwritten-digits)
     + [Deep Reinforcement Learning](#deep-reinforcement-learning)
     + [Image Reconstruction With RBM](#image-reconstruction-with-rbm)
+    + [Evolutionary Evolved Neural Network](#evolutionary-evolved-neural-network)
     + [Genetic Algorithm](#genetic-algorithm)
     + [Association Analysis](#association-analysis)
   * [Implementations](#implementations)
@@ -174,6 +175,23 @@ but rather to present the inner workings of them in a transparent and accessible
 <p align="center">
     Figure: Shows how the network gets better during training at reconstructing <br>
     the digit 2 in the MNIST dataset.
+</p>
+
+### Evolutionary Evolved Neural Network
+    $ python mlfromscratch/examples/neuro_evolution.py
+    [0 Top Individual - Fitness: 1.90372, Acc: 0.58%]
+    [1 Top Individual - Fitness: 1.91954, Acc: 0.43%]
+    ...
+    [299 Top Individual - Fitness: 6.24833, Acc: 0.88%]
+    Fitness: 6.24833
+    Accuracy: 0.88%
+
+<p align="center">
+    <img src="http://eriklindernoren.se/images/evo_nn.png" width="640">
+</p>
+<p align="center">
+    Figure: Classification by a neural network which has been evolutionary<br>
+    evolved.
 </p>
 
 ### Genetic Algorithm
