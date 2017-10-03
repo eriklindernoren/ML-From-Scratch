@@ -101,24 +101,25 @@ class NeuroEvolution():
 
         self._initialize_population()
 
+        # Print the model summary of the population's individuals
         print ()
         self.population[0].summary()
 
-        # The 40% highest fittest individuals are selected for the next generation
+        # The 40% highest fittest individuals will be selected for the next generation
         n_winners = int(self.population_size * 0.4)
 
         for epoch in range(n_generations):
             self._calculate_fitness()
 
             # Sort population by fitness
-            fitness_sort = np.argsort([model.fitness for model in self.population])[::-1]
-            self.population = [self.population[i] for i in fitness_sort]
+            sorted_i = np.argsort([model.fitness for model in self.population])[::-1]
+            self.population = [self.population[i] for i in sorted_i]
 
             # Get the individual with the highest fitness
             fittest_individual = self.population[0]
-            print ("[%d Top Individual - Fitness: %.5f, Acc: %.2f%%]" % (epoch, 
+            print ("[%d Top Individual - Fitness: %.5f, Acc: %.1f%%]" % (epoch, 
                                                                         fittest_individual.fitness, 
-                                                                        fittest_individual.accuracy))
+                                                                        float(100*fittest_individual.accuracy)))
 
             # The 'winners' are selected for the next generation
             next_population = [self.population[i] for i in range(n_winners)]

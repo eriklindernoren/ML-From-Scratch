@@ -193,16 +193,16 @@ but rather to present the inner workings of them in a transparent and accessible
     | Activation (Softmax) | 0          | (4,)         |
     +----------------------+------------+--------------+
     Total Parameters: 244
-    
-    [0 Top Individual - Fitness: 1.90372, Acc: 0.58%]
-    [1 Top Individual - Fitness: 1.91954, Acc: 0.43%]
+
+    [0 Top Individual - Fitness: 1.86712, Acc: 42.8%]
+    [1 Top Individual - Fitness: 1.99916, Acc: 49.5%]
     ...
-    [299 Top Individual - Fitness: 6.24833, Acc: 0.88%]
-    Fitness: 6.24833
-    Accuracy: 0.88%
+    [299 Top Individual - Fitness: 10.41595, Acc: 93.7%]
+    Fitness: 10.41595
+    Accuracy: 93.7%
 
 <p align="center">
-    <img src="http://eriklindernoren.se/images/evo_nn.png" width="640">
+    <img src="http://eriklindernoren.se/images/evo_nn1.png" width="640">
 </p>
 <p align="center">
     Figure: Classification by a neural network which has been evolutionary<br>

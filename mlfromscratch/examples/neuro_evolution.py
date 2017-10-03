@@ -29,7 +29,7 @@ def main():
     model = model.evolve(X_train, y_train, n_generations=300)
 
     print ("Fitness: %.5f" % model.fitness)
-    print ("Accuracy: %.2f%%" % model.accuracy)
+    print ("Accuracy: %.1f%%" % float(100*model.accuracy))
 
     # Reduce dimension to 2D using PCA and plot the results
     y_pred = np.argmax(model.predict(X_test), axis=1)
