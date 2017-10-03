@@ -179,6 +179,20 @@ but rather to present the inner workings of them in a transparent and accessible
 
 ### Evolutionary Evolved Neural Network
     $ python mlfromscratch/examples/neuro_evolution.py
+
+    +---------------+
+    | Model Summary |
+    +---------------+
+    Input Shape: (10,)
+    +----------------------+------------+--------------+
+    | Layer Type           | Parameters | Output Shape |
+    +----------------------+------------+--------------+
+    | Dense                | 176        | (16,)        |
+    | Activation (ReLU)    | 0          | (16,)        |
+    | Dense                | 68         | (4,)         |
+    | Activation (Softmax) | 0          | (4,)         |
+    +----------------------+------------+--------------+
+    Total Parameters: 244
     
     [0 Top Individual - Fitness: 1.90372, Acc: 0.58%]
     [1 Top Individual - Fitness: 1.91954, Acc: 0.43%]

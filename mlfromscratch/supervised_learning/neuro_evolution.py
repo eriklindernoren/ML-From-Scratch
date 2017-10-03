@@ -101,6 +101,9 @@ class NeuroEvolution():
 
         self._initialize_population()
 
+        print ()
+        self.population[0].summary()
+
         # The 40% highest fittest individuals are selected for the next generation
         n_winners = int(self.population_size * 0.4)
 

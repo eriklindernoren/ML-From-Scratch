@@ -7,10 +7,13 @@ import numpy as np
 # Import helper functions
 from mlfromscratch.supervised_learning import NeuroEvolution
 from mlfromscratch.utils import train_test_split, to_categorical, normalize, Plot
+from mlfromscratch.deep_learning.optimizers import Adam
 from mlfromscratch.deep_learning.loss_functions import CrossEntropy
 
 
 def main():
+
+    optimizer = Adam()
 
     X, y = datasets.make_classification(n_samples=1000, n_features=10, n_classes=4, n_clusters_per_class=1, n_informative=2)
 
