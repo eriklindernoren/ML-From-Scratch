@@ -179,6 +179,7 @@ but rather to present the inner workings of them in a transparent and accessible
 
 ### Evolutionary Evolved Neural Network
     $ python mlfromscratch/examples/neuro_evolution.py
+    
     [0 Top Individual - Fitness: 1.90372, Acc: 0.58%]
     [1 Top Individual - Fitness: 1.91954, Acc: 0.43%]
     ...
