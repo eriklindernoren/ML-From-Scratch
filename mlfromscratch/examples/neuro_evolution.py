@@ -22,7 +22,7 @@ def main():
     # MLP
     #-----
 
-    X, y = datasets.make_classification(n_samples=1000, n_features=4)
+    X, y = datasets.make_classification(n_samples=10000, n_features=4)
 
     y = to_categorical(y.astype("int"))
 
@@ -34,11 +34,10 @@ def main():
     model = NeuroEvolution(population_size=10, 
                         mutation_rate=0.01, 
                         n_parents=4, 
-                        recombination_rate=0.1, 
                         optimizer=optimizer, 
                         loss=CrossEntropy)
     
-    model, fitness, acc = model.evolve(X_train, y_train, n_generations=1000)
+    model, fitness, acc = model.evolve(X_train, y_train, n_generations=150)
     
 
 
