@@ -25,14 +25,13 @@ class NaiveBayes():
     def _calculate_likelihood(self, mean, var, x):
         """ Gaussian likelihood of the data x given mean and var """
         eps = 1e-4 # Add small term in denominator to avoid division by zero
-        coeff = 1.0 / (math.sqrt((2.0 * math.pi) * var) + eps)
+        coeff = 1.0 / (math.sqrt((2.0 * math.pi) * var + eps))
         exponent = math.exp(-(math.pow(x - mean, 2) / (2 * var  + eps)))
         return coeff * exponent
 
     def _calculate_prior(self, c):
         """ Calculate the prior of class c 
         (samples where class == c / total number of samples)"""
-        # Selects the rows where the class label is c
         X_where_c = self.X[np.where(self.y == c)]
         n_class_instances = X_where_c.shape[0]
         n_total_instances = self.X.shape[0]
