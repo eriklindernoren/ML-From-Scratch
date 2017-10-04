@@ -109,7 +109,8 @@ class Neuroevolution():
             next_population = [self.population[i] for i in range(n_winners)]
 
             total_fitness = np.sum([model.fitness for model in self.population])
-            # Parents are selected with probabilities proportionate to their fitness
+            # Parents are selected with probabilities proportionate to their 
+            # fitness (without replacement to preserve diversity)
             parent_probabilities = [model.fitness / total_fitness for model in self.population]
             parents = np.random.choice(a=self.population, size=n_parents, p=parent_probabilities, replace=False)
             for i in np.arange(0, len(parents), 2):

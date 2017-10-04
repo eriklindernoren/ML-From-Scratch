@@ -35,7 +35,7 @@ def main():
     model_builder(n_inputs=X.shape[1], n_outputs=y.shape[1]).summary()
 
     population_size = 100
-    n_generations = 2000
+    n_generations = 1000
     mutation_rate = 0.01
 
     print ("Population Size: %d" % population_size)
