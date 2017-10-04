@@ -194,14 +194,18 @@ but rather to present the inner workings of them in a transparent and accessible
     +----------------------+------------+--------------+
     Total Parameters: 1210
 
-    [0 Best Individual - Fitness: 3.08250, Acc: 23.1%]
-    [1 Best Individual - Fitness: 3.10461, Acc: 10.7%]
+    Population Size: 100
+    Generations: 2000
+    Mutation Rate: 0.01
+
+    [0 Best Individual - Fitness: 3.08301, Accuracy: 10.5%]
+    [1 Best Individual - Fitness: 3.08746, Accuracy: 12.0%]
     ...
-    [1999 Best Individual - Fitness: 32.91299, Acc: 95.0%]
-    Test set accuracy: 93.6%
+    [1999 Best Individual - Fitness: 69.70656, Accuracy: 97.9%]
+    Test set accuracy: 96.4%
 
 <p align="center">
-    <img src="http://eriklindernoren.se/images/evo_nn2.png" width="640">
+    <img src="http://eriklindernoren.se/images/evo_nn3.png" width="640">
 </p>
 <p align="center">
     Figure: Classification of the digit dataset by a neural network which has<br>

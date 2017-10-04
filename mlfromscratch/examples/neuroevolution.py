@@ -34,13 +34,22 @@ def main():
     print ()
     model_builder(n_inputs=X.shape[1], n_outputs=y.shape[1]).summary()
 
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4)
+    population_size = 100
+    n_generations = 2000
+    mutation_rate = 0.01
 
-    model = Neuroevolution(population_size=100, 
-                        mutation_rate=0.02, 
+    print ("Population Size: %d" % population_size)
+    print ("Generations: %d" % n_generations)
+    print ("Mutation Rate: %d" % mutation_rate)
+    print ("")
+
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4, seed=1)
+
+    model = Neuroevolution(population_size=population_size, 
+                        mutation_rate=mutation_rate, 
                         model_builder=model_builder)
     
-    model = model.evolve(X_train, y_train, n_generations=2000)
+    model = model.evolve(X_train, y_train, n_generations=n_generations)
 
     loss, accuracy = model.test_on_batch(X_test, y_test)
     print ("Test set accuracy: %.1f%%" % float(100*accuracy))
