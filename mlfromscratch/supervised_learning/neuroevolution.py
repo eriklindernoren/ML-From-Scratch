@@ -3,10 +3,6 @@ import numpy as np
 import copy
 
 from mlfromscratch.utils.misc import bar_widgets
-from mlfromscratch.deep_learning import NeuralNetwork
-from mlfromscratch.deep_learning.layers import Activation, Dense
-from mlfromscratch.deep_learning.optimizers import Adam
-
 
 class Neuroevolution():
     """ Evolutionary optimization of Neural Networks.
@@ -17,22 +13,17 @@ class Neuroevolution():
         The number of neural networks that are allowed in the population at a time.
     mutation_rate: float
         The probability that a weight will be mutated.
-    loss: class
-        Loss function used to measure the model's performance. SquareLoss or CrossEntropy.
+    model_builder: method
+        A method which returns a user specified NeuralNetwork instance. 
     """
-    def __init__(self, population_size, mutation_rate, loss):
+    def __init__(self, population_size, mutation_rate, model_builder):
         self.population_size = population_size
         self.mutation_rate = mutation_rate
-        self.loss_function = loss
+        self.model_builder = model_builder
 
-    def _build_mlp(self, id):
-        """ Returns a Multilayer Perceptron (a new individual in the population) """
-        model = NeuralNetwork(optimizer=Adam(), loss=self.loss_function)
-        model.add(Dense(16, input_shape=(self.X.shape[1],)))
-        model.add(Activation('relu'))
-        model.add(Dense(self.y.shape[1]))
-        model.add(Activation('softmax'))
-        
+    def _build_model(self, id):
+        """ Returns a new individual """
+        model = self.model_builder(n_inputs=self.X.shape[1], n_outputs=self.y.shape[1])
         model.id = id
         model.fitness = 0
         model.accuracy = 0
@@ -43,7 +34,7 @@ class Neuroevolution():
         """ Initialization of the neural networks forming the population"""
         self.population = []
         for _ in range(self.population_size):
-            model = self._build_mlp(id=np.random.randint(1000))
+            model = self._build_model(id=np.random.randint(1000))
             self.population.append(model)
 
     def _mutate(self, individual, var=1):
@@ -67,9 +58,9 @@ class Neuroevolution():
 
     def _crossover(self, parent1, parent2):
         """ Performs crossover between the neurons in parent1 and parent2 to form offspring """
-        child1 = self._build_mlp(id=parent1.id+1)
+        child1 = self._build_model(id=parent1.id+1)
         self._inherit_weights(child1, parent1)
-        child2 = self._build_mlp(id=parent2.id+1)
+        child2 = self._build_model(id=parent2.id+1)
         self._inherit_weights(child2, parent2)
 
         # Perform crossover
@@ -121,7 +112,7 @@ class Neuroevolution():
             # The 'winners' are selected for the next generation
             next_population = [self.population[i] for i in range(n_winners)]
 
-            # Parents are selected as the fittest 60% in the population
+            # The fittest 60% of the population are selected as parents
             parents = [self.population[i] for i in range(self.population_size - n_winners)]
             for i in np.arange(0, len(parents), 2):
                 # Perform crossover to produce offspring

@@ -244,7 +244,6 @@ class ElasticNet(Regression):
     def __init__(self, degree=1, reg_factor=0.05, l1_ratio=0.5, n_iterations=3000, 
                 learning_rate=0.01):
         self.degree = degree
-        # Ridge Regression
         self.regularization = l1_l2_regularization(alpha=reg_factor, l1_ratio=l1_ratio)
         super(ElasticNet, self).__init__(n_iterations, 
                                         learning_rate)

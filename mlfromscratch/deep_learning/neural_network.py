@@ -25,7 +25,7 @@ class NeuralNetwork():
         self.errors = {"training": [], "validation": []}
         self.loss_function = loss()
         self.progressbar = progressbar.ProgressBar(widgets=bar_widgets)
-        self.id = 0
+
         self.val_set = None
         if validation_data:
             X, y = validation_data
