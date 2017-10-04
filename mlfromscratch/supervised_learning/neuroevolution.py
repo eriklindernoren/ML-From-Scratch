@@ -2,8 +2,6 @@ from __future__ import print_function, division
 import numpy as np
 import copy
 
-from mlfromscratch.utils.misc import bar_widgets
-
 class Neuroevolution():
     """ Evolutionary optimization of Neural Networks.
 
@@ -78,7 +76,7 @@ class Neuroevolution():
 
     def _calculate_fitness(self):
         """ Evaluate the NNs on the test set to get fitness scores """
-        for i, individual in enumerate(self.population):
+        for individual in self.population:
             loss, acc = individual.test_on_batch(self.X, self.y)
             individual.fitness = 1 / (loss + 1e-8)
             individual.accuracy = acc
@@ -89,12 +87,10 @@ class Neuroevolution():
 
         self._initialize_population()
 
-        # Print the model summary of the population's individuals
-        print ()
-        self.population[0].summary()
-
         # The 40% highest fittest individuals will be selected for the next generation
         n_winners = int(self.population_size * 0.4)
+        # The fittest 60% of the population will be selected as parents to form offspring
+        n_parents = self.population_size - n_winners
 
         for epoch in range(n_generations):
             # Determine the fitness of the individuals in the population
@@ -113,7 +109,7 @@ class Neuroevolution():
             next_population = [self.population[i] for i in range(n_winners)]
 
             # The fittest 60% of the population are selected as parents
-            parents = [self.population[i] for i in range(self.population_size - n_winners)]
+            parents = [self.population[i] for i in range(n_parents)]
             for i in np.arange(0, len(parents), 2):
                 # Perform crossover to produce offspring
                 child1, child2 = self._crossover(parents[i], parents[i+1])

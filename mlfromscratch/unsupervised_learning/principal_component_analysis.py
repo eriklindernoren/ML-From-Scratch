@@ -10,16 +10,13 @@ class PCA():
     maximizing the variance along each feature axis. This class is also used throughout
     the project to plot data.
     """
-    def __init__(self): pass
-
     def transform(self, X, n_components):
         """ Fit the dataset to the number of principal components specified in the 
         constructor and return the transformed dataset """
-        covariance = calculate_covariance_matrix(X)
+        covariance_matrix = calculate_covariance_matrix(X)
 
-        # Get the eigenvalues and eigenvectors.
-        # (eigenvector[:,0] corresponds to eigenvalue[0])
-        eigenvalues, eigenvectors = np.linalg.eig(covariance)
+        # Where (eigenvector[:,0] corresponds to eigenvalue[0])
+        eigenvalues, eigenvectors = np.linalg.eig(covariance_matrix)
 
         # Sort the eigenvalues and corresponding eigenvectors from largest
         # to smallest eigenvalue and select the first n_components

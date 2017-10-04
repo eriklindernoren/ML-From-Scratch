@@ -82,10 +82,8 @@ class MultilayerPerceptron():
     # Use the trained model to predict labels of X
     def predict(self, X):
         # Forward pass:
-        # Calculate hidden layer
         hidden_input = X.dot(self.W) + self.w0
         hidden_output = self.hidden_activation(hidden_input)
-        # Calculate output layer
         output_layer_input = hidden_output.dot(self.V) + self.v0
         y_pred = self.output_activation(output_layer_input)
         return y_pred

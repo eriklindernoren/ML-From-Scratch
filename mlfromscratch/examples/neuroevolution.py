@@ -24,7 +24,12 @@ def main():
         model.add(Activation('relu'))
         model.add(Dense(n_outputs))
         model.add(Activation('softmax'))
+
         return model
+
+    # Print the model summary of a individual in the population
+    print ()
+    model_builder(n_inputs=X.shape[1], n_outputs=y.shape[1]).summary()
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4)
 

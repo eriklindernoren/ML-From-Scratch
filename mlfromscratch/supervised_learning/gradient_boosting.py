@@ -59,12 +59,10 @@ class GradientBoosting(object):
 
     def fit(self, X, y):
         y_pred = np.full(np.shape(y), np.mean(y, axis=0))
-        
         for i in self.bar(range(self.n_estimators)):
-            tree = self.trees[i]
             gradient = self.loss.gradient(y, y_pred)
-            tree.fit(X, gradient)
-            update = tree.predict(X)
+            self.trees[i].fit(X, gradient)
+            update = self.trees[i].predict(X)
             # Update y prediction
             y_pred -= np.multiply(self.learning_rate, update)
 
@@ -72,7 +70,7 @@ class GradientBoosting(object):
     def predict(self, X):
         y_pred = np.array([])
         # Make predictions
-        for i, tree in enumerate(self.trees):
+        for tree in self.trees:
             update = tree.predict(X)
             update = np.multiply(self.learning_rate, update)
             y_pred = -update if not y_pred.any() else y_pred - update

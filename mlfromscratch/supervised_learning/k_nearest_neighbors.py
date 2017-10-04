@@ -16,7 +16,7 @@ class KNN():
         self.k = k
 
     def _vote(self, neighbors):
-        """ Return the most common label among the neighbors """
+        """ Return the most common class among the neighbor samples """
         counts = np.bincount(neighbors[:, 1].astype('int'))
         return counts.argmax()
 
@@ -36,7 +36,7 @@ class KNN():
             # Sort the list of observed samples from lowest to highest distance
             # and select the k first
             k_nearest_neighbors = neighbors[neighbors[:, 0].argsort()][:self.k]
-            # Get the most common label among the neighbors
+            # Get the most common class among the neighbors
             label = self._vote(k_nearest_neighbors)
             y_pred[i] = label
         return y_pred

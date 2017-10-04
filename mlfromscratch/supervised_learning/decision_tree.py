@@ -3,9 +3,6 @@ import numpy as np
 
 from mlfromscratch.utils import divide_on_feature, train_test_split, standardize, mean_squared_error
 from mlfromscratch.utils import calculate_entropy, accuracy_score, calculate_variance
-from mlfromscratch.unsupervised_learning import PCA
-from mlfromscratch.utils import Plot
-
 
 class DecisionNode():
     """Class that represents a decision node or leaf in the decision tree
@@ -118,10 +115,10 @@ class DecisionTree(object):
                             largest_impurity = impurity
                             best_criteria = {"feature_i": feature_i, "threshold": threshold}
                             best_sets = {
-                                "leftX": Xy1[:, :n_features],
-                                "lefty": Xy1[:, n_features:],
-                                "rightX": Xy2[:, :n_features],
-                                "righty": Xy2[:, n_features:]
+                                "leftX": Xy1[:, :n_features],   # X of left subtree
+                                "lefty": Xy1[:, n_features:],   # y of left subtree
+                                "rightX": Xy2[:, :n_features],  # X of right subtree
+                                "righty": Xy2[:, n_features:]   # y of right subtree
                                 }
 
         if largest_impurity > self.min_impurity:

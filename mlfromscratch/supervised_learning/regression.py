@@ -133,7 +133,6 @@ class LassoRegression(Regression):
     """
     def __init__(self, degree, reg_factor, n_iterations=3000, learning_rate=0.01):
         self.degree = degree
-        # Lasso Regression
         self.regularization = l1_regularization(alpha=reg_factor)
         super(LassoRegression, self).__init__(n_iterations, 
                                             learning_rate)
@@ -189,7 +188,6 @@ class RidgeRegression(Regression):
         The step length that will be used when updating the weights.
     """
     def __init__(self, reg_factor, n_iterations=1000, learning_rate=0.001):
-        # Ridge Regression
         self.regularization = l2_regularization(alpha=reg_factor)
         super(RidgeRegression, self).__init__(n_iterations, 
                                             learning_rate)
@@ -211,7 +209,6 @@ class PolynomialRidgeRegression(Regression):
     """
     def __init__(self, degree, reg_factor, n_iterations=3000, learning_rate=0.01, gradient_descent=True):
         self.degree = degree
-        # Ridge Regression
         self.regularization = l2_regularization(alpha=reg_factor)
         super(PolynomialRidgeRegression, self).__init__(n_iterations, 
                                                         learning_rate)

@@ -31,10 +31,9 @@ class RandomForest():
         The maximum depth of a tree.
     """
     def __init__(self, n_estimators=100, max_features=None, min_samples_split=2,
-                 min_gain=1e-7, max_depth=float("inf")):
+                 min_gain=0, max_depth=float("inf")):
         self.n_estimators = n_estimators    # Number of trees
         self.max_features = max_features    # Maxmimum number of features per tree
-        self.feature_indices = []           # The indices of the features used for each tree
         self.min_samples_split = min_samples_split
         self.min_gain = min_gain            # Minimum information gain req. to continue
         self.max_depth = max_depth          # Maximum depth for tree
@@ -64,7 +63,7 @@ class RandomForest():
             # Feature bagging (select random subsets of the features)
             idx = np.random.choice(range(n_features), size=self.max_features, replace=True)
             # Save the indices of the features for prediction
-            self.feature_indices.append(idx)
+            self.trees[i].feature_indices = idx
             # Choose the features corresponding to the indices
             X_subset = X_subset[:, idx]
             # Fit the tree to the data
@@ -74,8 +73,8 @@ class RandomForest():
         y_preds = np.empty((X.shape[0], len(self.trees)))
         # Let each tree make a prediction on the data
         for i, tree in enumerate(self.trees):
-            # Select the features that the tree has trained on
-            idx = self.feature_indices[i]
+            # Indices of the features that the tree has trained on
+            idx = tree.feature_indices
             # Make a prediction based on those features
             prediction = tree.predict(X[:, idx])
             y_preds[:, i] = prediction
