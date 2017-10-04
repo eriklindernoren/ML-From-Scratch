@@ -102,14 +102,16 @@ class Neuroevolution():
 
             # Get the individual with the highest fitness
             fittest_individual = self.population[0]
-            print ("[%d Top Individual - Fitness: %.5f, Acc: %.1f%%]" % (epoch, 
+            print ("[%d Best Individual - Fitness: %.5f, Accuracy: %.1f%%]" % (epoch, 
                                                                         fittest_individual.fitness, 
                                                                         float(100*fittest_individual.accuracy)))
             # The 'winners' are selected for the next generation
             next_population = [self.population[i] for i in range(n_winners)]
 
-            # The fittest 60% of the population are selected as parents
-            parents = [self.population[i] for i in range(n_parents)]
+            total_fitness = np.sum([model.fitness for model in self.population])
+            # Parents are selected with probabilities proportionate to their fitness
+            parent_probabilities = [model.fitness / total_fitness for model in self.population]
+            parents = np.random.choice(a=self.population, size=n_parents, p=parent_probabilities, replace=False)
             for i in np.arange(0, len(parents), 2):
                 # Perform crossover to produce offspring
                 child1, child2 = self._crossover(parents[i], parents[i+1])

@@ -183,30 +183,29 @@ but rather to present the inner workings of them in a transparent and accessible
     +---------------+
     | Model Summary |
     +---------------+
-    Input Shape: (10,)
+    Input Shape: (64,)
     +----------------------+------------+--------------+
     | Layer Type           | Parameters | Output Shape |
     +----------------------+------------+--------------+
-    | Dense                | 176        | (16,)        |
+    | Dense                | 1040       | (16,)        |
     | Activation (ReLU)    | 0          | (16,)        |
-    | Dense                | 68         | (4,)         |
-    | Activation (Softmax) | 0          | (4,)         |
+    | Dense                | 170        | (10,)        |
+    | Activation (Softmax) | 0          | (10,)        |
     +----------------------+------------+--------------+
-    Total Parameters: 244
+    Total Parameters: 1210
 
-    [0 Top Individual - Fitness: 1.86712, Acc: 42.8%]
-    [1 Top Individual - Fitness: 1.99916, Acc: 49.5%]
+    [0 Best Individual - Fitness: 3.08250, Acc: 23.1%]
+    [1 Best Individual - Fitness: 3.10461, Acc: 10.7%]
     ...
-    [299 Top Individual - Fitness: 10.41595, Acc: 93.7%]
-    Fitness: 10.41595
-    Accuracy: 93.7%
+    [1999 Best Individual - Fitness: 32.91299, Acc: 95.0%]
+    Test set accuracy: 93.6%
 
 <p align="center">
-    <img src="http://eriklindernoren.se/images/evo_nn1.png" width="640">
+    <img src="http://eriklindernoren.se/images/evo_nn2.png" width="640">
 </p>
 <p align="center">
-    Figure: Classification by a neural network which has been evolutionary<br>
-    evolved.
+    Figure: Classification of the digit dataset by a neural network which has<br>
+    been evolutionary evolved.
 </p>
 
 ### Genetic Algorithm

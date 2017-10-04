@@ -15,6 +15,9 @@ def main():
 
     X, y = datasets.make_classification(n_samples=1000, n_features=10, n_classes=4, n_clusters_per_class=1, n_informative=2)
 
+    data = datasets.load_digits()
+    X = normalize(data.data)
+    y = data.target
     y = to_categorical(y.astype("int"))
 
     # Model builder
@@ -34,17 +37,17 @@ def main():
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4)
 
     model = Neuroevolution(population_size=100, 
-                        mutation_rate=0.05, 
+                        mutation_rate=0.02, 
                         model_builder=model_builder)
     
-    model = model.evolve(X_train, y_train, n_generations=500)
+    model = model.evolve(X_train, y_train, n_generations=2000)
 
-    print ("Fitness: %.5f" % model.fitness)
-    print ("Accuracy: %.1f%%" % float(100*model.accuracy))
+    loss, accuracy = model.test_on_batch(X_test, y_test)
+    print ("Test set accuracy: %.1f%%" % float(100*accuracy))
 
     # Reduce dimension to 2D using PCA and plot the results
     y_pred = np.argmax(model.predict(X_test), axis=1)
-    Plot().plot_in_2d(X_test, y_pred, title="Evolutionary Evolved Neural Network", accuracy=model.accuracy, legend_labels=range(y.shape[1]))
+    Plot().plot_in_2d(X_test, y_pred, title="Evolutionary Evolved Neural Network", accuracy=accuracy, legend_labels=range(y.shape[1]))
 
 
 if __name__ == "__main__":

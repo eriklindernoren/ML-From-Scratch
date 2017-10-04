@@ -11,7 +11,7 @@ from mlfromscratch.unsupervised_learning import DBSCAN
 
 def main():
     # Load the dataset
-    X, y = datasets.make_moons(n_samples=300, noise=0.1, shuffle=False)
+    X, y = datasets.make_moons(n_samples=300, noise=0.08, shuffle=False)
 
     # Cluster the data using DBSCAN
     clf = DBSCAN(eps=0.17, min_samples=5)

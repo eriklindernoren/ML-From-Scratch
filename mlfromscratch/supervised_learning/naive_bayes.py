@@ -24,9 +24,9 @@ class NaiveBayes():
 
     def _calculate_likelihood(self, mean, var, x):
         """ Gaussian likelihood of the data x given mean and var """
-        eps = 1e-4 # Add small term in denominator to avoid division by zero
-        coeff = 1.0 / (math.sqrt((2.0 * math.pi) * var + eps))
-        exponent = math.exp(-(math.pow(x - mean, 2) / (2 * var  + eps)))
+        eps = 1e-4 # Added in denominator to prevent division by zero
+        coeff = 1.0 / math.sqrt(2.0 * math.pi * var + eps)
+        exponent = math.exp(-(math.pow(x - mean, 2) / (2 * var + eps)))
         return coeff * exponent
 
     def _calculate_prior(self, c):

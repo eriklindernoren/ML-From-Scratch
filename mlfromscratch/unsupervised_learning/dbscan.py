@@ -18,25 +18,18 @@ class DBSCAN():
     def __init__(self, eps=1, min_samples=5):
         self.eps = eps
         self.min_samples = min_samples
-        # List of lists (each is a cluster) containing sample indices
-        self.clusters = []
-        self.visited_samples = []
-        # Hashmap {"sample_index": [neighbor1, neighbor2, ...]}
-        self.neighbors = {}
-        self.X = None   # Dataset
-
 
     def _get_neighbors(self, sample_i):
         """ Return a list of indexes of neighboring samples
         A sample_2 is considered a neighbor of sample_1 if the distance between
         them is smaller than epsilon """
         neighbors = []
-        for _sample_i, _sample in enumerate(self.X):
-            if _sample_i != sample_i and euclidean_distance(
-                    self.X[sample_i], _sample) < self.eps:
-                neighbors.append(_sample_i)
+        idxs = np.arange(len(self.X))
+        for i, _sample in enumerate(self.X[idxs != sample_i]):
+            distance = euclidean_distance(self.X[sample_i], _sample)
+            if distance < self.eps:
+                neighbors.append(i)
         return np.array(neighbors)
-
 
     def _expand_cluster(self, sample_i, neighbors):
         """ Recursive method which expands the cluster until we have reached the border
@@ -46,26 +39,27 @@ class DBSCAN():
         for neighbor_i in neighbors:
             if not neighbor_i in self.visited_samples:
                 self.visited_samples.append(neighbor_i)
-                # Fetch the samples distant neighbors
+                # Fetch the sample's distant neighbors (neighbors of neighbor)
                 self.neighbors[neighbor_i] = self._get_neighbors(neighbor_i)
-                # Make sure the neighbors neighbors are more than min_samples
+                # Make sure the neighbor's neighbors are more than min_samples
+                # (If this is true the neighbor is a core point)
                 if len(self.neighbors[neighbor_i]) >= self.min_samples:
                     # Expand the cluster from the neighbor
                     expanded_cluster = self._expand_cluster(
                         neighbor_i, self.neighbors[neighbor_i])
                     # Add expanded cluster to this cluster
                     cluster = cluster + expanded_cluster
-            if not neighbor_i in np.array(self.clusters):
-                cluster.append(neighbor_i)
+                else:
+                    # If the neighbor is not a core point we only add the neighbor point
+                    cluster.append(neighbor_i)
         return cluster
-
 
     def _get_cluster_labels(self):
         """ Return the samples labels as the index of the cluster in which they are
         contained """
         # Set default value to number of clusters
         # Will make sure all outliers have same cluster label
-        labels = len(self.clusters) * np.ones(np.shape(self.X)[0])
+        labels = np.full(shape=self.X.shape[0], fill_value=len(self.clusters))
         for cluster_i, cluster in enumerate(self.clusters):
             for sample_i in cluster:
                 labels[sample_i] = cluster_i
@@ -74,6 +68,9 @@ class DBSCAN():
     # DBSCAN
     def predict(self, X):
         self.X = X
+        self.clusters = []
+        self.visited_samples = []
+        self.neighbors = {}
         n_samples = np.shape(self.X)[0]
         # Iterate through samples and expand clusters from them
         # if they have more neighbors than self.min_samples
