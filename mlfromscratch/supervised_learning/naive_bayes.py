@@ -7,8 +7,6 @@ from mlfromscratch.utils import Plot, accuracy_score
 
 class NaiveBayes():
     """The Gaussian Naive Bayes classifier. """
-    def __init__(self): pass
-
     def fit(self, X, y):
         self.X, self.y = X, y
         self.classes = np.unique(y)
@@ -26,8 +24,9 @@ class NaiveBayes():
 
     def _calculate_likelihood(self, mean, var, x):
         """ Gaussian likelihood of the data x given mean and var """
-        coeff = (1.0 / (math.sqrt((2.0 * math.pi) * var)))
-        exponent = math.exp(-(math.pow(x - mean, 2) / (2 * var)))
+        eps = 1e-4 # Add small term in denominator to avoid division by zero
+        coeff = 1.0 / (math.sqrt((2.0 * math.pi) * var) + eps)
+        exponent = math.exp(-(math.pow(x - mean, 2) / (2 * var  + eps)))
         return coeff * exponent
 
     def _calculate_prior(self, c):
@@ -77,4 +76,3 @@ class NaiveBayes():
             y = self._classify(sample)
             y_pred.append(y)
         return y_pred
-
