@@ -97,10 +97,10 @@ def main():
     # Convert the nominal y values to binary
     y = to_categorical(y)
 
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, seed=1)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4, seed=1)
 
     # MLP
-    clf = MultilayerPerceptron(n_hidden=12,
+    clf = MultilayerPerceptron(n_hidden=16,
         n_iterations=1000,
         learning_rate=0.01)
 

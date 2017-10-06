@@ -25,7 +25,7 @@ class Neuroevolution():
         model.id = id
         model.fitness = 0
         model.accuracy = 0
-
+        
         return model
 
     def _initialize_population(self):
@@ -40,10 +40,11 @@ class Neuroevolution():
         for layer in individual.layers:
             if hasattr(layer, 'W'):
                 # Mutation of weight with probability self.mutation_rate
-                mutation_mask = np.random.binomial(1, self.mutation_rate, size=layer.W.shape)
-                layer.W += np.random.normal(0, var, size=layer.W.shape) * mutation_mask
-                mutation_mask = np.random.binomial(1, self.mutation_rate, size=layer.w0.shape)
-                layer.w0 += np.random.normal(0, var, size=layer.w0.shape) * mutation_mask
+                mutation_mask = np.random.binomial(1, p=self.mutation_rate, size=layer.W.shape)
+                layer.W += np.random.normal(loc=0, scale=var, size=layer.W.shape) * mutation_mask
+                mutation_mask = np.random.binomial(1, p=self.mutation_rate, size=layer.w0.shape)
+                layer.w0 += np.random.normal(loc=0, scale=var, size=layer.w0.shape) * mutation_mask
+        
         return individual
 
     def _inherit_weights(self, child, parent):
@@ -71,7 +72,7 @@ class Neuroevolution():
                 child1.layers[i].w0[:, cutoff:] = parent2.layers[i].w0[:, cutoff:].copy()
                 child2.layers[i].W[:, cutoff:] = parent1.layers[i].W[:, cutoff:].copy()
                 child2.layers[i].w0[:, cutoff:] = parent1.layers[i].w0[:, cutoff:].copy()
-
+        
         return child1, child2
 
     def _calculate_fitness(self):
@@ -109,10 +110,10 @@ class Neuroevolution():
             next_population = [self.population[i] for i in range(n_winners)]
 
             total_fitness = np.sum([model.fitness for model in self.population])
-            # Parents are selected with probabilities proportionate to their 
-            # fitness (without replacement to preserve diversity)
+            # The probability that a individual will be selected as a parent is proportionate to its fitness
             parent_probabilities = [model.fitness / total_fitness for model in self.population]
-            parents = np.random.choice(a=self.population, size=n_parents, p=parent_probabilities, replace=False)
+            # Select parents according to probabilities (without replacement to preserve diversity)
+            parents = np.random.choice(self.population, size=n_parents, p=parent_probabilities, replace=False)
             for i in np.arange(0, len(parents), 2):
                 # Perform crossover to produce offspring
                 child1, child2 = self._crossover(parents[i], parents[i+1])

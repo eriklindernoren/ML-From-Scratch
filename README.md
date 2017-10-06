@@ -281,6 +281,7 @@ but rather to present the inner workings of them in a transparent and accessible
 - [Multilayer Perceptron](mlfromscratch/supervised_learning/multilayer_perceptron.py)
 - [Naive Bayes](mlfromscratch/supervised_learning/naive_bayes.py)
 - [Neuroevolution](mlfromscratch/supervised_learning/neuroevolution.py)
+- [Particle Swarm Optimization of Neural Network](mlfromscratch/supervised_learning/particle_swarm_optimization.py)
 - [Perceptron](mlfromscratch/supervised_learning/perceptron.py)
 - [Polynomial Regression](mlfromscratch/supervised_learning/regression.py)
 - [Random Forest](mlfromscratch/supervised_learning/random_forest.py)

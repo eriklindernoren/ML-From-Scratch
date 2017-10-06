@@ -14,3 +14,4 @@ from .random_forest import RandomForest
 from .support_vector_machine import SupportVectorMachine
 from .xgboost import XGBoost
 from .neuroevolution import Neuroevolution
+from .particle_swarm_optimization import ParticleSwarmOptimizedNN
