@@ -9,17 +9,19 @@ class ParticleSwarmOptimizedNN():
     -----------
     n_individuals: int
         The number of neural networks that are allowed in the population at a time.
+    model_builder: method
+        A method which returns a user specified NeuralNetwork instance.
     inertia_weight:     float [0,1)
     cognitive_weight:   float [0,1)
     social_weight:      float [0,1)
-    model_builder: method
-        A method which returns a user specified NeuralNetwork instance.
+    max_velocity: float
+        The maximum allowed value for the velocity.
 
     Reference:
         Neural Network Training Using Particle Swarm Optimization
         https://visualstudiomagazine.com/articles/2013/12/01/neural-network-training-using-particle-swarm-optimization.aspx 
     """
-    def __init__(self, population_size, inertia_weight, cognitive_weight, social_weight, model_builder):
+    def __init__(self, population_size, model_builder, inertia_weight=0.8, cognitive_weight=2, social_weight=2, max_velocity=10):
         self.population_size = population_size
         self.model_builder = model_builder
         self.best_individual = None
@@ -27,6 +29,8 @@ class ParticleSwarmOptimizedNN():
         self.cognitive_w = cognitive_weight
         self.inertia_w = inertia_weight
         self.social_w = social_weight
+        self.min_v = -max_velocity
+        self.max_v = max_velocity
 
     def _build_model(self, id):
         """ Returns a new individual """
@@ -35,18 +39,16 @@ class ParticleSwarmOptimizedNN():
         model.fitness = 0
         model.highest_fitness = 0
         model.accuracy = 0
-
-        # Set initial velocity
-        model.velocity = []
-        for layer in model.layers:
-            if hasattr(layer, 'W'):
-                velocity = {"W": np.zeros_like(layer.W), "w0": np.zeros_like(layer.w0)}
-            else:
-                velocity = {"W": 0, "w0": 0}
-            model.velocity.append(velocity)
-
         # Set intial best as the current initialization
         model.best_layers = copy.copy(model.layers)
+
+        # Set initial velocity to zero
+        model.velocity = []
+        for layer in model.layers:
+            velocity = {"W": 0, "w0": 0}
+            if hasattr(layer, 'W'):
+                velocity = {"W": np.zeros_like(layer.W), "w0": np.zeros_like(layer.w0)}
+            model.velocity.append(velocity)
 
         return model
 
@@ -64,18 +66,19 @@ class ParticleSwarmOptimizedNN():
         r2 = np.random.uniform()
         for i, layer in enumerate(individual.layers):
             if hasattr(layer, 'W'):
-
                 # Layer weights velocity
                 first_term_W = self.inertia_w * individual.velocity[i]["W"]
                 second_term_W = self.cognitive_w * r1 * (individual.best_layers[i].W - layer.W)
                 third_term_W = self.social_w * r2 * (self.best_individual.layers[i].W - layer.W)
-                individual.velocity[i]["W"] = first_term_W + second_term_W + third_term_W
+                new_velocity = first_term_W + second_term_W + third_term_W
+                individual.velocity[i]["W"] = np.clip(new_velocity, self.min_v, self.max_v)
 
                 # Bias weight velocity
                 first_term_w0 = self.inertia_w * individual.velocity[i]["w0"]
                 second_term_w0 = self.cognitive_w * r1 * (individual.best_layers[i].w0 - layer.w0)
                 third_term_w0 = self.social_w * r2 * (self.best_individual.layers[i].w0 - layer.w0)
-                individual.velocity[i]["w0"] = first_term_w0 + second_term_w0 + third_term_w0
+                new_velocity = first_term_w0 + second_term_w0 + third_term_w0
+                individual.velocity[i]["w0"] = np.clip(new_velocity, self.min_v, self.max_v)
 
                 # Update layer weights with velocity
                 individual.layers[i].W += individual.velocity[i]["W"]
@@ -93,17 +96,17 @@ class ParticleSwarmOptimizedNN():
 
         self._initialize_population()
 
-        # The best individual of the population is initialized to the first individual
+        # The best individual of the population is initialized as population's first ind.
         self.best_individual = copy.copy(self.population[0])
 
         for epoch in range(n_generations):
             for individual in self.population:
-                # Update the NN weights by calculating new velocity
+                # Calculate new velocity and update the NN weights
                 self._update_weights(individual)
                 # Calculate the fitness of the updated individual
                 self._calculate_fitness(individual)
 
-                # If the current fitness is higher than the previous highest
+                # If the current fitness is higher than the individual's previous highest
                 # => update the individual's best layer setup
                 if individual.fitness > individual.highest_fitness:
                     individual.best_layers = copy.copy(individual.layers)
@@ -117,6 +120,5 @@ class ParticleSwarmOptimizedNN():
                                                                             self.best_individual.id,
                                                                             self.best_individual.fitness,
                                                                             100*float(self.best_individual.accuracy)))
-
         return self.best_individual
 

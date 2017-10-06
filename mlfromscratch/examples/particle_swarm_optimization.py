@@ -55,11 +55,14 @@ def main():
                         inertia_weight=inertia_weight,
                         cognitive_weight=cognitive_weight,
                         social_weight=social_weight,
+                        max_velocity=5,
                         model_builder=model_builder)
     
     model = model.evolve(X_train, y_train, n_generations=n_generations)
 
     loss, accuracy = model.test_on_batch(X_test, y_test)
+
+    print ("Accuracy: %.1f%%" % float(100*accuracy))
 
     # Reduce dimension to 2D using PCA and plot the results
     y_pred = np.argmax(model.predict(X_test), axis=1)
