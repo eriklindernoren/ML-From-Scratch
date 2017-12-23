@@ -21,7 +21,12 @@ class ParticleSwarmOptimizedNN():
         Neural Network Training Using Particle Swarm Optimization
         https://visualstudiomagazine.com/articles/2013/12/01/neural-network-training-using-particle-swarm-optimization.aspx 
     """
-    def __init__(self, population_size, model_builder, inertia_weight=0.8, cognitive_weight=2, social_weight=2, max_velocity=10):
+    def __init__(self, population_size, 
+                        model_builder, 
+                        inertia_weight=0.8, 
+                        cognitive_weight=2, 
+                        social_weight=2, 
+                        max_velocity=20):
         self.population_size = population_size
         self.model_builder = model_builder
         self.best_individual = None

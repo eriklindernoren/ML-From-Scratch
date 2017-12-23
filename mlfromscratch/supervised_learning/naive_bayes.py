@@ -38,8 +38,11 @@ class NaiveBayes():
         return n_class_instances / n_total_instances
 
     def _classify(self, sample):
-        """ Classification using Bayes Rule P(Y|X) = P(X|Y)*P(Y)/P(X)
+        """ Classification using Bayes Rule P(Y|X) = P(X|Y)*P(Y)/P(X),
+            or Posterior = Likelihood * Prior / Scaling Factor
 
+        P(Y|X) - The posterior is the probability that sample x is of class y given the
+                 feature values of x being distributed according to distribution of y and the prior.
         P(X|Y) - Likelihood of data X given class distribution Y. 
                  Gaussian distribution (given by _calculate_likelihood)
         P(Y)   - Prior (given by _calculate_prior)
@@ -52,17 +55,16 @@ class NaiveBayes():
         posteriors = []
         # Go through list of classes
         for i, c in enumerate(self.classes):
+            # Initialize posterior as prior
             posterior = self._calculate_prior(c)
             # Naive assumption (independence):
             # P(x1,x2,x3|Y) = P(x1|Y)*P(x2|Y)*P(x3|Y)
-            # Multiply with the class likelihoods
+            # Posterior is product of prior and likelihoods (ignoring scaling factor)
             for j, params in enumerate(self.parameters[i]):
                 sample_feature = sample[j]
-                # Determine P(x|Y)
+                # Likelihood of sample x given distribution of y
                 likelihood = self._calculate_likelihood(params["mean"], params["var"], sample_feature)
-                # Multiply with the accumulated probability
                 posterior *= likelihood
-            # Total posterior = P(Y)*P(x1|Y)*P(x2|Y)*...*P(xN|Y)
             posteriors.append(posterior)
         # Return the class with the largest posterior probability
         index_of_max = np.argmax(posteriors)
