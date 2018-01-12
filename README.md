@@ -140,7 +140,8 @@ but rather to present the inner workings of them in a transparent and accessible
     <img src="http://eriklindernoren.se/images/gan_mnist5.gif" width="640">
 </p>
 <p align="center">
-    Figure: Training progress of a MNIST Generative Adversarial Network.
+    Figure: Training progress of a Generative Adversarial Network generating <br>
+    handwritten digits from the MNIST dataset.
 </p>
 
 ### Deep Reinforcement Learning
