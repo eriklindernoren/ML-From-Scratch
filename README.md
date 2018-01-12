@@ -38,11 +38,11 @@ but rather to present the inner workings of them in a transparent and accessible
     $ python mlfromscratch/examples/polynomial_regression.py
 
 <p align="center">
-    <img src="http://eriklindernoren.se/images/poly_regr1.gif" width="640"\>
+    <img src="http://eriklindernoren.se/images/p_reg.gif" width="640"\>
 </p>
 <p align="center">
-    Figure: Training progress of a regularized polynomial regression model fitting temperature data measured in <br> 
-    Linköping, Sweden 2016.
+    Figure: Training progress of a regularized polynomial regression model fitting <br>
+    temperature data measured in Linköping, Sweden 2016.
 </p>
 
 ### Classification With CNN
