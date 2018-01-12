@@ -315,18 +315,20 @@ class BatchNormalization(Layer):
             self.running_mean = np.mean(X, axis=0)
             self.running_var = np.var(X, axis=0)
 
-        if training:
+        if training and self.trainable:
             mean = np.mean(X, axis=0)
             var = np.var(X, axis=0)
-            self.X_centered = X - mean
-            self.stddev_inv = 1 / np.sqrt(var + self.eps)
             self.running_mean = self.momentum * self.running_mean + (1 - self.momentum) * mean
             self.running_var = self.momentum * self.running_var + (1 - self.momentum) * var
         else:
             mean = self.running_mean
             var = self.running_var
 
-        X_norm = (X - mean) / np.sqrt(var + self.eps)
+        # Statistics saved for backward pass
+        self.X_centered = X - mean
+        self.stddev_inv = 1 / np.sqrt(var + self.eps)
+
+        X_norm = self.X_centered * self.stddev_inv
         output = self.gamma * X_norm + self.beta
 
         return output
@@ -347,7 +349,7 @@ class BatchNormalization(Layer):
 
         batch_size = accum_grad.shape[0]
 
-        # The gradient of the loss with respect to the layer inputs (use weights from forward pass)
+        # The gradient of the loss with respect to the layer inputs (use weights and statistics from forward pass)
         accum_grad = (1 / batch_size) * gamma * self.stddev_inv * (
             batch_size * accum_grad 
             - np.sum(accum_grad, axis=0)

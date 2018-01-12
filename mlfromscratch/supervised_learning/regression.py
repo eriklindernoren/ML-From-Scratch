@@ -65,8 +65,9 @@ class Regression(object):
         X = np.insert(X, 0, 1, axis=1)
         self.training_errors = []
         self.initialize_weights(n_features=X.shape[1])
+
         # Do gradient descent for n_iterations
-        for _ in range(self.n_iterations):
+        for i in range(self.n_iterations):
             y_pred = X.dot(self.w)
             # Calculate l2 loss
             mse = np.mean(0.5 * (y - y_pred)**2 + self.regularization(self.w))

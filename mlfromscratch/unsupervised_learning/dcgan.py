@@ -7,7 +7,7 @@ from sklearn.datasets import fetch_mldata
 from mlfromscratch.deep_learning.optimizers import Adam
 from mlfromscratch.deep_learning.loss_functions import CrossEntropy
 from mlfromscratch.deep_learning.layers import Dense, Dropout, Flatten, Activation, Reshape, BatchNormalization, ZeroPadding2D, Conv2D, UpSampling2D
-from mlfromscratch.supervised_learning import NeuralNetwork
+from mlfromscratch.deep_learning import NeuralNetwork
 
 
 class DCGAN():
@@ -16,6 +16,7 @@ class DCGAN():
         self.img_cols = 28
         self.channels = 1
         self.img_shape = (self.channels, self.img_rows, self.img_cols)
+        self.latent_dim = 100
 
         optimizer = Adam(learning_rate=0.0002, b1=0.5)
         loss_function = CrossEntropy
@@ -28,8 +29,12 @@ class DCGAN():
 
         # Build the combined model
         self.combined = NeuralNetwork(optimizer=optimizer, loss=loss_function)
-        self.combined.layers += self.generator.layers[:]
-        self.combined.layers += self.discriminator.layers[:]
+        self.combined.layers.extend(self.generator.layers)
+        self.combined.layers.extend(self.discriminator.layers)
+
+        print ()
+        self.generator.summary(name="Generator")
+        self.discriminator.summary(name="Discriminator")
 
     def build_generator(self, optimizer, loss_function):
         
@@ -38,12 +43,15 @@ class DCGAN():
         model.add(Dense(128 * 7 * 7, input_shape=(100,)))
         model.add(Activation('leaky_relu'))
         model.add(Reshape((128, 7, 7)))
+        model.add(BatchNormalization(momentum=0.8))
         model.add(UpSampling2D())
         model.add(Conv2D(128, filter_shape=(3,3), padding='same'))
         model.add(Activation("leaky_relu"))
+        model.add(BatchNormalization(momentum=0.8))
         model.add(UpSampling2D())
         model.add(Conv2D(64, filter_shape=(3,3), padding='same'))
         model.add(Activation("leaky_relu"))
+        model.add(BatchNormalization(momentum=0.8))
         model.add(Conv2D(1, filter_shape=(3,3), padding='same'))
         model.add(Activation("tanh"))
 
@@ -60,16 +68,15 @@ class DCGAN():
         model.add(ZeroPadding2D(padding=((0,1),(0,1))))
         model.add(Activation('leaky_relu'))
         model.add(Dropout(0.25))
+        model.add(BatchNormalization(momentum=0.8))
         model.add(Conv2D(128, filter_shape=(3,3), stride=2, padding='same'))
         model.add(Activation('leaky_relu'))
         model.add(Dropout(0.25))
+        model.add(BatchNormalization(momentum=0.8))
         model.add(Conv2D(256, filter_shape=(3,3), stride=1, padding='same'))
         model.add(Activation('leaky_relu'))
         model.add(Dropout(0.25))
         model.add(Flatten())
-        model.add(Dense(128))
-        model.add(Activation('leaky_relu'))
-        model.add(Dropout(0.5))
         model.add(Dense(2))
         model.add(Activation('softmax'))
 
@@ -100,6 +107,7 @@ class DCGAN():
             idx = np.random.randint(0, X.shape[0], half_batch)
             imgs = X[idx]
 
+            # Sample noise to use as generator input
             noise = np.random.normal(0, 1, (half_batch, 100))
 
             # Generate a half batch of images
@@ -123,7 +131,7 @@ class DCGAN():
             self.discriminator.set_trainable(False)
 
             # Sample noise and use as generator input
-            noise = np.random.normal(0, 1, (batch_size, 100))
+            noise = np.random.normal(0, 1, (batch_size, self.latent_dim))
 
             # The generator wants the discriminator to label the generated samples as valid
             valid = np.concatenate((np.ones((batch_size, 1)), np.zeros((batch_size, 1))), axis=1)
@@ -143,11 +151,11 @@ class DCGAN():
         noise = np.random.normal(0, 1, (r * c, 100))
         gen_imgs = self.generator.predict(noise)
 
-        # Rescale images 0 - 1
-        gen_imgs = 0.5 * gen_imgs + 0.5
+        # Rescale images 0 - 1 (from -1 to 1)
+        gen_imgs = 0.5 * (gen_imgs + 1)
 
         fig, axs = plt.subplots(r, c)
-        plt.suptitle("Generative Adversarial Network")
+        plt.suptitle("Deep Convolutional Generative Adversarial Network")
         cnt = 0
         for i in range(r):
             for j in range(c):
@@ -160,6 +168,6 @@ class DCGAN():
 
 if __name__ == '__main__':
     dcgan = DCGAN()
-    dcgan.train(epochs=80000, batch_size=32, save_interval=50)
+    dcgan.train(epochs=200000, batch_size=32, save_interval=50)
 
 
