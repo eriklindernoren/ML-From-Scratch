@@ -14,29 +14,21 @@ class KNN():
     def __init__(self, k=5):
         self.k = k
 
-    def _vote(self, neighbors):
+    def _vote(self, neighbor_labels):
         """ Return the most common class among the neighbor samples """
-        counts = np.bincount(neighbors[:, 1].astype('int'))
+        counts = np.bincount(neighbor_labels.astype('int'))
         return counts.argmax()
 
     def predict(self, X_test, X_train, y_train):
         y_pred = np.empty(X_test.shape[0])
         # Determine the class of each sample
         for i, test_sample in enumerate(X_test):
-            # Two columns [distance, label], for each observed sample
-            neighbors = np.empty((X_train.shape[0], 2))
-            # Calculate the distance from each observed sample to the
-            # sample we wish to predict
-            for j, observed_sample in enumerate(X_train):
-                distance = euclidean_distance(test_sample, observed_sample)
-                label = y_train[j]
-                # Add neighbor information
-                neighbors[j] = [distance, label]
-            # Sort the list of observed samples from lowest to highest distance
-            # and select the k first
-            k_nearest_neighbors = neighbors[neighbors[:, 0].argsort()][:self.k]
-            # Get the most common class among the neighbors
-            label = self._vote(k_nearest_neighbors)
-            y_pred[i] = label
+            # Sort the training samples by their distance to the test sample and get the K nearest
+            idx = np.argsort([euclidean_distance(test_sample, x) for x in X_train])[:self.k]
+            # Extract the labels of the K nearest neighboring training samples
+            k_nearest_neighbors = np.array([y_train[i] for i in idx])
+            # Label sample as the most common class label
+            y_pred[i] = self._vote(k_nearest_neighbors)
+
         return y_pred
         
