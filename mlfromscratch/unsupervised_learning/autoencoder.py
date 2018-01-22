@@ -14,7 +14,7 @@ from mlfromscratch.deep_learning import NeuralNetwork
 
 
 class Autoencoder():
-    """A Autoencoder with deep fully-connected neural nets.
+    """An Autoencoder with deep fully-connected neural nets.
 
     Training Data: MNIST Handwritten Digits (28x28 images)
     """
@@ -27,7 +27,6 @@ class Autoencoder():
         optimizer = Adam(learning_rate=0.0002, b1=0.5)
         loss_function = SquareLoss
 
-        # Build the discriminator
         self.encoder = self.build_encoder(optimizer, loss_function)
         self.decoder = self.build_decoder(optimizer, loss_function)
 
