@@ -141,7 +141,7 @@ but rather to present the inner workings of them in a transparent and accessible
 </p>
 <p align="center">
     Figure: Training progress of a Generative Adversarial Network generating <br>
-    handwritten digits from the MNIST dataset.
+    handwritten digits.
 </p>
 
 ### Deep Reinforcement Learning
