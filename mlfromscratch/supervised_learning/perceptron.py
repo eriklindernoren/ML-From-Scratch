@@ -18,7 +18,7 @@ class Perceptron():
     n_iterations: float
         The number of training iterations the algorithm will tune the weights for.
     activation_function: class
-        The activation that shall be used for each neuron. 
+        The activation that shall be used for each neuron.
         Possible choices: Sigmoid, ExpLU, ReLU, LeakyReLU, SoftPlus, TanH
     loss: class
         The loss function used to assess the model's performance.
@@ -35,7 +35,7 @@ class Perceptron():
 
     def fit(self, X, y):
         n_samples, n_features = np.shape(X)
-        n_outputs = np.shape(y)[1]
+        _, n_outputs = np.shape(y)
 
         # Initialize weights between [-1/sqrt(N), 1/sqrt(N)]
         limit = 1 / math.sqrt(n_features)

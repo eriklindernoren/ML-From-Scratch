@@ -6,14 +6,14 @@ from mlfromscratch.deep_learning.activation_functions import Sigmoid
 
 
 class LogisticRegression():
-    """ Logistic Regression classifier. 
+    """ Logistic Regression classifier.
     Parameters:
     -----------
     learning_rate: float
         The step length that will be taken when following the negative gradient during
         training.
     gradient_descent: boolean
-        True or false depending if gradient descent should be used when training. If 
+        True or false depending if gradient descent should be used when training. If
         false then we use batch optimization by least squares.
     """
     def __init__(self, learning_rate=.1, gradient_descent=True):
@@ -35,7 +35,7 @@ class LogisticRegression():
             # Make a new prediction
             y_pred = self.sigmoid(X.dot(self.param))
             if self.gradient_descent:
-                # Move against the gradient of the loss function with 
+                # Move against the gradient of the loss function with
                 # respect to the parameters to minimize the loss
                 self.param -= self.learning_rate * -(y - y_pred).dot(X)
             else:
@@ -45,6 +45,5 @@ class LogisticRegression():
                 self.param = np.linalg.pinv(X.T.dot(diag_gradient).dot(X)).dot(X.T).dot(diag_gradient.dot(X).dot(self.param) + y - y_pred)
 
     def predict(self, X):
-        y_pred = np.round(self.sigmoid(X.dot(self.param)))
-        return y_pred.astype(int)
-        
+        y_pred = np.round(self.sigmoid(X.dot(self.param))).astype(int)
+        return y_pred

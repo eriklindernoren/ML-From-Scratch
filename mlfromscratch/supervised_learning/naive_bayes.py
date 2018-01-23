@@ -4,7 +4,6 @@ import math
 from mlfromscratch.utils import train_test_split, normalize
 from mlfromscratch.utils import Plot, accuracy_score
 
-
 class NaiveBayes():
     """The Gaussian Naive Bayes classifier. """
     def fit(self, X, y):
@@ -17,8 +16,7 @@ class NaiveBayes():
             X_where_c = X[np.where(y == c)]
             self.parameters.append([])
             # Add the mean and variance for each feature (column)
-            for j in range(X.shape[1]):
-                col = X_where_c[:, j]
+            for col in X_where_c.T:
                 parameters = {"mean": col.mean(), "var": col.var()}
                 self.parameters[i].append(parameters)
 
@@ -30,12 +28,11 @@ class NaiveBayes():
         return coeff * exponent
 
     def _calculate_prior(self, c):
-        """ Calculate the prior of class c 
+        """ Calculate the prior of class c
         (samples where class == c / total number of samples)"""
         X_where_c = self.X[np.where(self.y == c)]
-        n_class_instances = X_where_c.shape[0]
-        n_total_instances = self.X.shape[0]
-        return n_class_instances / n_total_instances
+        frequency = len(X_where_c) / len(self.X)
+        return frequency
 
     def _classify(self, sample):
         """ Classification using Bayes Rule P(Y|X) = P(X|Y)*P(Y)/P(X),
@@ -43,7 +40,7 @@ class NaiveBayes():
 
         P(Y|X) - The posterior is the probability that sample x is of class y given the
                  feature values of x being distributed according to distribution of y and the prior.
-        P(X|Y) - Likelihood of data X given class distribution Y. 
+        P(X|Y) - Likelihood of data X given class distribution Y.
                  Gaussian distribution (given by _calculate_likelihood)
         P(Y)   - Prior (given by _calculate_prior)
         P(X)   - Scales the posterior to make it a proper probability distribution.
@@ -60,20 +57,15 @@ class NaiveBayes():
             # Naive assumption (independence):
             # P(x1,x2,x3|Y) = P(x1|Y)*P(x2|Y)*P(x3|Y)
             # Posterior is product of prior and likelihoods (ignoring scaling factor)
-            for j, params in enumerate(self.parameters[i]):
-                sample_feature = sample[j]
-                # Likelihood of sample x given distribution of y
-                likelihood = self._calculate_likelihood(params["mean"], params["var"], sample_feature)
+            for feature_value, params in zip(sample, self.parameters[i]):
+                # Likelihood of feature value given distribution of feature values given y
+                likelihood = self._calculate_likelihood(params["mean"], params["var"], feature_value)
                 posterior *= likelihood
             posteriors.append(posterior)
         # Return the class with the largest posterior probability
-        index_of_max = np.argmax(posteriors)
-        return self.classes[index_of_max]
+        return self.classes[np.argmax(posteriors)]
 
     def predict(self, X):
         """ Predict the class labels of the samples in X """
-        y_pred = []
-        for sample in X:
-            y = self._classify(sample)
-            y_pred.append(y)
+        y_pred = [self._classify(sample) for sample in X]
         return y_pred

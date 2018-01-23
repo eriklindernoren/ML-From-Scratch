@@ -12,7 +12,7 @@ class DecisionNode():
     feature_i: int
         Feature index which we want to use as the threshold measure.
     threshold: float
-        The value that we will compare feature values at feature_i against to 
+        The value that we will compare feature values at feature_i against to
         determine the prediction.
     value: float
         The class prediction if classification tree, or float value if regression tree.
@@ -39,7 +39,7 @@ class DecisionTree(object):
     min_samples_split: int
         The minimum number of samples needed to make a split when building a tree.
     min_impurity: float
-        The minimum impurity required to split the tree further. 
+        The minimum impurity required to split the tree further.
     max_depth: int
         The maximum depth of a tree.
     loss: function
@@ -99,7 +99,7 @@ class DecisionTree(object):
                     # Divide X and y depending on if the feature value of X at index feature_i
                     # meets the threshold
                     Xy1, Xy2 = divide_on_feature(Xy, feature_i, threshold)
-                    
+
                     if len(Xy1) > 0 and len(Xy2) > 0:
                         # Select the y-values of the two sets
                         y1 = Xy1[:, n_features:]
@@ -161,9 +161,7 @@ class DecisionTree(object):
 
     def predict(self, X):
         """ Classify samples one by one and return the set of labels """
-        y_pred = []
-        for x in X:
-            y_pred.append(self.predict_value(x))
+        y_pred = [self.predict_value(sample) for sample in X]
         return y_pred
 
     def print_tree(self, tree=None, indent=" "):
@@ -195,7 +193,7 @@ class XGBoostRegressionTree(DecisionTree):
     """
 
     def _split(self, y):
-        """ y contains y_true in left half of the middle column and 
+        """ y contains y_true in left half of the middle column and
         y_pred in the right half. Split and return the two matrices """
         col = int(np.shape(y)[1]/2)
         y, y_pred = y[:, :col], y[:, col:]
@@ -223,7 +221,7 @@ class XGBoostRegressionTree(DecisionTree):
         # Newton's Method
         gradient = np.sum(y * self.loss.gradient(y, y_pred), axis=0)
         hessian = np.sum(self.loss.hess(y, y_pred), axis=0)
-        update_approximation =  gradient / hessian 
+        update_approximation =  gradient / hessian
 
         return update_approximation
 
@@ -281,5 +279,3 @@ class ClassificationTree(DecisionTree):
         self._impurity_calculation = self._calculate_information_gain
         self._leaf_value_calculation = self._majority_vote
         super(ClassificationTree, self).fit(X, y)
-
-
