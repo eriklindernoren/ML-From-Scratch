@@ -1,214 +1,279 @@
 # -*- coding: utf-8 -*-
 
 import numpy as np
-from ..base import Layer
-from ztlearn.utils import clip_gradients as cg
-from ztlearn.dl.initializers import InitializeWeights as init
-from ztlearn.dl.activations import ActivationFunction as activate
-from ztlearn.dl.optimizers import OptimizationFunction as optimizer
+
+class WeightInitializer:
+
+    def compute_fans(self, shape):
+        # Original code forked from MIT licensed keras project
+        # https://github.com/fchollet/keras/blob/master/keras/initializers.py
+        # kernel shape: ('NF': Total Filters, 'CF': Filter Channels, 'HF': Filter Height 'WF': Filter Width)
+
+        shape = (shape[0], 1) if len(shape) ==  1 else shape
+        receptive_field_size = np.prod(shape[:2])
+        fan_out = shape[0] * receptive_field_size # NF *receptive_field_size
+        fan_in = shape[1] * receptive_field_size # CF *receptive_field_size
+        return fan_in, fan_out
 
 
-class LSTM(Layer):
+class HeNormal(WeightInitializer):
 
-    # (time_steps, input_dim) = input_shape
-    # input_dim ==> vocabulary size
+    """
+    **He Normal (HeNormal)**
 
-    def __init__(self, h_units, activation = 'tanh', input_shape = None, gate_activation = 'sigmoid'):
-        self.h_units = h_units # number of hidden states
-        self.activation = activation
-        self.input_shape = input_shape
-        self.gate_activation = gate_activation
+    HeNormal is a robust initialization method that particularly considers the
+    rectifier nonlinearities. He normal is an implementation based on
+    Gaussian distribution
 
-        self.init_method = None
-        self.optimizer_kwargs = None
+    References:
+        [1] Delving Deep into Rectifiers: Surpassing Human-Level Performance on ImageNet Classification
+            * [Kaiming He, 2015] https://arxiv.org/abs/1502.01852
+            * [PDF] https://arxiv.org/pdf/1502.01852.pdf
 
-        # gate weights
-        self.W_input = None
-        self.W_forget = None
-        self.W_output = None
+        [2] Initialization Of Deep Networks Case of Rectifiers
+            [DeepGrid Article - Jefkine Kafunah] https://goo.gl/TBNw5t
+    """
 
-        # gate bias
-        self.b_input = None
-        self.b_forget = None
-        self.b_output = None
-
-        # cell weights
-        self.W_cell = None
-
-        # cell bias
-        self.b_cell = None
-
-        # final output weights
-        self.W_final = None
-
-        # final output bias
-        self.b_final = None
-
-    def prep_layer(self):
-        _, input_dim = self.input_shape
-        z_dim = self.h_units + input_dim # concatenate (h_units, vocabulary_size) vector
-
-        # gate weights
-        self.W_input = init(self.init_method).initialize_weights((z_dim, self.h_units))
-        self.W_forget = init(self.init_method).initialize_weights((z_dim, self.h_units))
-        self.W_output = init(self.init_method).initialize_weights((z_dim, self.h_units))
-
-        # gate bias
-        self.b_input = np.zeros((self.h_units,))
-        self.b_forget = np.zeros((self.h_units,))
-        self.b_output = np.zeros((self.h_units,))
-
-        # cell weights
-        self.W_cell = init(self.init_method).initialize_weights((z_dim, self.h_units))
-
-        # cell bias
-        self.b_cell = np.zeros((self.h_units,))
-
-        # final output weights
-        self.W_final = init(self.init_method).initialize_weights((self.h_units, input_dim))
-
-        # final output bias
-        self.b_final = np.zeros((input_dim,))
+    def weights(self, shape):
+        fan_in, fan_out = self.compute_fans(shape)
+        scale = np.sqrt(2. / fan_in)
+        return np.random.normal(loc = 0.0, scale = scale, size = shape)
 
     @property
-    def weight_initializer(self):
-        return self.init_method
+    def init_name(self):
+        return self.__class__.__name__
 
-    @weight_initializer.setter
-    def weight_initializer(self, init_method):
-        self.init_method = init_method
+
+class HeUniform(WeightInitializer):
+
+    """
+    **He Normal (HeNormal)**
+
+    HeNormal is a robust initialization method that particularly considers the
+    rectifier nonlinearities. He uniform is an implementation based on
+    Uniform distribution
+
+    References:
+        [1] Delving Deep into Rectifiers: Surpassing Human-Level Performance on ImageNet Classification
+            * [Kaiming He, 2015] https://arxiv.org/abs/1502.01852
+            * [PDF] https://arxiv.org/pdf/1502.01852.pdf
+
+        [2] Initialization Of Deep Networks Case of Rectifiers
+            [DeepGrid Article - Jefkine Kafunah] https://goo.gl/TBNw5t
+    """
+
+    def weights(self, shape):
+        fan_in, fan_out = self.compute_fans(shape)
+        scale = np.sqrt(6. / fan_in)
+        return np.random.uniform(low = -scale, high = scale, size = shape)
 
     @property
-    def weight_optimizer(self):
-        return self.optimizer_kwargs
+    def init_name(self):
+        return self.__class__.__name__
 
-    @weight_optimizer.setter
-    def weight_optimizer(self, optimizer_kwargs = {}):
-        self.optimizer_kwargs = optimizer_kwargs
+
+class GlorotNormal(WeightInitializer):
+
+    """
+    **Glorot Normal (GlorotNormal)**
+
+    GlorotNormal more famously known as the Xavier initialization is based on the
+    effort to try mantain the same variance of the gradients of the weights for
+    all the layers. Glorot normal is an implementation based on
+    Gaussian distribution
+
+    References:
+        [1] Understanding the difficulty of training deep feedforward neural networks
+            * [Xavier Glorot, 2010] http://proceedings.mlr.press/v9/glorot10a.html
+            * [PDF] http://proceedings.mlr.press/v9/glorot10a/glorot10a.pdf
+
+        [2] Initialization Of Deep Feedfoward Networks
+            [DeepGrid Article - Jefkine Kafunah] https://goo.gl/E2XrGe
+    """
+
+    def weights(self, shape):
+        fan_in, fan_out = self.compute_fans(shape)
+        scale = np.sqrt(2. / (fan_in + fan_out))
+        return np.random.normal(loc = 0.0, scale = scale, size = shape)
 
     @property
-    def layer_activation(self):
-        return self.activation
+    def init_name(self):
+        return self.__class__.__name__
 
-    @layer_activation.setter
-    def layer_activation(self, activation):
-        self.activation = activation
+
+class GlorotUniform(WeightInitializer):
+
+    """
+    **Glorot Uniform (GlorotUniform)**
+
+    GlorotUniform more famously known as the Xavier initialization is based on the
+    effort to try mantain the same variance of the gradients of the weights for
+    all the layers. Glorot uniform is an implementation based on
+    Uniform distribution
+
+    References:
+        [1] Understanding the difficulty of training deep feedforward neural networks
+            * [Xavier Glorot, 2010] http://proceedings.mlr.press/v9/glorot10a.html
+            * [PDF] http://proceedings.mlr.press/v9/glorot10a/glorot10a.pdf
+
+        [2] Initialization Of Deep Feedfoward Networks
+            [DeepGrid Article - Jefkine Kafunah] https://goo.gl/E2XrGe
+    """
+
+    def weights(self, shape):
+        fan_in, fan_out = self.compute_fans(shape)
+        scale = np.sqrt(6. / (fan_in + fan_out))
+        return np.random.uniform(low = -scale, high = scale, size = shape)
 
     @property
-    def output_shape(self):
-        return self.input_shape
+    def init_name(self):
+        return self.__class__.__name__
 
-    def pass_forward(self, inputs, train_mode = True):
-        self.inputs = inputs
-        batch_size, time_steps, input_dim = inputs.shape
 
-        self.forget = np.zeros((batch_size, time_steps, self.h_units))
-        self.input = np.zeros((batch_size, time_steps, self.h_units))
-        self.output = np.zeros((batch_size, time_steps, self.h_units))
-        self.states = np.zeros((batch_size, time_steps, self.h_units))
-        self.cell_tilde = np.zeros((batch_size, time_steps, self.h_units))
-        self.cell = np.zeros((batch_size, time_steps, self.h_units))
-        self.final = np.zeros((batch_size, time_steps, input_dim))
+class LeCunUniform(WeightInitializer):
 
-        self.z = np.concatenate((self.inputs, self.states), axis=2)
+    """
+    **LeCun Uniform (LeCunUniform)**
 
-        for t in range(time_steps):
-            self.forget[:, t] = activate(self.gate_activation)._forward(np.dot(self.z[:, t], self.W_forget) + self.b_forget)
-            self.input[:, t] = activate(self.gate_activation)._forward(np.dot(self.z[:, t], self.W_input) + self.b_input)
-            self.cell_tilde[:, t] = activate(self.activation)._forward(np.dot(self.z[:, t], self.W_cell) + self.b_cell)
-            self.cell[:, t] = self.forget[:, t] * self.cell[:, t-1] + self.input[:, t] * self.cell_tilde[:, t]
-            self.output[:, t] = activate(self.gate_activation)._forward(np.dot(self.z[:, t], self.W_output) + self.b_output)
-            self.states[:, t] = self.output[:, t] * activate(self.activation)._forward(self.cell[:, t])
+    Weights should be randomly chosen but in such a way that the sigmoid is
+    primarily activated in its linear region. LeCun uniform is an
+    implementation based on Uniform distribution
 
-            # logits
-            self.final[:, t] = np.dot(self.states[:, t], self.W_final) + self.b_final
+    References:
+        [1] Efficient Backprop
+            [LeCun, 1998][PDF] http://yann.lecun.com/exdb/publis/pdf/lecun-98b.pdf
+    """
 
-        if not train_mode:
-            return activate('softmax')._forward(self.final) # if mode is not training
+    def weights(self, shape):
+        fan_in, fan_out = self.compute_fans(shape)
+        scale = np.sqrt(3. / fan_in)
+        return np.random.uniform(low = -scale, high = scale, size = shape)
 
-        return self.final
+    @property
+    def init_name(self):
+        return self.__class__.__name__
 
-    def pass_backward(self, grad):
-        _, time_steps, _ = grad.shape
 
-        dW_forget = np.zeros_like(self.W_forget)
-        dW_input = np.zeros_like(self.W_input)
-        dW_output = np.zeros_like(self.W_output)
-        dW_cell = np.zeros_like(self.W_cell)
-        dW_final = np.zeros_like(self.W_final)
+class LeCunNormal(WeightInitializer):
 
-        db_forget = np.zeros_like(self.b_forget)
-        db_input = np.zeros_like(self.b_input)
-        db_output = np.zeros_like(self.b_output)
-        db_cell = np.zeros_like(self.b_cell)
-        db_final = np.zeros_like(self.b_final)
+    """
+    **LeCun Normal (LeCunNormal)**
 
-        dstates = np.zeros_like(self.states)
-        dcell = np.zeros_like(self.cell)
-        dcell_tilde = np.zeros_like(self.cell_tilde)
-        dforget = np.zeros_like(self.forget)
-        dinput = np.zeros_like(self.input)
-        doutput = np.zeros_like(self.output)
+    Weights should be randomly chosen but in such a way that the sigmoid is
+    primarily activated in its linear region. LeCun uniform is the
+    implementation based on Gaussian distribution
 
-        dcell_next = np.zeros_like(self.cell)
-        dstates_next = np.zeros_like(self.states)
+    References:
+        [1] Efficient Backprop
+            [LeCun, 1998][PDF] http://yann.lecun.com/exdb/publis/pdf/lecun-98b.pdf
+    """
 
-        next_grad = np.zeros_like(grad)
+    def weights(self, shape):
+        fan_in, fan_out = self.compute_fans(shape)
+        scale = np.sqrt(1. / fan_in)
+        return np.random.normal(low = -scale, high = scale, size = shape)
 
-        for t in np.arange(time_steps)[::-1]: # reversed
+    @property
+    def init_name(self):
+        return self.__class__.__name__
 
-            dW_final += np.dot(self.states[:, t].T, grad[:, t])
-            db_final += np.sum(grad[:, t], axis = 0)
 
-            dstates[:, t] = np.dot(grad[:, t], self.W_final.T)
-            dstates[:, t] += dstates_next[:, t]
-            next_grad = np.dot(dstates, self.W_final)
+class RandomUniform(WeightInitializer):
 
-            doutput[:,t] = activate(self.activation)._forward(self.cell[:, t]) * dstates[:, t]
-            doutput[:,t] = activate(self.gate_activation)._backward(self.output[:, t]) * doutput[:,t]
-            dW_output += np.dot(self.z[:, t].T, doutput[:, t])
-            db_output += np.sum(doutput[:, t], axis = 0)
+    """
+    **Random Uniform (RandomUniform)**
 
-            dcell[:, t] += self.output[:, t] * dstates[:, t] * activate(self.activation)._backward(self.cell[:, t])
-            dcell[:, t] += dcell_next[:, t]
-            dcell_tilde[:, t] = dcell[:, t] * self.input[:, t]
-            dcell_tilde[:, t] = dcell_tilde[:, t] * activate(self.activation)._backward(dcell_tilde[:, t])
-            dW_cell += np.dot(self.z[:, t].T, dcell[:, t])
-            db_cell += np.sum(dcell[:, t], axis = 0)
+    Random uniform is an implementation of weight initialization based on
+    Uniform distribution
+    """
 
-            dinput[:, t] = self.cell_tilde[:, t] * dcell[:, t]
-            dinput[:, t] = activate(self.gate_activation)._backward(self.input[:, t]) * dinput[:, t]
-            dW_input += np.dot(self.z[:, t].T, dinput[:, t])
-            db_input += np.sum(dinput[:, t], axis = 0)
+    def weights(self, shape, seed = None):
+        fan_in, fan_out = self.compute_fans(shape)
+        scale = np.sqrt(1. / (fan_in + fan_out))
+        np.random.seed(seed)
+        return np.random.uniform(low = -scale, high = scale, size = shape)
 
-            dforget[:, t] = self.cell[:, t-1] * dcell[:, t]
-            dforget[:, t] = activate(self.gate_activation)._backward(self.forget[:, t]) * dforget[:, t]
-            dW_forget += np.dot(self.z[:, t].T, dforget[:, t])
-            db_forget += np.sum(dforget[:, t], axis = 0)
+    @property
+    def init_name(self):
+        return self.__class__.__name__
 
-            dz_forget = np.dot(dforget[:, t], self.W_forget.T)
-            dz_input = np.dot(dinput[:, t], self.W_input.T)
-            dz_output = np.dot(doutput[:, t], self.W_output.T)
-            dz_cell = np.dot(dcell[:, t], self.W_cell.T)
 
-            dz = dz_forget + dz_input + dz_output + dz_cell
-            dstates_next[:, t] = dz[:,:self.h_units]
-            dcell_next = self.forget * dcell
+class RandomNormal(WeightInitializer):
 
-        # optimize weights and bias
-        self.W_final = optimizer(self.optimizer_kwargs)._update(self.W_final, cg(dW_final))
-        self.b_final = optimizer(self.optimizer_kwargs)._update(self.b_final, cg(db_final))
+    """
+    **Random Normal (RandomNormal)**
 
-        self.W_forget = optimizer(self.optimizer_kwargs)._update(self.W_forget, cg(dW_forget))
-        self.b_forget = optimizer(self.optimizer_kwargs)._update(self.b_forget, cg(db_forget))
+    Random uniform is an implementation of weight initialization based on
+    Gaussian distribution
+    """
 
-        self.W_input = optimizer(self.optimizer_kwargs)._update(self.W_input, cg(dW_input))
-        self.b_input = optimizer(self.optimizer_kwargs)._update(self.b_input, cg(db_input))
+    def weights(self, shape, seed = None):
+        fan_in, fan_out = self.compute_fans(shape)
+        scale = np.sqrt(1. / (fan_in + fan_out))
+        np.random.seed(seed)
+        return np.random.normal(loc = 0.0, scale = scale, size = shape)
 
-        self.W_output = optimizer(self.optimizer_kwargs)._update(self.W_output, cg(dW_output))
-        self.b_output = optimizer(self.optimizer_kwargs)._update(self.b_output, cg(db_output))
+    @property
+    def init_name(self):
+        return self.__class__.__name__
 
-        self.W_cell = optimizer(self.optimizer_kwargs)._update(self.W_cell, cg(dW_cell))
-        self.b_cell = optimizer(self.optimizer_kwargs)._update(self.b_cell, cg(db_cell))
 
-        return next_grad
+class Zero(WeightInitializer):
+
+    """
+    **Zero (Zero)**
+
+    Zero is an implementation of weight initialization that returns all zeros
+    """
+
+    def weights(self, shape):
+        return np.zeros(shape = shape)
+
+    @property
+    def init_name(self):
+        return self.__class__.__name__
+
+
+class One(WeightInitializer):
+
+    """
+    **One (One)**
+
+    One is an implementation of weight initialization that returns all ones
+    """
+
+    def weights(self, shape):
+        return np.ones(shape = shape)
+
+    @property
+    def init_name(self):
+        return self.__class__.__name__
+
+
+class InitializeWeights:
+
+    _methods = {
+        'ones': One,
+        'zeros': Zero,
+        'he-normal': HeNormal,
+        'he-uniform': HeUniform,
+        'lecun-normal': LeCunNormal,
+        'lecun-uniform': LeCunUniform,
+        'random-normal': RandomNormal,
+        'glorot-normal': GlorotNormal,
+        'random-uniform': RandomUniform,
+        'glorot-uniform': GlorotUniform
+    }
+
+    def __init__(self, name):
+        if name not in self._methods.keys():
+            raise Exception('Weight initialization method must be either one of the following: {}.'.format(', '.join(self._methods.keys())))
+        self.init_method = self._methods[name]()
+
+    @property
+    def name(self):
+        return self.init_method.init_name
+
+    def initialize_weights(self, shape):
+        return self.init_method.weights(shape)
+
