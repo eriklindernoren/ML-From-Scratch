@@ -11,7 +11,7 @@ but rather to present the inner workings of them in a transparent and accessible
   * [About](#about)
   * [Table of Contents](#table-of-contents)
   * [Installation](#installation)
-  * [Example Usage](#example-usage)
+  * [Examples](#examples)
     + [Polynomial Regression](#polynomial-regression)
     + [Classification With CNN](#classification-with-cnn)
     + [Density-Based Clustering](#density-based-clustering)
@@ -33,7 +33,7 @@ but rather to present the inner workings of them in a transparent and accessible
     $ cd ML-From-Scratch
     $ python setup.py install
 
-## Example Usage
+## Examples
 ### Polynomial Regression
     $ python mlfromscratch/examples/polynomial_regression.py
 
