@@ -30,8 +30,7 @@ class NaiveBayes():
     def _calculate_prior(self, c):
         """ Calculate the prior of class c
         (samples where class == c / total number of samples)"""
-        X_where_c = self.X[np.where(self.y == c)]
-        frequency = len(X_where_c) / len(self.X)
+        frequency = np.mean(self.y == c)
         return frequency
 
     def _classify(self, sample):

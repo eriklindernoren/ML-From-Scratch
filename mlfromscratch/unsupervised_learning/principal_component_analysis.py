@@ -6,12 +6,12 @@ from mlfromscratch.utils import calculate_correlation_matrix
 
 class PCA():
     """A method for doing dimensionality reduction by transforming the feature
-    space to a lower dimensionality, removing correlation between features and 
+    space to a lower dimensionality, removing correlation between features and
     maximizing the variance along each feature axis. This class is also used throughout
     the project to plot data.
     """
     def transform(self, X, n_components):
-        """ Fit the dataset to the number of principal components specified in the 
+        """ Fit the dataset to the number of principal components specified in the
         constructor and return the transformed dataset """
         covariance_matrix = calculate_covariance_matrix(X)
 
@@ -28,4 +28,3 @@ class PCA():
         X_transformed = X.dot(eigenvectors)
 
         return X_transformed
-

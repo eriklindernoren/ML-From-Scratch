@@ -33,9 +33,6 @@ def main():
     # Convert to one-hot encoding
     y = to_categorical(y.astype("int"))
 
-    n_samples = np.shape(X)
-    n_hidden = 512
-
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4, seed=1)
 
     # Reshape X to (n_samples, channels, height, width)
@@ -46,11 +43,11 @@ def main():
                         loss=CrossEntropy,
                         validation_data=(X_test, y_test))
 
-    clf.add(Conv2D(n_filters=16, filter_shape=(3,3), input_shape=(1,8,8), padding='same'))
+    clf.add(Conv2D(n_filters=16, filter_shape=(3,3), stride=1, input_shape=(1,8,8), padding='same'))
     clf.add(Activation('relu'))
     clf.add(Dropout(0.25))
     clf.add(BatchNormalization())
-    clf.add(Conv2D(n_filters=32, filter_shape=(3,3), padding='same'))
+    clf.add(Conv2D(n_filters=32, filter_shape=(3,3), stride=1, padding='same'))
     clf.add(Activation('relu'))
     clf.add(Dropout(0.25))
     clf.add(BatchNormalization())
@@ -66,7 +63,7 @@ def main():
     clf.summary(name="ConvNet")
 
     train_err, val_err = clf.fit(X_train, y_train, n_epochs=50, batch_size=256)
-    
+
     # Training and validation error plot
     n = len(train_err)
     training, = plt.plot(range(n), train_err, label="Training Error")
