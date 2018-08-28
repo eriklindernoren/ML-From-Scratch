@@ -17,8 +17,8 @@ def main():
     # Load temperature data
     data = pd.read_csv('mlfromscratch/data/TempLinkoping2016.txt', sep="\t")
 
-    time = np.atleast_2d(data["time"].as_matrix()).T
-    temp = np.atleast_2d(data["temp"].as_matrix()).T
+    time = np.atleast_2d(data["time"].values).T
+    temp = np.atleast_2d(data["temp"].values).T
 
     X = time.reshape((-1, 1))               # Time. Fraction of the year [0, 1]
     X = np.insert(X, 0, values=1, axis=1)   # Insert bias term
