@@ -20,7 +20,7 @@ class GeneticAlgorithm():
         self.target = target_string
         self.population_size = population_size
         self.mutation_rate = mutation_rate
-        self.letters = [" "] + list(string.letters)
+        self.letters = [" "] + list(string.ascii_letters)
 
     def _initialize(self):
         """ Initialize population with random strings """
