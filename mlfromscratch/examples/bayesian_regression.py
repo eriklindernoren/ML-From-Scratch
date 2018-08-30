@@ -12,8 +12,8 @@ def main():
     # Load temperature data
     data = pd.read_csv('mlfromscratch/data/TempLinkoping2016.txt', sep="\t")
 
-    time = np.atleast_2d(data["time"].as_matrix()).T
-    temp = np.atleast_2d(data["temp"].as_matrix()).T
+    time = np.atleast_2d(data["time"].values).T
+    temp = np.atleast_2d(data["temp"].values).T
 
     X = time # fraction of the year [0, 1]
     y = temp
