@@ -1,7 +1,4 @@
 from __future__ import division, print_function
-import numpy as np
-import itertools
-
 
 class FPTreeNode():
     def __init__(self, item=None, support=1):
@@ -22,11 +19,11 @@ class FPGrowth():
 
     Parameters:
     -----------
-    min_sup: float
-        The minimum fraction of transactions an itemets needs to
+    min_sup: int
+        The minimum transactions an itemset needs to
         occur in to be deemed frequent
     """
-    def __init__(self, min_sup=0.3):
+    def __init__(self, min_sup=1):
         self.min_sup = min_sup
         # The root of the initial FP Growth Tree
         self.tree_root = None
@@ -147,7 +144,7 @@ class FPGrowth():
             itemset_key = str(itemset[0])
         return itemset_key
 
-    def _determine_frequent_itemsets(self, conditional_database, suffix):
+    def _determine_frequent_itemsets(self, conditional_database, suffix=None):
         # Calculate new frequent items from the conditional database
         # of suffix
         frequent_items = self._get_frequent_items(conditional_database)
@@ -191,7 +188,7 @@ class FPGrowth():
             print ("FP-Growth Tree:")
             self.print_tree(self.tree_root)
 
-        self._determine_frequent_itemsets(transactions, suffix=None)
+        self._determine_frequent_itemsets(transactions, suffix)
 
         return self.frequent_itemsets
 
