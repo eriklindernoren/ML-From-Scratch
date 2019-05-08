@@ -33,6 +33,11 @@ but rather to present the inner workings of them in a transparent and accessible
     $ cd ML-From-Scratch
     $ python setup.py install
 
+if you are getting an error like "RuntimeError: Python version >= 3.5 required." then install python3 ( if not installed ), and run this command instead of last command given before;
+
+    $ python3 setup.py install
+
+
 ## Examples
 ### Polynomial Regression
     $ python mlfromscratch/examples/polynomial_regression.py
