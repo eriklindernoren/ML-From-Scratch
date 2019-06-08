@@ -141,3 +141,4 @@ class DeepQNetwork():
                 total_reward += reward
                 if done: break
             print ("%d Reward: %s" % (epoch, total_reward))
+        self.env.close()
