@@ -365,7 +365,7 @@ class BatchNormalization(Layer):
 class PoolingLayer(Layer):
     """A parent class of MaxPooling2D and AveragePooling2D
     """
-    def __init__(self, pool_shape=(2, 2), stride=1, padding=0):
+    def __init__(self, pool_shape=(2, 2), stride=2, padding='valid'):
         self.pool_shape = pool_shape
         self.stride = stride
         self.padding = padding
@@ -397,7 +397,7 @@ class PoolingLayer(Layer):
         # MaxPool or AveragePool specific method
         accum_grad_col = self._pool_backward(accum_grad)
 
-        accum_grad = column_to_image(accum_grad_col, (batch_size * channels, 1, height, width), self.pool_shape, self.stride, 0)
+        accum_grad = column_to_image(accum_grad_col, (batch_size * channels, 1, height, width), self.pool_shape, self.stride, self.padding)
         accum_grad = accum_grad.reshape((batch_size,) + self.input_shape)
 
         return accum_grad
