@@ -718,7 +718,7 @@ def column_to_image(cols, images_shape, filter_shape, stride, output_shape='same
     pad_h, pad_w = determine_padding(filter_shape, output_shape)
     height_padded = height + np.sum(pad_h)
     width_padded = width + np.sum(pad_w)
-    images_padded = np.empty((batch_size, channels, height_padded, width_padded))
+    images_padded = np.zeros((batch_size, channels, height_padded, width_padded))
 
     # Calculate the indices where the dot products are applied between weights
     # and the image
