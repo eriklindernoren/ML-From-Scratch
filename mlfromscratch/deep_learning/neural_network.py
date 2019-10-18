@@ -23,7 +23,7 @@ class NeuralNetwork():
         self.optimizer = optimizer
         self.layers = []
         self.errors = {"training": [], "validation": []}
-        self.loss_function = loss()
+        self.loss_function = loss() if callable(loss) else loss
         self.progressbar = progressbar.ProgressBar(widgets=bar_widgets)
 
         self.val_set = None
@@ -43,7 +43,7 @@ class NeuralNetwork():
         if self.layers:
             layer.set_input_shape(shape=self.layers[-1].output_shape())
 
-        # If the layer has weights that needs to be initialized 
+        # If the layer has weights that needs to be initialized
         if hasattr(layer, 'initialize'):
             layer.initialize(optimizer=self.optimizer)
 
@@ -73,7 +73,7 @@ class NeuralNetwork():
     def fit(self, X, y, n_epochs, batch_size):
         """ Trains the model for a fixed number of epochs """
         for _ in self.progressbar(range(n_epochs)):
-            
+
             batch_error = []
             for X_batch, y_batch in batch_iterator(X, y, batch_size=batch_size):
                 loss, _ = self.train_on_batch(X_batch, y_batch)

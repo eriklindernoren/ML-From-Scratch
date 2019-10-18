@@ -1,10 +1,9 @@
-
 from __future__ import print_function, division
 import math
 import numpy as np
 import copy
-from mlfromscratch.deep_learning.activation_functions import Sigmoid, ReLU, SoftPlus, LeakyReLU
-from mlfromscratch.deep_learning.activation_functions import TanH, ELU, SELU, Softmax
+from mlfromscratch.deep_learning.activation_functions import Sigmoid, \
+    ReLU, SoftPlus, LeakyReLU, TanH, ELU, SELU, Softmax, EXP
 
 
 class Layer(object):
@@ -602,6 +601,106 @@ class Dropout(Layer):
     def output_shape(self):
         return self.input_shape
 
+
+class MDN(Layer):
+    """Mixture Density Networks
+
+    Parameters:
+    -----------
+    inputs: input_shape = dim of data must be specified if MDN first layer
+            of the network
+    outputs:
+
+    """
+    def __init__(self, num_components, input_shape=None, output_shape=None):
+        super(MDN, self).__init__()
+        # defines the output shape from previous layer
+        self.input_shape = input_shape
+        self.output_dim = output_shape
+        self.num_components = num_components  # num mix components
+        self.activation_sigma = activation_functions['exp']()
+        self.activation_pi = activation_functions['softmax']()
+        self.trainable = True
+        self.Wmu = None
+        self.bu = None
+        self.Wsigma = None
+        self.bsigma = None
+        self.Wpi = None
+        self.bpi = None
+
+    def initialize(self, optimizer):
+        self.input_dim = self.input_shape[0]
+        self.output_dim = self.num_components
+        # hidden to output
+        self.Wmu = np.random.randn(self.input_dim, self.output_dim) * 0.1
+        self.bmu = np.random.randn(self.output_dim,) * 0.01
+        self.Wsigma = np.random.randn(self.input_dim, self.output_dim) * 0.1
+        self.bsigma = np.random.randn(self.output_dim,) * 0.01
+        self.Wpi = np.random.randn(self.input_dim, self.output_dim) * 0.1
+        self.bpi = np.random.randn(self.output_dim,) * 0.01
+
+        # Weight optimizers
+        self.Wmu_opt = copy.copy(optimizer)
+        self.bmu_opt = copy.copy(optimizer)
+        self.Wsigma_opt = copy.copy(optimizer)
+        self.bsigma_opt = copy.copy(optimizer)
+        self.Wpi_opt = copy.copy(optimizer)
+        self.bpi_opt = copy.copy(optimizer)
+
+    def parameters(self):
+        return np.prod(self.Wmu.shape) + np.prod(self.bmu.shape) + \
+            np.prod(self.Wsigma.shape) + np.prod(self.bsigma.shape) + \
+            np.prod(self.Wpi.shape) + np.prod(self.bpi.shape)
+
+    def forward_pass(self, X, training=True):
+        self.layer_input = X
+        # forward pass
+        mu = np.dot(self.layer_input, self.Wmu) + self.bmu
+        self.sigma = np.exp(
+            np.dot(self.layer_input, self.Wsigma) + self.bsigma
+        )
+        self.pi = self.activation_pi(
+            np.dot(self.layer_input, self.Wpi) + self.bpi
+        )
+        return np.c_[(self.pi, mu, self.sigma)]
+
+    def backward_pass(self, accum_grad):
+        # Save weights used during forwards pass
+        Wpi = self.Wpi
+        Wmu = self.Wmu
+        Wsigma = self.Wsigma
+        if self.trainable:
+            # compute the gradients on nn outputs
+            dpi, dmu, dsigma = accum_grad
+            # Calculate gradient w.r.t layer weights
+            # backprop to decoder matrices
+            dpi = dpi * self.activation_pi.gradient(self.pi)
+            grad_Wpi = np.dot(self.layer_input.T, dpi)
+            grad_bpi = np.sum(dpi, axis=0)
+            grad_Wmu = np.dot(self.layer_input.T, dmu)
+            grad_bmu = np.sum(dmu, axis=0)
+            dsigma = dsigma * self.activation_sigma.gradient(self.sigma)
+            grad_Wsigma = np.dot(self.layer_input.T, dsigma)
+            grad_bsigma = np.sum(dsigma, axis=0)
+
+            # Update the layer weights
+            self.Wpi = self.Wpi_opt.update(self.Wpi, grad_Wpi)
+            self.bpi = self.bpi_opt.update(self.bpi, grad_bpi)
+            self.Wmu = self.Wmu_opt.update(self.Wmu, grad_Wmu)
+            self.bmu = self.bmu_opt.update(self.bmu, grad_bmu)
+            self.Wsigma = self.Wsigma_opt.update(self.Wsigma, grad_Wsigma)
+            self.bsigma = self.bsigma_opt.update(self.bsigma, grad_bsigma)
+
+        # Return accumulated gradient for next layer
+        # Calculated based on the weights used during the forward pass
+        accum_grad = np.dot(dpi, Wpi.T) + np.dot(dmu, Wmu.T) + \
+            np.dot(dsigma, Wsigma.T)
+        return accum_grad
+
+    def output_shape(self):
+        return (self.output_dim * 3,)
+
+
 activation_functions = {
     'relu': ReLU,
     'sigmoid': Sigmoid,
@@ -610,8 +709,10 @@ activation_functions = {
     'softmax': Softmax,
     'leaky_relu': LeakyReLU,
     'tanh': TanH,
-    'softplus': SoftPlus
+    'softplus': SoftPlus,
+    'exp': EXP
 }
+
 
 class Activation(Layer):
     """A layer that applies an activation operation to the input.
