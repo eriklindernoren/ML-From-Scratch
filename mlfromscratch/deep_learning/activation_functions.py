@@ -73,3 +73,19 @@ class SoftPlus():
     def gradient(self, x):
         return 1 / (1 + np.exp(-x))
 
+class Swish():
+    # Reference : https://arxiv.org/abs/1710.05941v1
+    def __init__(self):
+        self.beta = 1
+
+    def __call__(self, x):
+        return x * self.__sigmoid(self.beta * x)
+
+    def __sigmoid(self, x):
+        return 1 / (1 + np.exp(-x))
+
+    def gradient(self, x):
+        betaX = self.beta * x
+        sig = self.__sigmoid(betaX)
+        return betaX * (sig * (1 - sig)) + sig
+        

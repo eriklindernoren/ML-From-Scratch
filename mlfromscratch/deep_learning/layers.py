@@ -3,7 +3,7 @@ from __future__ import print_function, division
 import math
 import numpy as np
 import copy
-from mlfromscratch.deep_learning.activation_functions import Sigmoid, ReLU, SoftPlus, LeakyReLU
+from mlfromscratch.deep_learning.activation_functions import Sigmoid, ReLU, SoftPlus, LeakyReLU, Swish
 from mlfromscratch.deep_learning.activation_functions import TanH, ELU, SELU, Softmax
 
 
@@ -610,7 +610,8 @@ activation_functions = {
     'softmax': Softmax,
     'leaky_relu': LeakyReLU,
     'tanh': TanH,
-    'softplus': SoftPlus
+    'softplus': SoftPlus,
+    'swish': Swish
 }
 
 class Activation(Layer):
