@@ -17,6 +17,8 @@ def main():
     clf = DBSCAN(eps=0.17, min_samples=5)
     y_pred = clf.predict(X)
 
+    print('cluster count:', len(set(y_pred)))
+
     # Project the data onto the 2 primary principal components
     p = Plot()
     p.plot_in_2d(X, y_pred, title="DBSCAN")
