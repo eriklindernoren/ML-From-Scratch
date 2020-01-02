@@ -51,7 +51,7 @@ class ELU():
         return np.where(x >= 0.0, x, self.alpha * (np.exp(x) - 1))
 
     def gradient(self, x):
-        return np.where(x >= 0.0, 1, self.__call__(x) + self.alpha)
+        return np.where(x >= 0.0, 1, self.alpha * np.exp(x))
 
 class SELU():
     # Reference : https://arxiv.org/abs/1706.02515,
