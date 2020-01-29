@@ -28,14 +28,13 @@ def batch_iterator(X, y=None, batch_size=64):
 def divide_on_feature(X, feature_i, threshold):
     """ Divide dataset based on if sample value on feature index is larger than
         the given threshold """
-    split_func = None
-    if isinstance(threshold, int) or isinstance(threshold, float):
-        split_func = lambda sample: sample[feature_i] >= threshold
-    else:
-        split_func = lambda sample: sample[feature_i] == threshold
 
-    X_1 = np.array([sample for sample in X if split_func(sample)])
-    X_2 = np.array([sample for sample in X if not split_func(sample)])
+    if isinstance(threshold, int) or isinstance(threshold, float):
+        X_1 = X[X[:,feature_i]>=threshold]
+        X_2 = X[X[:,feature_i]<threshold]
+    else:
+        X_1 = X[X[:,feature_i]==threshold]
+        X_2 = X[X[:,feature_i]!=threshold]
 
     return np.array([X_1, X_2])
 
@@ -47,12 +46,12 @@ def polynomial_features(X, degree):
         combs = [combinations_with_replacement(range(n_features), i) for i in range(0, degree + 1)]
         flat_combs = [item for sublist in combs for item in sublist]
         return flat_combs
-    
+
     combinations = index_combinations()
     n_output_features = len(combinations)
     X_new = np.empty((n_samples, n_output_features))
-    
-    for i, index_combs in enumerate(combinations):  
+
+    for i, index_combs in enumerate(combinations):
         X_new[:, i] = np.prod(X[:, index_combs], axis=1)
 
     return X_new
