@@ -45,6 +45,12 @@ def euclidean_distance(x1, x2):
         distance += pow((x1[i] - x2[i]), 2)
     return math.sqrt(distance)
 
+def manhattan_distance(x1, x2):
+    """ Calculates L1 norm(distance) between two vectors """
+    distance = 0
+    for i in range(len(x1)):
+        distance+= abs(x1[i]-x2[i]) # Absolute difference between corresponding points
+    return distance
 
 def accuracy_score(y_true, y_pred):
     """ Compare y_true to y_pred and return the accuracy """
