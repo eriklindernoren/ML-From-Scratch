@@ -45,6 +45,28 @@ def euclidean_distance(x1, x2):
         distance += pow((x1[i] - x2[i]), 2)
     return math.sqrt(distance)
 
+def manhattan_distance(x1, x2):
+    """ Calculates L1 norm(distance) between two vectors """
+    distance = 0
+    for i in range(len(x1)):
+        distance+= abs(x1[i]-x2[i]) # Absolute difference between corresponding points
+    return distance
+
+def infinite_norm(x1, x2):
+    """Calculates L-infinite norm of two vectors. Returns -1 in case of failure"""
+    max_diff = -1
+    for i in range(len(x1)):
+        max_diff = max(max_diff, abs(x1[i]-x2[i]))  # maximum of all the absolute diffrences between consecutive elements 
+
+    return max_diff
+
+def p_norm(x1, x2, p):
+    """Calculates p-th norm of two vectors"""
+    distance = 0
+    for i in range(len(x1)):
+        distance+= pow(abs(x1[i]-x2[i]),p)
+
+    return pow(distance,1/p)
 
 def accuracy_score(y_true, y_pred):
     """ Compare y_true to y_pred and return the accuracy """
