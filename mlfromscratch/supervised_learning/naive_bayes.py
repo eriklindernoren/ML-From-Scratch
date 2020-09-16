@@ -68,3 +68,36 @@ class NaiveBayes():
         """ Predict the class labels of the samples in X """
         y_pred = [self._classify(sample) for sample in X]
         return y_pred
+    
+class BernoulliNaiveBayes:
+    def __init__(self,X,y):
+        self.X = X
+        self.y = y
+        self.N, self.D = X.shape
+        self.classes = np.unique(y)
+        self.C = len(self.classes)
+        self.prior = np.zeros(self.C,dtype=np.float64)
+        self.likelihood = np.zeros((self.C,self.D),dtype=np.float64)
+        self.N1 = sum(self.y)
+
+    def fit(self,X,y):        # Does the fit by calculating the prior and the likelihood of the training data
+        for c in self.classes:
+            X_c = X[c == y]
+            X_c_sum = np.sum(X_c, axis=0)
+            self.prior[c] = X_c.shape[0] / float(self.N)
+            for i in range(len(self.likelihood[0])):
+                self.likelihood[c,i] = X_c_sum[i]/len(X_c)
+
+    def predict(self,X_test): #Gives the predicted labels for dataset
+        y_pred = [self._predict(x) for x in X_test]
+        return y_pred
+
+    def _predict(self, x):
+        posteriors = []
+        for i, c in enumerate(self.classes):
+            log_prior = np.log1p(self.prior[i])
+            log_likelihood = np.sum(np.log1p(self.likelihood[i]*x)) + np.sum(np.log1p(self.likelihood[i]*(1-x)))
+            posterior = log_prior + log_likelihood
+            posteriors.append(posterior)
+        return self.classes[np.argmax(posteriors)]     
+    
