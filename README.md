@@ -150,7 +150,7 @@ but rather to present the inner workings of them in a transparent and accessible
     +----------------+
     | Deep Q-Network |
     +----------------+
-    Input Shape: (4,)
+    Input shape: (4,)
     +-------------------+------------+--------------+
     | Layer Type        | Parameters | Output Shape |
     +-------------------+------------+--------------+
@@ -219,13 +219,8 @@ but rather to present the inner workings of them in a transparent and accessible
     +--------+
     |   GA   |
     +--------+
-    Description: Implementation of a Genetic Algorithm which aims to produce
-    the user specified target string. This implementation calculates each
-    candidate's fitness based on the alphabetical distance between the candidate
-    and the target. A candidate is selected as a parent with probabilities proportional
-    to the candidate's fitness. Reproduction is implemented as a single-point
-    crossover between pairs of parents. Mutation is done by randomly assigning
-    new characters with uniform probability.
+    Description: Implementation of a Genetic Algorithm that aims to produce the user-specified target string. This implementation calculates each candidate's fitness based on the alphabetical distance between the candidate and the target. A candidate is selected as a parent with probabilities proportional to the candidate's fitness. Reproduction is implemented as a single-point
+    the crossover between pairs of parents. The mutation is done by randomly assigning new characters with uniform probability.
 
     Parameters
     ----------
