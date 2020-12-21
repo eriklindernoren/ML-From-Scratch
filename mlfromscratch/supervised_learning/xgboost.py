@@ -55,7 +55,7 @@ class XGBoost(object):
                  min_impurity=1e-7, max_depth=2):
         self.n_estimators = n_estimators            # Number of trees
         self.learning_rate = learning_rate          # Step size for weight update
-        self.min_samples_split = min_samples_split  # The minimum n of sampels to justify split
+        self.min_samples_split = min_samples_split  # The minimum n of samples to justify split
         self.min_impurity = min_impurity              # Minimum variance reduction to continue
         self.max_depth = max_depth                  # Maximum depth for tree
 
