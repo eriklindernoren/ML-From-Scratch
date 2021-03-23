@@ -1,11 +1,6 @@
-from __future__ import division, print_function
+import numpy as np
 import math
 from sklearn import datasets
-import numpy as np
-
-from mlfromscratch.utils import normalize, euclidean_distance, calculate_covariance_matrix
-from mlfromscratch.utils import Plot
-
 
 class GaussianMixtureModel():
     """A probabilistic clustering method for determining groupings among data samples.
@@ -37,7 +32,7 @@ class GaussianMixtureModel():
         for i in range(self.k):
             params = {}
             params["mean"] = X[np.random.choice(range(n_samples))]
-            params["cov"] = calculate_covariance_matrix(X)
+            params["cov"] = np.cov(X, rowvar=False)
             self.parameters.append(params)
 
     def multivariate_gaussian(self, X, params):
