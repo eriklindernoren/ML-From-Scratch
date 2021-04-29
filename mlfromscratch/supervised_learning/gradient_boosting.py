@@ -40,6 +40,7 @@ class GradientBoosting(object):
         self.max_depth = max_depth
         self.regression = regression
         self.bar = progressbar.ProgressBar(widgets=bar_widgets)
+        self.initial_prediction = None
         
         # Square loss for regression
         # Log loss for classification
@@ -58,6 +59,7 @@ class GradientBoosting(object):
 
 
     def fit(self, X, y):
+        self.initial_prediction = np.mean(y, axis=0)
         y_pred = np.full(np.shape(y), np.mean(y, axis=0))
         for i in self.bar(range(self.n_estimators)):
             gradient = self.loss.gradient(y, y_pred)
@@ -73,7 +75,7 @@ class GradientBoosting(object):
         for tree in self.trees:
             update = tree.predict(X)
             update = np.multiply(self.learning_rate, update)
-            y_pred = -update if not y_pred.any() else y_pred - update
+            y_pred = self.initial_prediction - update if not y_pred.any() else y_pred - update
 
         if not self.regression:
             # Turn into probability distribution

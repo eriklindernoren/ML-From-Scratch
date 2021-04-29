@@ -6,7 +6,6 @@ import progressbar
 
 from mlfromscratch.utils import train_test_split, standardize, to_categorical
 from mlfromscratch.utils import mean_squared_error, accuracy_score, Plot
-from mlfromscratch.utils.loss_functions import SquareLoss
 from mlfromscratch.utils.misc import bar_widgets
 from mlfromscratch.supervised_learning import GradientBoostingRegressor
 
