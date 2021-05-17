@@ -13,7 +13,7 @@ but rather to present the inner workings of them in a transparent and accessible
   * [Installation](#installation)
   * [Examples](#examples)
     + [Polynomial Regression](#polynomial-regression)
-    + [Classification With CNN](#classification-with-cnn)
+    + [Classification With CNN(Convolutional Neural Networks](#classification-with-cnn)
     + [Density-Based Clustering](#density-based-clustering)
     + [Generating Handwritten Digits](#generating-handwritten-digits)
     + [Deep Reinforcement Learning](#deep-reinforcement-learning)
