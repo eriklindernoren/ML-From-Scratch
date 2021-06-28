@@ -22,6 +22,7 @@ but rather to present the inner workings of them in a transparent and accessible
     + [Genetic Algorithm](#genetic-algorithm)
     + [Association Analysis](#association-analysis)
   * [Implementations](#implementations)
+    + [Normalizing](#normalizing)
     + [Supervised Learning](#supervised-learning)
     + [Unsupervised Learning](#unsupervised-learning)
     + [Reinforcement Learning](#reinforcement-learning)
@@ -267,6 +268,11 @@ but rather to present the inner workings of them in a transparent and accessible
 
 
 ## Implementations
+### Normalizing
+- [MinMaxScaler](mlfromscratch/normalizing/minmaxscaler.py)
+- [StandardScaler](mlfromscratch/normalizing/standardscaler.py)
+- [StandardScaler With Selective mean and variance](mlfromscratch/normalizing/standardscalerwithmv.py)
+- [MaxAbsScaler](mlfromscratch/normalizing/maxabsscaler.py)
 ### Supervised Learning
 - [Adaboost](mlfromscratch/supervised_learning/adaboost.py)
 - [Bayesian Regression](mlfromscratch/supervised_learning/bayesian_regression.py)
