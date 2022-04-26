@@ -24,8 +24,9 @@ class DBSCAN():
         A sample_2 is considered a neighbor of sample_1 if the distance between
         them is smaller than epsilon """
         neighbors = []
-        idxs = np.arange(len(self.X))
-        for i, _sample in enumerate(self.X[idxs != sample_i]):
+        for i, _sample in enumerate(self.X):
+            if i == sample_i:
+                continue
             distance = euclidean_distance(self.X[sample_i], _sample)
             if distance < self.eps:
                 neighbors.append(i)
