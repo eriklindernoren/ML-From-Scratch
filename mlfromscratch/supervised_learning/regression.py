@@ -9,7 +9,7 @@ class l1_regularization():
         self.alpha = alpha
     
     def __call__(self, w):
-        return self.alpha * np.linalg.norm(w)
+        return self.alpha * np.linalg.norm(w, 1)
 
     def grad(self, w):
         return self.alpha * np.sign(w)
