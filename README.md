@@ -1,6 +1,6 @@
 # Machine Learning From Scratch
 
-## About
+# About
 Python implementations of some of the fundamental Machine Learning models and algorithms from scratch.
 
 The purpose of this project is not to produce as optimized and computationally efficient algorithms as possible
