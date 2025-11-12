@@ -8,7 +8,9 @@ class Sigmoid():
         return 1 / (1 + np.exp(-x))
 
     def gradient(self, x):
-        return self.__call__(x) * (1 - self.__call__(x))
+        y = self.__call__(x)
+        """ save memory in order to avoid repeating calculating self.__call__(x) """
+        return y * (1 - y)
 
 class Softmax():
     def __call__(self, x):
@@ -16,8 +18,21 @@ class Softmax():
         return e_x / np.sum(e_x, axis=-1, keepdims=True)
 
     def gradient(self, x):
+    """
+    Return the Jacobian matrix for softmax for a single sample (1D array).
+    If x has shape (batch, n), return array of shape (batch, n, n).
+    """
         p = self.__call__(x)
-        return p * (1 - p)
+        if p.ndim == 1:
+        return np.diagflat(p) - np.outer(p, p)
+    else:
+        # p: (batch, n) -> jacobians: (batch, n, n)
+        batch_size, n = p.shape
+        jac = np.empty((batch_size, n, n))
+        for i in range(batch_size):
+            pi = p[i]
+            jac[i] = np.diagflat(pi) - np.outer(pi, pi)
+        return jac
 
 class TanH():
     def __call__(self, x):
