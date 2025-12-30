@@ -1,6 +1,6 @@
 matplotlib
 numpy
-sklearn
+scikit-learn
 pandas
 cvxopt
 scipy
