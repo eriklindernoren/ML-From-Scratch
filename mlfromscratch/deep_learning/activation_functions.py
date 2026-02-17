@@ -67,6 +67,17 @@ class SELU():
         return self.scale * np.where(x >= 0.0, 1, self.alpha * np.exp(x))
 
 class SoftPlus():
+    """
+    SoftPlus activation function.
+    Smooth approximation of ReLU.
+
+    f(x) = log(1 + e^x)
+
+    Advantages:
+    - Differentiable everywhere
+    - Avoids dead neuron problem of ReLU
+    """
+
     def __call__(self, x):
         return np.log(1 + np.exp(x))
 
