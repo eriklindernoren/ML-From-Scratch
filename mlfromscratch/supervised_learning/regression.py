@@ -96,12 +96,12 @@ class LinearRegression(Regression):
         false then we use batch optimization by least squares.
     """
     def __init__(self, n_iterations=100, learning_rate=0.001, gradient_descent=True):
+        super(LinearRegression, self).__init__(n_iterations=n_iterations,
+                                          learning_rate=learning_rate)
         self.gradient_descent = gradient_descent
-        # No regularization
         self.regularization = lambda x: 0
         self.regularization.grad = lambda x: 0
-        super(LinearRegression, self).__init__(n_iterations=n_iterations,
-                                            learning_rate=learning_rate)
+
     def fit(self, X, y):
         # If not gradient descent => Least squares approximation of w
         if not self.gradient_descent:
