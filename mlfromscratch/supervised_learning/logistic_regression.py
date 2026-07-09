@@ -37,7 +37,8 @@ class LogisticRegression():
             if self.gradient_descent:
                 # Move against the gradient of the loss function with
                 # respect to the parameters to minimize the loss
-                self.param -= self.learning_rate * -(y - y_pred).dot(X)
+                n_samples = X.shape[0]
+                self.param -= self.learning_rate * (1 / n_samples) * -(y - y_pred).dot(X)
             else:
                 # Make a diagonal matrix of the sigmoid gradient column vector
                 diag_gradient = make_diagonal(self.sigmoid.gradient(X.dot(self.param)))
