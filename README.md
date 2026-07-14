@@ -77,7 +77,7 @@ but rather to present the inner workings of them in a transparent and accessible
     Accuracy: 0.987465181058
 
 <p align="center">
-    <img src="http://eriklindernoren.se/images/mlfs_cnn1.png" width="640">
+    <img src="images/mlfs_cnn1.png" width="640">
 </p>
 <p align="center">
     Figure: Classification of the digit dataset using CNN.
