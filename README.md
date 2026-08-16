@@ -326,6 +326,12 @@ but rather to present the inner workings of them in a transparent and accessible
     * [Convolutional Neural Network](mlfromscratch/examples/convolutional_neural_network.py)
     * [Multilayer Perceptron](mlfromscratch/examples/multilayer_perceptron.py)
     * [Recurrent Neural Network](mlfromscratch/examples/recurrent_neural_network.py)
+    * [Transformer](mlfromscratch/deep_learning/transformer.py)
+      - Multi-Head Self-Attention
+      - Position-wise Feed-Forward Network
+      - Positional Encoding (Sinusoidal)
+      - Transformer Encoder Layer
+      - Full Transformer Encoder
 
 ## Contact
 If there's some implementation you would like to see here or if you're just feeling social,
