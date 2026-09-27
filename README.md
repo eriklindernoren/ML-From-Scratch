@@ -76,12 +76,8 @@ but rather to present the inner workings of them in a transparent and accessible
     Training: 100% [------------------------------------------------------------------------] Time: 0:01:55
     Accuracy: 0.987465181058
 
-<p align="center">
-    <img src="http://eriklindernoren.se/images/mlfs_cnn1.png" width="640">
-</p>
-<p align="center">
-    Figure: Classification of the digit dataset using CNN.
-</p>
+The [CNN example](mlfromscratch/examples/convolutional_neural_network.py) trains a
+classifier for handwritten digits and reports its accuracy above.
 
 ### Density-Based Clustering
     $ python mlfromscratch/examples/dbscan.py
