@@ -91,7 +91,7 @@ def normalize(X, axis=-1, order=2):
 
 def standardize(X):
     """ Standardize the dataset X """
-    X_std = X
+    X_std = X.astype(float, copy=True)
     mean = X.mean(axis=0)
     std = X.std(axis=0)
     for col in range(np.shape(X)[1]):
