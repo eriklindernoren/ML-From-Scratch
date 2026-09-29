@@ -177,11 +177,11 @@ class RNN(Layer):
             grad_V += accum_grad[:, t].T.dot(self.states[:, t])
             # Calculate the gradient w.r.t the state input
             grad_wrt_state = accum_grad[:, t].dot(self.V) * self.activation.gradient(self.state_input[:, t])
-            # Gradient w.r.t the layer input
-            accum_grad_next[:, t] = grad_wrt_state.dot(self.U)
             # Update gradient w.r.t W and U by backprop. from time step t for at most
             # self.bptt_trunc number of time steps
             for t_ in reversed(np.arange(max(0, t - self.bptt_trunc), t+1)):
+                # Every reachable output contributes to the input at this step.
+                accum_grad_next[:, t_] += grad_wrt_state.dot(self.U)
                 grad_U += grad_wrt_state.T.dot(self.layer_input[:, t_])
                 grad_W += grad_wrt_state.T.dot(self.states[:, t_-1])
                 # Calculate gradient w.r.t previous state
