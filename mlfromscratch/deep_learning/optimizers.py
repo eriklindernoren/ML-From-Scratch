@@ -109,6 +109,7 @@ class Adam():
         self.eps = 1e-8
         self.m = None
         self.v = None
+        self.t = 0
         # Decay rates
         self.b1 = b1
         self.b2 = b2
@@ -119,15 +120,27 @@ class Adam():
             self.m = np.zeros(np.shape(grad_wrt_w))
             self.v = np.zeros(np.shape(grad_wrt_w))
         
+        self.t += 1
         self.m = self.b1 * self.m + (1 - self.b1) * grad_wrt_w
         self.v = self.b2 * self.v + (1 - self.b2) * np.power(grad_wrt_w, 2)
 
-        m_hat = self.m / (1 - self.b1)
-        v_hat = self.v / (1 - self.b2)
+        m_hat = self.m / (1 - self.b1 ** self.t)
+        v_hat = self.v / (1 - self.b2 ** self.t)
 
         self.w_updt = self.learning_rate * m_hat / (np.sqrt(v_hat) + self.eps)
 
         return w - self.w_updt
 
 
+class AdamW(Adam):
+    """Adam with decoupled weight decay."""
+    def __init__(self, learning_rate=0.001, b1=0.9, b2=0.999,
+                 weight_decay=0.01):
+        super(AdamW, self).__init__(learning_rate=learning_rate, b1=b1, b2=b2)
+        if weight_decay < 0:
+            raise ValueError("weight_decay must be non-negative")
+        self.weight_decay = weight_decay
 
+    def update(self, w, grad_wrt_w):
+        updated = super(AdamW, self).update(w, grad_wrt_w)
+        return updated - self.learning_rate * self.weight_decay * w

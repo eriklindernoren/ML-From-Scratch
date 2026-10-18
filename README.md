@@ -327,6 +327,28 @@ but rather to present the inner workings of them in a transparent and accessible
     * [Multilayer Perceptron](mlfromscratch/examples/multilayer_perceptron.py)
     * [Recurrent Neural Network](mlfromscratch/examples/recurrent_neural_network.py)
 
+#### Modern training features
+
+The NumPy training loop supports reproducible per-epoch shuffling, validation
+metrics, early stopping with restoration of the best model and optimizer state,
+and AdamW with decoupled weight decay. Existing calls to `fit` remain valid:
+
+```python
+from mlfromscratch.deep_learning.neural_network import NeuralNetwork
+from mlfromscratch.deep_learning.optimizers import AdamW
+from mlfromscratch.deep_learning.loss_functions import CrossEntropy
+
+model = NeuralNetwork(optimizer=AdamW(weight_decay=0.01), loss=CrossEntropy)
+training_loss, validation_loss = model.fit(
+    X_train, y_train, n_epochs=100, batch_size=64,
+    validation_data=(X_val, y_val), seed=7, patience=10
+)
+```
+
+Use `shuffle=False` to retain sequential batches. The `seed` controls data
+shuffling; initialize NumPy's random seed separately when reproducible weight
+initialization is also required.
+
 ## Contact
 If there's some implementation you would like to see here or if you're just feeling social,
 feel free to [email](mailto:eriklindernoren@gmail.com) me or connect with me on [LinkedIn](https://www.linkedin.com/in/eriklindernoren/).
